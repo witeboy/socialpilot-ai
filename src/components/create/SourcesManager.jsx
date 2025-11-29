@@ -29,13 +29,20 @@ export default function SourcesManager({ onComplete }) {
 
   const addSourceMutation = useMutation({
     mutationFn: async () => {
-      if (!title.trim()) throw new Error('Title required');
       if (sourceType !== 'text' && !url.trim()) throw new Error('URL required');
       if (sourceType === 'text' && !text.trim()) throw new Error('Text required');
 
+      // Auto-generate title
+      let autoTitle = '';
+      if (sourceType === 'text') {
+        autoTitle = text.substring(0, 50) + (text.length > 50 ? '...' : '');
+      } else {
+        autoTitle = url;
+      }
+
       return base44.entities.Source.create({
         source_type: sourceType,
-        title,
+        title: autoTitle,
         ...(sourceType === 'text' ? { source_text: text } : { source_url: url }),
         is_active: true,
         content_generated_count: 0
@@ -43,7 +50,6 @@ export default function SourcesManager({ onComplete }) {
     },
     onSuccess: () => {
       toast({ title: '✅ Source Added' });
-      setTitle('');
       setUrl('');
       setText('');
       setShowAddForm(false);
@@ -110,16 +116,6 @@ export default function SourcesManager({ onComplete }) {
                 <SelectItem value="text">📝 Manual Text</SelectItem>
               </SelectContent>
             </Select>
-          </div>
-
-          <div>
-            <Label className="text-indigo-300 mb-2 block text-xs sm:text-sm">Title</Label>
-            <Input
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="My favorite blog..."
-              className="bg-white/10 border-white/10 text-white rounded-xl text-xs sm:text-sm"
-            />
           </div>
 
           {sourceType !== 'text' && (

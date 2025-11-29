@@ -169,22 +169,45 @@ Return ONLY the topic, nothing else.`;
       const mediaPromptText = await base44.integrations.Core.InvokeLLM({
         prompt: `Based on this content topic: "${topic}"
 
-      Generate a detailed, creative image prompt for AI image generation that would make compelling visual content for social media.
+Generate a detailed image prompt for AI generation that creates genuinely realistic photography.
 
-      Guidelines:
-      - Be specific about composition, lighting, and style
-      - Match professional social media aesthetics
-      - Keep it concise but descriptive
-      - Focus on visual elements that support the topic
+Create a photograph that looks genuinely real, natural, and human. 
+The image must follow real-world camera physics, lighting behavior, and human anatomy.
 
-      CRITICAL STYLE REQUIREMENTS:
-      Create a highly realistic, natural-looking photographic image.  
-      No AI glow, no plastic skin, no distortions.  
-      Use real human proportions, natural expressions, correct hands, and believable lighting.  
-      Modern environment, minimalistic background, clean color palette.  
-      Never depict real people—only generic, anonymous individuals.
+REQUIRED REALISM RULES:
+- Skin must have natural pores, micro-textures, slight asymmetry, and subtle imperfections.
+- No plastic skin, no waxy smoothing, no over-sharpening, no glow effects.
+- Eyes must have realistic reflections, natural moisture, and correct proportions.
+- Hands must have correct finger count, natural folds, and believable gestures.
+- Hair must appear naturally messy with micro-strands visible.
+- Faces must NOT be symmetrical or overly "perfect."
+- Clothing must fall naturally with wrinkles, texture, and directional shadows.
+- Background must follow real depth-of-field physics: mild blur only if appropriate.
+- Colors must be neutral, soft, and grounded—no saturation boost unless requested.
+- Lighting must follow real-world rules: direction, softness, and falloff must make sense.
+- Shadows must be soft and physically accurate.
+- No AI artifacts, no warped objects, no melted limbs, no floating elements.
+- The scene should feel candid, documentary-style, or editorial—not staged.
 
-      Return ONLY the image prompt, nothing else.`
+CAMERA & OPTICS:
+- Use a real lens simulation: 35mm, 50mm, or 85mm prime.
+- Aperture f/2.0–f/4 for natural depth without extreme blur.
+- Use cinematic color grading: subtle teal-orange or soft neutral tones.
+- Resolution must be crisp but not digitally over-clean.
+
+ENVIRONMENT RULES:
+- Room layouts must make sense.
+- Objects must look physically present (shadows, reflections, occlusion).
+- Screens, laptops, papers, or whiteboards must avoid unreadable "AI text mush."
+
+HUMAN MODELING:
+- Create only generic individuals—no real or famous people.
+- Use realistic facial diversity and body proportions.
+- Natural expressions only, not exaggerated AI smiles.
+
+OUTPUT FORMAT:
+Return a single 16:9 cinematic horizontal composition prompt optimized for the topic "${topic}".
+Return ONLY the final image generation prompt, nothing else.`
       });
 
       // Step 3: Generate image

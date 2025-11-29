@@ -4,7 +4,7 @@ import { Home, PlusSquare, Layers, Settings } from 'lucide-react';
 import { createPageUrl } from './utils';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
-import { Toaster } from '@/components/ui/toaster';
+import { Toaster } from '@/components/ui/sonner';
 
 export default function Layout({ children, currentPageName }) {
   const location = useLocation();
@@ -33,7 +33,7 @@ export default function Layout({ children, currentPageName }) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0F0F1A] to-[#121B2E] pb-20">
-      <Toaster />
+      <Toaster richColors closeButton position="top-center" />
       {/* Page Content */}
       <main className="min-h-screen">
         {children}

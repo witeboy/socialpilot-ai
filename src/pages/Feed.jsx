@@ -4,10 +4,9 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { AnimatePresence } from 'framer-motion';
 import SwipeCard from '../components/feed/SwipeCard';
 import EmptyFeed from '../components/feed/EmptyFeed';
-import { useToast } from '@/components/ui/use-toast';
+import { toast } from 'sonner';
 
 export default function Feed() {
-  const { toast } = useToast();
   const queryClient = useQueryClient();
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -93,9 +92,9 @@ export default function Feed() {
     },
     onSuccess: (data) => {
       if (data?.posted) {
-        toast({ title: '✅ Posted Live!', description: 'Content published to your platform', duration: 3000 });
+        toast.success('Posted Live!', { description: 'Content published to your platform', duration: 3000 });
       } else {
-        toast({ title: '✅ Approved!', description: 'Content scheduled for posting', duration: 3000 });
+        toast.success('Approved!', { description: 'Content scheduled for posting', duration: 3000 });
       }
       queryClient.invalidateQueries(['pendingDrafts']);
       queryClient.invalidateQueries(['userPersona']);
@@ -106,7 +105,7 @@ export default function Feed() {
   const rejectMutation = useMutation({
     mutationFn: (draft) => base44.entities.ContentDraft.update(draft.id, { status: 'rejected' }),
     onSuccess: () => {
-      toast({ title: '❌ Post Rejected' });
+      toast.error('Post Rejected');
       queryClient.invalidateQueries(['pendingDrafts']);
       setCurrentIndex((prev) => prev + 1);
     }

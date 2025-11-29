@@ -6,11 +6,10 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '../utils';
-import { useToast } from '@/components/ui/use-toast';
+import { toast } from 'sonner';
 
 export default function Home() {
   const navigate = useNavigate();
-  const { toast } = useToast();
   const queryClient = useQueryClient();
   const [user, setUser] = useState(null);
   const [dailyBriefing, setDailyBriefing] = useState('');
@@ -112,11 +111,11 @@ Make it punchy and actionable. Return ONLY the briefing text.`;
       });
     },
     onSuccess: () => {
-      toast({ title: '✅ +1 Credit Earned!', description: 'Ad credit added to your wallet' });
+      toast.success('+1 Credit Earned!', { description: 'Ad credit added to your wallet' });
       queryClient.invalidateQueries(['userPersona']);
     },
     onError: (error) => {
-      toast({ title: '❌ Failed', description: error.message, variant: 'destructive' });
+      toast.error('Failed', { description: error.message });
     }
   });
 

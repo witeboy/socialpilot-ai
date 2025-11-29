@@ -5,7 +5,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { Sparkles, Loader2, Coins, Linkedin, Twitter, Youtube, Video } from 'lucide-react';
+import { Sparkles, Loader2, Coins, Linkedin, Twitter, Youtube, Video, Wand2, Image as ImageIcon } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 
 const tones = [
@@ -29,6 +29,8 @@ export default function ContentGenerator({ userPersona }) {
   const [input, setInput] = useState('');
   const [selectedTone, setSelectedTone] = useState(userPersona?.persona_profile?.tone || 'thought_leader');
   const [selectedPlatforms, setSelectedPlatforms] = useState(['linkedin']);
+  const [mediaPrompt, setMediaPrompt] = useState('');
+  const [isGeneratingPrompt, setIsGeneratingPrompt] = useState(false);
 
   const togglePlatform = (platformId) => {
     setSelectedPlatforms(prev => 
@@ -38,14 +40,57 @@ export default function ContentGenerator({ userPersona }) {
     );
   };
 
+  const generateMediaPrompt = async () => {
+    if (!input.trim()) {
+      toast({ title: '⚠️ Add a topic first', variant: 'destructive' });
+      return;
+    }
+
+    setIsGeneratingPrompt(true);
+    try {
+      const prompt = `Based on this content topic: "${input}"
+
+Generate a detailed, creative image prompt for AI image generation that would make compelling visual content for social media.
+
+Guidelines:
+- Be specific about composition, lighting, and style
+- Match professional social media aesthetics
+- Keep it concise but descriptive
+- Focus on visual elements that support the topic
+
+Return ONLY the image prompt, nothing else.`;
+
+      const result = await base44.integrations.Core.InvokeLLM({ prompt });
+      setMediaPrompt(result);
+      toast({ title: '✨ Media Prompt Generated!' });
+    } catch (error) {
+      toast({ title: '❌ Failed', description: error.message, variant: 'destructive' });
+    } finally {
+      setIsGeneratingPrompt(false);
+    }
+  };
+
   const generateMutation = useMutation({
     mutationFn: async () => {
       if (!input.trim()) throw new Error('Please enter a topic or URL');
       if (selectedPlatforms.length === 0) throw new Error('Select at least one platform');
 
       const totalCredits = (userPersona?.purchased_credits || 0) + (userPersona?.daily_ad_credits || 0);
-      const creditsNeeded = selectedPlatforms.length;
-      if (totalCredits < creditsNeeded) throw new Error(`Need ${creditsNeeded} credits`);
+      let creditsNeeded = selectedPlatforms.length;
+      
+      // Add 2 credits if generating media
+      let mediaUrl = null;
+      if (mediaPrompt.trim()) {
+        creditsNeeded += 2;
+        if (totalCredits < creditsNeeded) throw new Error(`Need ${creditsNeeded} credits (${selectedPlatforms.length} for content + 2 for media)`);
+        
+        const imageResult = await base44.integrations.Core.GenerateImage({
+          prompt: mediaPrompt
+        });
+        mediaUrl = imageResult.url;
+      } else {
+        if (totalCredits < creditsNeeded) throw new Error(`Need ${creditsNeeded} credits`);
+      }
 
       // Generate content for each platform
       for (const platformId of selectedPlatforms) {
@@ -93,6 +138,7 @@ Return structured script.`;
           platform: platformId,
           content_type: platformId === 'youtube' || platformId === 'tiktok' ? 'video_script' : 'post',
           text_content: response,
+          media_url: mediaUrl,
           virality_score: viralityScore,
           status: 'pending',
           topic: input,
@@ -121,7 +167,7 @@ Return structured script.`;
       await base44.entities.CreditTransaction.create({
         transaction_type: 'usage',
         amount: -creditsNeeded,
-        description: `Generated content for ${selectedPlatforms.length} platform(s)`,
+        description: `Generated content for ${selectedPlatforms.length} platform(s)${mediaPrompt.trim() ? ' with media' : ''}`,
         payment_gateway: 'none',
         balance_after: newDailyCredits + newPurchasedCredits
       });
@@ -129,6 +175,7 @@ Return structured script.`;
     onSuccess: () => {
       toast({ title: '✨ Content Generated!', description: 'Check your Feed to review' });
       setInput('');
+      setMediaPrompt('');
       queryClient.invalidateQueries(['userPersona']);
     },
     onError: (error) => {
@@ -193,23 +240,44 @@ Return structured script.`;
         />
       </div>
 
-      <div>
-        <Label className="text-indigo-300 mb-2 block text-xs sm:text-sm">Tone</Label>
-        <div className="flex flex-wrap gap-2">
-          {tones.map((tone) => (
-            <button
-              key={tone.value}
-              onClick={() => setSelectedTone(tone.value)}
-              className={`px-3 py-1.5 rounded-xl transition-all text-xs sm:text-sm ${
-                selectedTone === tone.value
-                  ? 'bg-indigo-600 text-white'
-                  : 'bg-white/10 text-indigo-300 hover:bg-indigo-500/20 hover:text-white'
-              }`}
-            >
-              {tone.label}
-            </button>
-          ))}
+      <div className="border-t border-white/10 pt-4">
+        <div className="flex items-center justify-between mb-2">
+          <Label className="text-indigo-300 text-xs sm:text-sm flex items-center gap-2">
+            <ImageIcon className="w-4 h-4" />
+            Media Prompt (Optional)
+          </Label>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={generateMediaPrompt}
+            disabled={isGeneratingPrompt || !input.trim()}
+            className="text-cyan-400 hover:text-cyan-300 text-xs"
+          >
+            {isGeneratingPrompt ? (
+              <>
+                <Loader2 className="w-3 h-3 mr-1 animate-spin" />
+                Generating...
+              </>
+            ) : (
+              <>
+                <Wand2 className="w-3 h-3 mr-1" />
+                Auto-Generate
+              </>
+            )}
+          </Button>
         </div>
+        <Textarea
+          value={mediaPrompt}
+          onChange={(e) => setMediaPrompt(e.target.value)}
+          placeholder="Click Auto-Generate or write your own image description..."
+          className="w-full rounded-xl bg-white/10 text-white p-3 border border-white/10 text-xs sm:text-sm"
+          rows={3}
+        />
+        {mediaPrompt.trim() && (
+          <p className="text-xs text-yellow-400 mt-1">
+            💡 Media generation will cost +2 credits
+          </p>
+        )}
       </div>
 
       <Button
@@ -225,7 +293,7 @@ Return structured script.`;
         ) : (
           <>
             <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
-            Generate ({selectedPlatforms.length} Credit{selectedPlatforms.length > 1 ? 's' : ''})
+            Generate ({selectedPlatforms.length + (mediaPrompt.trim() ? 2 : 0)} Credit{(selectedPlatforms.length + (mediaPrompt.trim() ? 2 : 0)) > 1 ? 's' : ''})
           </>
         )}
       </Button>

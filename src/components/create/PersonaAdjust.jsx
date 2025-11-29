@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Sparkles, Loader2, User } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 
-export default function PersonaAdjust({ userPersona }) {
+export default function PersonaAdjust({ userPersona, onComplete }) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [tone, setTone] = useState(userPersona?.persona_profile?.tone || 'thought_leader');
@@ -25,54 +25,15 @@ export default function PersonaAdjust({ userPersona }) {
       });
     },
     onSuccess: () => {
-      toast({ title: '✅ Tone Updated' });
+      toast({ title: '✅ Tone Saved' });
       queryClient.invalidateQueries(['userPersona']);
-    }
-  });
-
-  const regeneratePersonaMutation = useMutation({
-    mutationFn: async () => {
-      if (!userPersona?.resumes || userPersona.resumes.length === 0) {
-        throw new Error('No resumes found');
+      if (onComplete) {
+        setTimeout(() => onComplete(), 500);
       }
-
-      const combinedText = userPersona.resumes.map(r => r.text_content).join('\n\n---\n\n');
-
-      const prompt = `Analyze these resumes and create a comprehensive professional persona profile:
-
-${combinedText}
-
-Generate a JSON response with:
-{
-  "writing_style": "brief description of writing style",
-  "expertise_areas": ["area1", "area2", "area3"],
-  "content_pillars": ["pillar1", "pillar2", "pillar3"]
-}`;
-
-      const result = await base44.integrations.Core.InvokeLLM({
-        prompt,
-        response_json_schema: {
-          type: "object",
-          properties: {
-            writing_style: { type: "string" },
-            expertise_areas: { type: "array", items: { type: "string" } },
-            content_pillars: { type: "array", items: { type: "string" } }
-          }
-        }
-      });
-
-      return base44.entities.UserPersona.update(userPersona.id, {
-        persona_profile: { tone, ...result }
-      });
-    },
-    onSuccess: () => {
-      toast({ title: '✨ Persona Regenerated!' });
-      queryClient.invalidateQueries(['userPersona']);
-    },
-    onError: (error) => {
-      toast({ title: '❌ Failed', description: error.message, variant: 'destructive' });
     }
   });
+
+
 
   return (
     <Card className="bg-slate-900/50 backdrop-blur-sm border border-purple-500/20 p-6 space-y-6">
@@ -130,24 +91,7 @@ Generate a JSON response with:
         </div>
       )}
 
-      <Button
-        onClick={() => regeneratePersonaMutation.mutate()}
-        disabled={regeneratePersonaMutation.isPending}
-        variant="outline"
-        className="w-full border-purple-500/50 text-purple-300 hover:bg-purple-500/10"
-      >
-        {regeneratePersonaMutation.isPending ? (
-          <>
-            <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-            Regenerating...
-          </>
-        ) : (
-          <>
-            <Sparkles className="w-5 h-5 mr-2" />
-            Regenerate Persona
-          </>
-        )}
-      </Button>
+
     </Card>
   );
 }

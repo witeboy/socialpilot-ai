@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import ContentGenerator from '../components/create/ContentGenerator';
 import SourcesManager from '../components/create/SourcesManager';
-import MediaGenerator from '../components/create/MediaGenerator';
+
 import PersonaAdjust from '../components/create/PersonaAdjust';
 
 export default function Create() {
@@ -31,27 +31,22 @@ export default function Create() {
 
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-4 bg-white/5 border border-white/10 backdrop-blur-xl rounded-2xl text-xs sm:text-sm">
-          <TabsTrigger value="sources" className="data-[state=active]:bg-indigo-600 rounded-xl">Sources</TabsTrigger>
-          <TabsTrigger value="generate" className="data-[state=active]:bg-indigo-600 rounded-xl">Generate</TabsTrigger>
-          <TabsTrigger value="media" className="data-[state=active]:bg-indigo-600 rounded-xl">Media</TabsTrigger>
-          <TabsTrigger value="tone" className="data-[state=active]:bg-indigo-600 rounded-xl">Tone</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-3 bg-white/5 border border-white/10 backdrop-blur-xl rounded-2xl text-xs sm:text-sm">
+          <TabsTrigger value="sources" className="data-[state=active]:bg-indigo-600 rounded-xl">1. Sources</TabsTrigger>
+          <TabsTrigger value="tone" className="data-[state=active]:bg-indigo-600 rounded-xl">2. Tone</TabsTrigger>
+          <TabsTrigger value="generate" className="data-[state=active]:bg-indigo-600 rounded-xl">3. Generate</TabsTrigger>
         </TabsList>
 
         <TabsContent value="sources" className="space-y-4 mt-4">
-          <SourcesManager />
+          <SourcesManager onComplete={() => setActiveTab('tone')} />
+        </TabsContent>
+
+        <TabsContent value="tone" className="space-y-4 mt-4">
+          <PersonaAdjust userPersona={userPersona} onComplete={() => setActiveTab('generate')} />
         </TabsContent>
 
         <TabsContent value="generate" className="space-y-4 mt-4">
           <ContentGenerator userPersona={userPersona} />
-        </TabsContent>
-
-        <TabsContent value="media" className="space-y-4 mt-4">
-          <MediaGenerator userPersona={userPersona} />
-        </TabsContent>
-
-        <TabsContent value="tone" className="space-y-4 mt-4">
-          <PersonaAdjust userPersona={userPersona} />
         </TabsContent>
       </Tabs>
       </div>

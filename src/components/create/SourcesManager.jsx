@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Plus, Trash2, Rss, Link2, FileText, Loader2, X } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 
-export default function SourcesManager() {
+export default function SourcesManager({ onComplete }) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [showAddForm, setShowAddForm] = useState(false);
@@ -48,6 +48,9 @@ export default function SourcesManager() {
       setText('');
       setShowAddForm(false);
       queryClient.invalidateQueries(['sources']);
+      if (onComplete) {
+        setTimeout(() => onComplete(), 500);
+      }
     },
     onError: (error) => {
       toast({ title: '❌ Failed', description: error.message, variant: 'destructive' });

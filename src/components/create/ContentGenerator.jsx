@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Sparkles, Loader2, Coins, Linkedin, Twitter, Youtube, Video, Check } from 'lucide-react';
-import { useToast } from '@/components/ui/use-toast';
+import { toast } from 'sonner';
 
 const platforms = [
   { id: 'linkedin', name: 'LinkedIn', icon: Linkedin, color: 'text-blue-400' },
@@ -116,7 +116,6 @@ Return ONLY the JSON then hashtags.`
 };
 
 export default function ContentGenerator({ userPersona, hasSources, hasTone }) {
-  const { toast } = useToast();
   const queryClient = useQueryClient();
   const [selectedPlatforms, setSelectedPlatforms] = useState(['linkedin']);
   const [generatedContent, setGeneratedContent] = useState(null);
@@ -284,13 +283,13 @@ Generate the content following ALL the rules above.`;
       return { topic, platformContent };
     },
     onSuccess: (data) => {
-      toast({ title: '✨ Content Generated!', description: 'Preview your content below', duration: 3000 });
+      toast.success('Content Generated!', { description: 'Preview your content below', duration: 3000 });
       setGeneratedContent(data);
       setSelectedPreviewPlatform(selectedPlatforms[0]);
       queryClient.invalidateQueries(['userPersona']);
     },
     onError: (error) => {
-      toast({ title: '❌ Failed', description: error.message, variant: 'destructive', duration: 3000 });
+      toast.error('Failed', { description: error.message, duration: 3000 });
     }
   });
 

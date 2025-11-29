@@ -12,7 +12,10 @@ import PersonaAdjust from '../components/create/PersonaAdjust';
 
 export default function Create() {
   const queryClient = useQueryClient();
-  const [activeTab, setActiveTab] = useState('sources');
+  const urlParams = new URLSearchParams(window.location.search);
+  const tabParam = urlParams.get('tab');
+  const [activeTab, setActiveTab] = useState(tabParam || 'sources');
+  const [manualMode, setManualMode] = useState(!!tabParam);
 
   const { data: userPersona } = useQuery({
     queryKey: ['userPersona'],
@@ -36,18 +39,18 @@ export default function Create() {
 
   const isAutoMode = userPersona?.automation_mode === 'auto';
 
-  // Auto-progress through tabs
+  // Auto-progress through tabs (only if not in manual mode)
   React.useEffect(() => {
-    if (activeTab === 'sources' && hasSources) {
+    if (!manualMode && activeTab === 'sources' && hasSources) {
       setTimeout(() => setActiveTab('tone'), 300);
     }
-  }, [hasSources, activeTab]);
+  }, [hasSources, activeTab, manualMode]);
 
   React.useEffect(() => {
-    if (activeTab === 'tone' && hasTone) {
+    if (!manualMode && activeTab === 'tone' && hasTone) {
       setTimeout(() => setActiveTab('generate'), 300);
     }
-  }, [hasTone, activeTab]);
+  }, [hasTone, activeTab, manualMode]);
 
   if (isAutoMode) {
     return (

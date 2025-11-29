@@ -216,7 +216,7 @@ Make it punchy and actionable. Return ONLY the briefing text.`;
           </Button>
 
           <Button
-            onClick={() => navigate(createPageUrl('Create'))}
+            onClick={() => navigate(createPageUrl('Create') + '?tab=sources')}
             className="h-28 flex flex-col items-center justify-center gap-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl text-white hover:scale-105 transition-transform"
           >
             <Layers className="w-8 h-8 text-indigo-400" />

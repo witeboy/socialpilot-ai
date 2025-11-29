@@ -21,24 +21,21 @@ export default function Create() {
   });
 
   return (
-    <div className="p-4 max-w-2xl mx-auto space-y-4 pb-6">
-      {/* Header */}
-      <div className="text-center pt-4 pb-2">
-        <h1 className="text-3xl font-bold text-white mb-2">
-          Create Content
-        </h1>
-        <p className="text-slate-400 text-sm">
-          Generate posts, images, and videos powered by AI
-        </p>
-      </div>
+    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-950 to-black p-4 pb-24">
+      <div className="max-w-2xl mx-auto space-y-4">
+        {/* Header */}
+        <div className="text-center pt-4 pb-2">
+          <h1 className="text-2xl font-bold text-white mb-1">Create Content</h1>
+          <p className="text-sm text-indigo-300">AI-Powered Content Lab</p>
+        </div>
 
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-4 bg-slate-900/50 border border-purple-500/20">
-          <TabsTrigger value="generate">Generate</TabsTrigger>
-          <TabsTrigger value="sources">Sources</TabsTrigger>
-          <TabsTrigger value="media">Media</TabsTrigger>
-          <TabsTrigger value="persona">Persona</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-4 bg-white/5 border border-white/10 backdrop-blur-xl rounded-2xl">
+          <TabsTrigger value="generate" className="data-[state=active]:bg-indigo-600 rounded-xl">Generate</TabsTrigger>
+          <TabsTrigger value="sources" className="data-[state=active]:bg-indigo-600 rounded-xl">Sources</TabsTrigger>
+          <TabsTrigger value="media" className="data-[state=active]:bg-indigo-600 rounded-xl">Media</TabsTrigger>
+          <TabsTrigger value="persona" className="data-[state=active]:bg-indigo-600 rounded-xl">Persona</TabsTrigger>
         </TabsList>
 
         <TabsContent value="generate" className="space-y-4 mt-4">

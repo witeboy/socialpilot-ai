@@ -1,27 +1,24 @@
 import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tantml:react-query';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '../utils';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Sparkles, Upload, Loader2, CheckCircle2 } from 'lucide-react';
+import { Sparkles, Upload, Loader2, X, FileText } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 
 const tones = [
-  { value: 'thought_leader', label: '💡 Thought Leader', desc: 'Insightful, authoritative, visionary' },
-  { value: 'founder', label: '🚀 Founder', desc: 'Entrepreneurial, ambitious, innovative' },
-  { value: 'policy_maker', label: '📊 Policy Maker', desc: 'Analytical, formal, data-driven' },
-  { value: 'casual_creator', label: '✨ Casual Creator', desc: 'Friendly, relatable, conversational' }
+  { value: 'thought_leader', label: '💡 Thought Leader', desc: 'Insightful, authoritative' },
+  { value: 'founder', label: '🚀 Founder', desc: 'Entrepreneurial, innovative' },
+  { value: 'policy_maker', label: '📊 Policy Maker', desc: 'Analytical, formal' },
+  { value: 'subject_matter_expert', label: '🎓 Subject Matter Expert', desc: 'Technical, detailed' },
+  { value: 'casual_creator', label: '✨ Casual Creator', desc: 'Friendly, relatable' }
 ];
 
-const countries = [
-  'United States', 'United Kingdom', 'Canada', 'Australia', 'Germany', 'France',
-  'Nigeria', 'South Africa', 'Kenya', 'Ghana', 'Egypt', 'Morocco'
-];
+const countries = ['United States', 'United Kingdom', 'Canada', 'Australia', 'Nigeria', 'South Africa', 'Kenya', 'Ghana'];
 
 export default function Onboarding() {
   const { toast } = useToast();
@@ -30,24 +27,49 @@ export default function Onboarding() {
   
   const [step, setStep] = useState(1);
   const [country, setCountry] = useState('');
-  const [resume, setResume] = useState('');
+  const [resumes, setResumes] = useState([]);
   const [tone, setTone] = useState('thought_leader');
   const [automationMode, setAutomationMode] = useState('semi_auto');
 
+  const handleFileUpload = (e) => {
+    const files = Array.from(e.target.files);
+    if (resumes.length + files.length > 10) {
+      toast({ title: '⚠️ Maximum 10 resumes allowed', variant: 'destructive' });
+      return;
+    }
+
+    files.forEach((file) => {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setResumes(prev => [...prev, {
+          filename: file.name,
+          text_content: event.target.result,
+          uploaded_date: new Date().toISOString()
+        }]);
+      };
+      reader.readAsText(file);
+    });
+  };
+
+  const removeResume = (index) => {
+    setResumes(prev => prev.filter((_, i) => i !== index));
+  };
+
   const createPersonaMutation = useMutation({
     mutationFn: async () => {
-      if (!resume.trim()) {
-        throw new Error('Please enter your resume or professional bio');
+      if (resumes.length === 0) {
+        throw new Error('Please upload at least one resume');
       }
 
-      // Generate persona using AI
-      const prompt = `Analyze this resume/bio and create a professional persona profile:
+      const combinedText = resumes.map(r => r.text_content).join('\n\n---\n\n');
+      
+      const prompt = `Analyze these resumes and create a comprehensive professional persona:
 
-${resume}
+${combinedText}
 
-Generate a JSON response with:
+Generate JSON with:
 {
-  "writing_style": "brief description of writing style",
+  "writing_style": "description",
   "expertise_areas": ["area1", "area2", "area3"],
   "content_pillars": ["pillar1", "pillar2", "pillar3"]
 }`;
@@ -64,17 +86,13 @@ Generate a JSON response with:
         }
       });
 
-      // Create user persona
       return base44.entities.UserPersona.create({
-        resume_text: resume,
-        persona_profile: {
-          tone,
-          ...personaData
-        },
+        resumes,
+        persona_profile: { tone, ...personaData },
         automation_mode: automationMode,
-        generation_time: '09:00',
-        posting_time: '12:00',
-        credits_balance: 10, // Starting credits
+        generation_time: '08:00',
+        posting_time: '09:00',
+        credits_balance: 10,
         country,
         approved_posts_count: 0,
         subscription_status: 'free'
@@ -91,15 +109,12 @@ Generate a JSON response with:
   });
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <Card className="w-full max-w-2xl bg-slate-900/90 backdrop-blur-sm border-2 border-purple-500/30 p-8">
-        {/* Header */}
+    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-950 to-black flex items-center justify-center p-4">
+      <Card className="w-full max-w-2xl bg-white/5 border border-white/10 backdrop-blur-xl rounded-2xl shadow-xl p-8">
         <div className="text-center mb-8">
-          <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-purple-500 to-cyan-500 rounded-2xl flex items-center justify-center">
-            <Sparkles className="w-8 h-8 text-white" />
-          </div>
+          <Sparkles className="w-12 h-12 mx-auto mb-4 text-indigo-400" />
           <h1 className="text-3xl font-bold text-white mb-2">Welcome to SocialPilot</h1>
-          <p className="text-slate-400">Let's set up your AI-powered content engine</p>
+          <p className="text-indigo-300">Set up your AI content engine</p>
         </div>
 
         {/* Progress */}
@@ -108,7 +123,7 @@ Generate a JSON response with:
             <div
               key={s}
               className={`h-2 rounded-full transition-all ${
-                s <= step ? 'w-12 bg-gradient-to-r from-purple-500 to-cyan-500' : 'w-8 bg-slate-700'
+                s <= step ? 'w-12 bg-gradient-to-r from-green-500 to-indigo-500' : 'w-8 bg-white/20'
               }`}
             />
           ))}
@@ -119,11 +134,8 @@ Generate a JSON response with:
           <div className="space-y-6">
             <div>
               <Label className="text-white text-lg mb-3 block">Select Your Country</Label>
-              <p className="text-slate-400 text-sm mb-4">
-                This determines your payment gateway (Stripe or Flutterwave)
-              </p>
               <Select value={country} onValueChange={setCountry}>
-                <SelectTrigger className="bg-slate-800 border-slate-700 text-white h-12">
+                <SelectTrigger className="bg-white/10 border-white/10 text-white h-12 rounded-xl">
                   <SelectValue placeholder="Choose country..." />
                 </SelectTrigger>
                 <SelectContent>
@@ -136,36 +148,58 @@ Generate a JSON response with:
             <Button
               onClick={() => setStep(2)}
               disabled={!country}
-              className="w-full h-12 bg-gradient-to-r from-purple-600 to-cyan-600"
+              className="w-full h-12 bg-gradient-to-r from-indigo-600 to-indigo-400 rounded-xl"
             >
               Continue
             </Button>
           </div>
         )}
 
-        {/* Step 2: Resume */}
+        {/* Step 2: Resumes */}
         {step === 2 && (
           <div className="space-y-6">
             <div>
-              <Label className="text-white text-lg mb-3 block">Your Resume / Professional Bio</Label>
-              <p className="text-slate-400 text-sm mb-4">
-                Paste your resume or write a brief professional bio. AI will analyze it to create your content persona.
-              </p>
-              <Textarea
-                value={resume}
-                onChange={(e) => setResume(e.target.value)}
-                placeholder="I'm a software engineer with 10 years of experience in AI and machine learning. I've worked at Google and led teams building..."
-                className="bg-slate-800 border-slate-700 text-white min-h-[200px]"
+              <Label className="text-white text-lg mb-3 block">Upload Resumes (Max 10)</Label>
+              <p className="text-indigo-300 text-sm mb-4">Upload multiple resumes to build a comprehensive persona</p>
+              
+              <input
+                type="file"
+                accept=".txt,.pdf,.doc,.docx"
+                multiple
+                onChange={handleFileUpload}
+                className="hidden"
+                id="resume-upload"
               />
+              
+              <label
+                htmlFor="resume-upload"
+                className="flex items-center justify-center gap-2 w-full h-32 border-2 border-dashed border-white/20 rounded-xl hover:border-indigo-500 cursor-pointer bg-white/5"
+              >
+                <Upload className="w-6 h-6 text-indigo-400" />
+                <span className="text-white">Click to upload resumes</span>
+              </label>
+
+              <div className="mt-4 space-y-2">
+                {resumes.map((resume, idx) => (
+                  <div key={idx} className="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/10">
+                    <div className="flex items-center gap-2">
+                      <FileText className="w-4 h-4 text-indigo-400" />
+                      <span className="text-white text-sm">{resume.filename}</span>
+                    </div>
+                    <button onClick={() => removeResume(idx)} className="text-red-400 hover:text-red-300">
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                ))}
+              </div>
             </div>
+            
             <div className="flex gap-3">
-              <Button onClick={() => setStep(1)} variant="outline" className="flex-1">
-                Back
-              </Button>
+              <Button onClick={() => setStep(1)} variant="outline" className="flex-1">Back</Button>
               <Button
                 onClick={() => setStep(3)}
-                disabled={!resume.trim()}
-                className="flex-1 bg-gradient-to-r from-purple-600 to-cyan-600"
+                disabled={resumes.length === 0}
+                className="flex-1 bg-gradient-to-r from-indigo-600 to-indigo-400"
               >
                 Continue
               </Button>
@@ -178,98 +212,62 @@ Generate a JSON response with:
           <div className="space-y-6">
             <div>
               <Label className="text-white text-lg mb-3 block">Choose Your Tone</Label>
-              <p className="text-slate-400 text-sm mb-4">
-                This defines how your AI-generated content will sound
-              </p>
               <div className="space-y-3">
                 {tones.map((t) => (
                   <div
                     key={t.value}
                     onClick={() => setTone(t.value)}
-                    className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
-                      tone === t.value
-                        ? 'border-cyan-500 bg-cyan-500/10'
-                        : 'border-slate-700 bg-slate-800/30 hover:border-slate-600'
+                    className={`p-4 rounded-xl border-2 cursor-pointer transition-all ${
+                      tone === t.value ? 'border-indigo-500 bg-indigo-500/10' : 'border-white/10 bg-white/5 hover:border-white/20'
                     }`}
                   >
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-white font-semibold">{t.label}</p>
-                        <p className="text-xs text-slate-400 mt-1">{t.desc}</p>
-                      </div>
-                      {tone === t.value && <CheckCircle2 className="w-5 h-5 text-cyan-400" />}
-                    </div>
+                    <p className="text-white font-semibold">{t.label}</p>
+                    <p className="text-xs text-indigo-300 mt-1">{t.desc}</p>
                   </div>
                 ))}
               </div>
             </div>
             <div className="flex gap-3">
-              <Button onClick={() => setStep(2)} variant="outline" className="flex-1">
-                Back
-              </Button>
-              <Button
-                onClick={() => setStep(4)}
-                className="flex-1 bg-gradient-to-r from-purple-600 to-cyan-600"
-              >
-                Continue
-              </Button>
+              <Button onClick={() => setStep(2)} variant="outline" className="flex-1">Back</Button>
+              <Button onClick={() => setStep(4)} className="flex-1 bg-gradient-to-r from-indigo-600 to-indigo-400">Continue</Button>
             </div>
           </div>
         )}
 
-        {/* Step 4: Automation Mode */}
+        {/* Step 4: Automation */}
         {step === 4 && (
           <div className="space-y-6">
             <div>
-              <Label className="text-white text-lg mb-3 block">Automation Preference</Label>
-              <p className="text-slate-400 text-sm mb-4">
-                Choose how you want content to be posted
-              </p>
+              <Label className="text-white text-lg mb-3 block">Automation Mode</Label>
               <div className="space-y-3">
                 <div
                   onClick={() => setAutomationMode('semi_auto')}
-                  className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
-                    automationMode === 'semi_auto'
-                      ? 'border-cyan-500 bg-cyan-500/10'
-                      : 'border-slate-700 bg-slate-800/30'
+                  className={`p-4 rounded-xl border-2 cursor-pointer ${
+                    automationMode === 'semi_auto' ? 'border-indigo-500 bg-indigo-500/10' : 'border-white/10 bg-white/5'
                   }`}
                 >
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-white font-semibold">⏸️ Semi-Auto (Recommended)</p>
-                      <p className="text-xs text-slate-400 mt-1">Review and approve before posting</p>
-                    </div>
-                    {automationMode === 'semi_auto' && <CheckCircle2 className="w-5 h-5 text-cyan-400" />}
-                  </div>
+                  <p className="text-white font-semibold">⏸️ Semi-Auto (Recommended)</p>
+                  <p className="text-xs text-indigo-300 mt-1">Review before posting</p>
                 </div>
 
                 <div
                   onClick={() => setAutomationMode('auto')}
-                  className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
-                    automationMode === 'auto'
-                      ? 'border-green-500 bg-green-500/10'
-                      : 'border-slate-700 bg-slate-800/30'
+                  className={`p-4 rounded-xl border-2 cursor-pointer ${
+                    automationMode === 'auto' ? 'border-green-500 bg-green-500/10' : 'border-white/10 bg-white/5'
                   }`}
                 >
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-white font-semibold">⚡ Fully Automatic</p>
-                      <p className="text-xs text-slate-400 mt-1">System posts automatically after 3 manual approvals</p>
-                    </div>
-                    {automationMode === 'auto' && <CheckCircle2 className="w-5 h-5 text-green-400" />}
-                  </div>
+                  <p className="text-white font-semibold">⚡ Fully Automatic</p>
+                  <p className="text-xs text-indigo-300 mt-1">Posts automatically after 3 approvals</p>
                 </div>
               </div>
             </div>
 
             <div className="flex gap-3">
-              <Button onClick={() => setStep(3)} variant="outline" className="flex-1">
-                Back
-              </Button>
+              <Button onClick={() => setStep(3)} variant="outline" className="flex-1">Back</Button>
               <Button
                 onClick={() => createPersonaMutation.mutate()}
                 disabled={createPersonaMutation.isPending}
-                className="flex-1 bg-gradient-to-r from-purple-600 to-cyan-600"
+                className="flex-1 bg-gradient-to-r from-indigo-600 to-indigo-400"
               >
                 {createPersonaMutation.isPending ? (
                   <>
@@ -279,7 +277,7 @@ Generate a JSON response with:
                 ) : (
                   <>
                     <Sparkles className="w-5 h-5 mr-2" />
-                    Create My Profile
+                    Create Profile
                   </>
                 )}
               </Button>

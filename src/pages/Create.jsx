@@ -20,6 +20,17 @@ export default function Create() {
     }
   });
 
+  const { data: sources = [] } = useQuery({
+    queryKey: ['sources'],
+    queryFn: async () => {
+      const user = await base44.auth.me();
+      return base44.entities.Source.filter({ created_by: user.email });
+    }
+  });
+
+  const hasSources = sources.length > 0;
+  const hasTone = !!userPersona?.persona_profile?.tone;
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-950 to-black p-4 pb-24">
       <div className="max-w-2xl mx-auto space-y-4">
@@ -32,9 +43,9 @@ export default function Create() {
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid w-full grid-cols-3 bg-white/5 border border-white/10 backdrop-blur-xl rounded-2xl text-xs sm:text-sm">
-          <TabsTrigger value="sources" className="data-[state=active]:bg-indigo-600 rounded-xl">1. Sources</TabsTrigger>
-          <TabsTrigger value="tone" className="data-[state=active]:bg-indigo-600 rounded-xl">2. Tone</TabsTrigger>
-          <TabsTrigger value="generate" className="data-[state=active]:bg-indigo-600 rounded-xl">3. Generate</TabsTrigger>
+          <TabsTrigger value="sources" className="data-[state=active]:bg-indigo-600 rounded-xl">Sources</TabsTrigger>
+          <TabsTrigger value="tone" disabled={!hasSources} className="data-[state=active]:bg-indigo-600 rounded-xl disabled:opacity-40 disabled:cursor-not-allowed">Tone</TabsTrigger>
+          <TabsTrigger value="generate" disabled={!hasTone} className="data-[state=active]:bg-indigo-600 rounded-xl disabled:opacity-40 disabled:cursor-not-allowed">Generate</TabsTrigger>
         </TabsList>
 
         <TabsContent value="sources" className="space-y-4 mt-4">

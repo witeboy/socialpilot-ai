@@ -26,19 +26,19 @@ export default function Settings() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0F0F1A] to-[#121B2E] p-4 pb-24">
+    <div className="min-h-screen bg-slate-50 p-4 pb-24">
       <div className="max-w-2xl mx-auto space-y-4">
       <div className="text-center pt-4 pb-2">
-        <h1 className="text-3xl font-bold text-white mb-2">Settings</h1>
-        <p className="text-slate-400 text-sm">Configure your SocialPilot experience</p>
+        <h1 className="text-3xl font-bold text-slate-900 mb-2">Settings</h1>
+        <p className="text-slate-600 text-sm">Configure your SocialPilot experience</p>
       </div>
 
       <Tabs defaultValue="automation" className="w-full">
-        <TabsList className="grid w-full grid-cols-4 bg-slate-900/50 border border-purple-500/20">
-          <TabsTrigger value="automation" className="text-xs">Auto</TabsTrigger>
-          <TabsTrigger value="social" className="text-xs">Social</TabsTrigger>
-          <TabsTrigger value="credits" className="text-xs">Credits</TabsTrigger>
-          <TabsTrigger value="account" className="text-xs">Account</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-4 bg-slate-100 border border-slate-200 rounded-full p-1">
+          <TabsTrigger value="automation" className="data-[state=active]:bg-[#0FB5BA] data-[state=active]:text-white text-slate-700 rounded-full text-xs font-semibold h-10">Auto</TabsTrigger>
+          <TabsTrigger value="social" className="data-[state=active]:bg-[#0FB5BA] data-[state=active]:text-white text-slate-700 rounded-full text-xs font-semibold h-10">Social</TabsTrigger>
+          <TabsTrigger value="credits" className="data-[state=active]:bg-[#0FB5BA] data-[state=active]:text-white text-slate-700 rounded-full text-xs font-semibold h-10">Credits</TabsTrigger>
+          <TabsTrigger value="account" className="data-[state=active]:bg-[#0FB5BA] data-[state=active]:text-white text-slate-700 rounded-full text-xs font-semibold h-10">Account</TabsTrigger>
         </TabsList>
 
         <TabsContent value="automation" className="space-y-4 mt-4">

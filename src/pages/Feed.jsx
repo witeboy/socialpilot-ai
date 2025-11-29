@@ -134,27 +134,22 @@ export default function Feed() {
   const needsManualApproval = (userPersona?.approved_posts_count || 0) < 3;
 
   return (
-    <div className="h-screen flex flex-col bg-gradient-to-br from-[#0F0F1A] to-[#121B2E]">
+    <div className="h-screen flex flex-col bg-slate-50">
       {/* Sticky Header */}
-      <div className="sticky top-0 z-20 pt-6 pb-4 px-4 bg-gradient-to-b from-[#0F0F1A] to-transparent">
+      <div className="sticky top-0 z-20 pt-6 pb-4 px-4 bg-slate-50">
         <div className="mx-auto" style={{ maxWidth: 'clamp(360px, 90vw, 760px)' }}>
-          <h1 className="text-[20px] sm:text-[24px] md:text-[28px] font-bold text-[#F8FAFC] text-center">
+          <h1 className="text-[20px] sm:text-[24px] md:text-[28px] font-bold text-slate-900 text-center">
             Review Feed
           </h1>
-          <p className="text-[13px] sm:text-[14px] md:text-[16px] text-[#64748B] text-center mt-1">
+          <p className="text-[13px] sm:text-[14px] md:text-[16px] text-slate-600 text-center mt-1">
             Swipe right to approve, left to reject
           </p>
           {needsManualApproval && (
             <div 
-              className="mt-3 mx-auto flex items-center justify-center gap-2"
-              style={{
-                background: 'rgba(255,255,255,0.08)',
-                padding: '8px 16px',
-                borderRadius: '999px',
-                maxWidth: '280px'
-              }}
+              className="mt-3 mx-auto flex items-center justify-center gap-2 bg-amber-50 border border-amber-200 rounded-full px-4 py-2"
+              style={{ maxWidth: '280px' }}
             >
-              <span className="text-[12px] sm:text-[13px] text-[#FACC15] font-medium">
+              <span className="text-[12px] sm:text-[13px] text-amber-700 font-medium">
                 ⚠️ First 3 approvals: {userPersona?.approved_posts_count || 0}/3
               </span>
             </div>
@@ -177,9 +172,9 @@ export default function Feed() {
       </div>
 
       {/* Sticky Counter */}
-      <div className="sticky bottom-16 z-20 pb-4 text-center">
-        <div className="inline-block bg-[#111827]/80 backdrop-blur-sm px-4 py-2 rounded-full border border-white/10">
-          <p className="text-[#64748B] text-sm font-medium">
+      <div className="sticky bottom-20 z-20 pb-4 text-center">
+        <div className="inline-block bg-white shadow-md px-4 py-2 rounded-full border border-slate-200">
+          <p className="text-slate-700 text-sm font-semibold">
             {currentIndex + 1} of {drafts.length}
           </p>
         </div>

@@ -48,7 +48,6 @@ export default function ContentGenerator({ userPersona }) {
       if (totalCredits < creditsNeeded) throw new Error(`Need ${creditsNeeded} credits`);
 
       // Generate content for each platform
-      const createdDrafts = [];
       for (const platformId of selectedPlatforms) {
         const platformName = platforms.find(p => p.id === platformId)?.name || platformId;
         

@@ -56,39 +56,24 @@ export default function SwipeCard({ draft, onSwipe, isTop }) {
       className="px-4 sm:px-6 md:px-8"
     >
       <Card 
-        className="h-full bg-[#111827] border border-white/10 overflow-hidden relative flex flex-col"
+        className="h-full bg-white border border-slate-200 overflow-hidden relative flex flex-col shadow-xl"
         style={{
           borderRadius: '16px',
-          padding: '16px',
-          boxShadow: '0 2px 8px rgba(0,0,0,0.25)'
+          padding: '16px'
         }}
       >
         {/* Platform Badge - Top Left */}
         <div 
-          className="absolute top-4 left-4 flex items-center justify-center"
-          style={{
-            width: '32px',
-            height: '32px',
-            background: 'rgba(255,255,255,0.06)',
-            borderRadius: '10px'
-          }}
+          className="absolute top-4 left-4 w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center"
         >
           <Icon style={{ color: config.color, width: '18px', height: '18px' }} />
         </div>
 
         {/* Virality Badge - Top Right */}
         <div 
-          className="absolute top-4 right-4 flex items-center gap-1.5"
-          style={{
-            background: 'rgba(6,182,212,0.18)',
-            color: '#06B6D4',
-            borderRadius: '999px',
-            padding: '6px 12px',
-            fontSize: '13px',
-            fontWeight: '600'
-          }}
+          className="absolute top-4 right-4 flex items-center gap-1.5 bg-[#DDF7F8] text-[#0FB5BA] rounded-full px-3 py-1.5 text-xs font-semibold border border-[#0FB5BA]/30"
         >
-          <Flame style={{ width: '14px', height: '14px' }} />
+          <Flame className="w-3.5 h-3.5 text-orange-500" />
           <span>{draft.virality_score}/100</span>
         </div>
 
@@ -168,9 +153,8 @@ export default function SwipeCard({ draft, onSwipe, isTop }) {
 
         {/* Bottom Action Buttons - Sticky with Gradient */}
         <div 
-          className="sticky bottom-0 pt-6 mt-4 border-t border-white/10"
+          className="sticky bottom-0 pt-6 mt-4 border-t border-slate-200 bg-white"
           style={{
-            background: 'linear-gradient(to top, rgba(17,24,39,1) 70%, rgba(17,24,39,0.7))',
             marginLeft: '-16px',
             marginRight: '-16px',
             marginBottom: '-16px',
@@ -182,15 +166,14 @@ export default function SwipeCard({ draft, onSwipe, isTop }) {
           <div className="grid grid-cols-2 gap-3">
             <Button
               onClick={handleReject}
-              variant="outline"
-              className="h-12 sm:h-14 rounded-xl sm:rounded-2xl border-2 border-[#F87171] text-[#F87171] bg-transparent hover:bg-[#F87171]/10 text-sm sm:text-base font-semibold"
+              className="h-12 sm:h-14 rounded-lg bg-white border-2 border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300 text-sm sm:text-base font-semibold"
             >
               <ThumbsDown className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
               Reject
             </Button>
             <Button
               onClick={handleApprove}
-              className="h-12 sm:h-14 rounded-xl sm:rounded-2xl bg-[#4ADE80] text-[#052e16] hover:bg-[#4ADE80]/90 text-sm sm:text-base font-semibold shadow-lg"
+              className="h-12 sm:h-14 rounded-lg bg-gradient-to-r from-[#0FB5BA] to-[#14D4BA] hover:scale-105 text-white text-sm sm:text-base font-semibold shadow-md transition-transform"
             >
               <ThumbsUp className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
               Approve

@@ -143,7 +143,7 @@ export default function SourcesManager({ onComplete }) {
           <Button
             onClick={() => addSourceMutation.mutate()}
             disabled={addSourceMutation.isPending}
-            className="w-full bg-gradient-to-r from-indigo-600 to-indigo-400 rounded-xl text-xs sm:text-sm"
+            className="w-full h-12 bg-gradient-to-r from-indigo-600 to-indigo-400 hover:from-indigo-500 hover:to-indigo-300 rounded-xl text-xs sm:text-sm font-semibold shadow-lg"
           >
             {addSourceMutation.isPending ? (
               <>

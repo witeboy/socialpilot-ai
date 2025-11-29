@@ -89,39 +89,39 @@ export default function Create() {
           <p className="text-xs sm:text-sm text-indigo-300">AI-Powered Content Lab</p>
         </div>
 
-      {/* Tabs */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-3 bg-white/5 border border-white/10 backdrop-blur-xl rounded-2xl text-xs sm:text-sm">
-          <TabsTrigger value="sources" className="data-[state=active]:bg-indigo-600 rounded-xl">Sources</TabsTrigger>
-          <TabsTrigger value="tone" disabled={!hasSources} className="data-[state=active]:bg-indigo-600 rounded-xl disabled:opacity-40 disabled:cursor-not-allowed">Tone</TabsTrigger>
-          <TabsTrigger value="generate" disabled={!hasTone} className="data-[state=active]:bg-indigo-600 rounded-xl disabled:opacity-40 disabled:cursor-not-allowed">Generate</TabsTrigger>
+      {/* Tabs - Segmented Control Style */}
+      <Tabs value={activeTab} onValueChange={(val) => { setActiveTab(val); setManualMode(true); }} className="w-full">
+        <TabsList className="grid w-full grid-cols-3 bg-slate-900/50 border border-white/10 backdrop-blur-xl rounded-full p-1 text-xs sm:text-sm">
+          <TabsTrigger value="sources" className="data-[state=active]:bg-indigo-600 data-[state=active]:shadow-lg rounded-full h-10 font-semibold transition-all">Sources</TabsTrigger>
+          <TabsTrigger value="tone" disabled={!hasSources} className="data-[state=active]:bg-indigo-600 data-[state=active]:shadow-lg rounded-full h-10 font-semibold disabled:opacity-40 disabled:cursor-not-allowed transition-all">Tone</TabsTrigger>
+          <TabsTrigger value="generate" disabled={!hasTone} className="data-[state=active]:bg-indigo-600 data-[state=active]:shadow-lg rounded-full h-10 font-semibold disabled:opacity-40 disabled:cursor-not-allowed transition-all">Generate</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="sources" className="space-y-4 mt-4">
-          <SourcesManager onComplete={() => setActiveTab('tone')} />
+        <TabsContent value="sources" className="space-y-4 mt-6">
+          <SourcesManager onComplete={() => { setActiveTab('tone'); setManualMode(false); }} />
           {hasSources && (
             <Button 
-              onClick={() => setActiveTab('tone')}
-              className="w-full bg-gradient-to-r from-indigo-600 to-purple-600"
+              onClick={() => { setActiveTab('tone'); setManualMode(false); }}
+              className="w-full h-12 sm:h-14 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 rounded-xl sm:rounded-2xl text-sm sm:text-base font-semibold shadow-lg"
             >
               Next: Set Tone →
             </Button>
           )}
         </TabsContent>
 
-        <TabsContent value="tone" className="space-y-4 mt-4">
-          <PersonaAdjust userPersona={userPersona} onComplete={() => setActiveTab('generate')} />
+        <TabsContent value="tone" className="space-y-4 mt-6">
+          <PersonaAdjust userPersona={userPersona} onComplete={() => { setActiveTab('generate'); setManualMode(false); }} />
           {hasTone && (
             <Button 
-              onClick={() => setActiveTab('generate')}
-              className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 mt-4"
+              onClick={() => { setActiveTab('generate'); setManualMode(false); }}
+              className="w-full h-12 sm:h-14 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 rounded-xl sm:rounded-2xl text-sm sm:text-base font-semibold shadow-lg mt-4"
             >
               Next: Generate Content →
             </Button>
           )}
         </TabsContent>
 
-        <TabsContent value="generate" className="space-y-4 mt-4">
+        <TabsContent value="generate" className="space-y-4 mt-6">
           <ContentGenerator userPersona={userPersona} hasSources={hasSources} hasTone={hasTone} />
         </TabsContent>
       </Tabs>

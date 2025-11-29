@@ -60,7 +60,7 @@ export default function PersonaAdjust({ userPersona, onComplete }) {
         <Button
           onClick={() => updateToneMutation.mutate()}
           disabled={updateToneMutation.isPending}
-          className="w-full mt-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500"
+          className="w-full h-12 mt-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 rounded-xl text-sm sm:text-base font-semibold shadow-lg"
         >
           {updateToneMutation.isPending ? 'Saving...' : 'Save & Continue'}
         </Button>

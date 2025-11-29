@@ -23,7 +23,7 @@ const platforms = [
   { id: 'tiktok', name: 'TikTok', icon: Video, color: 'text-pink-400' }
 ];
 
-export default function ContentGenerator({ userPersona }) {
+export default function ContentGenerator({ userPersona, hasSources, hasTone }) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [input, setInput] = useState('');
@@ -282,8 +282,8 @@ Return structured script.`;
 
       <Button
         onClick={() => generateMutation.mutate()}
-        disabled={generateMutation.isPending || !input.trim() || selectedPlatforms.length === 0}
-        className="w-full bg-gradient-to-r from-indigo-600 to-indigo-400 text-white py-3 sm:py-4 rounded-xl sm:rounded-2xl shadow-lg hover:from-indigo-500 hover:to-indigo-300 text-xs sm:text-sm"
+        disabled={generateMutation.isPending || !input.trim() || selectedPlatforms.length === 0 || !hasSources || !hasTone}
+        className="w-full bg-gradient-to-r from-indigo-600 to-indigo-400 text-white py-3 sm:py-4 rounded-xl sm:rounded-2xl shadow-lg hover:from-indigo-500 hover:to-indigo-300 text-xs sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {generateMutation.isPending ? (
           <>

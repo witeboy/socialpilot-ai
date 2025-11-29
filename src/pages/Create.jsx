@@ -57,7 +57,7 @@ export default function Create() {
         </TabsContent>
 
         <TabsContent value="generate" className="space-y-4 mt-4">
-          <ContentGenerator userPersona={userPersona} />
+          <ContentGenerator userPersona={userPersona} hasSources={hasSources} hasTone={hasTone} />
         </TabsContent>
       </Tabs>
       </div>

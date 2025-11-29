@@ -1,19 +1,19 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { motion, useMotionValue, useTransform } from 'framer-motion';
 import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Linkedin, Twitter, Youtube, Music, ThumbsUp, ThumbsDown } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Linkedin, Twitter, Youtube, Music, ThumbsUp, ThumbsDown, Flame } from 'lucide-react';
 
 const platformConfig = {
-  linkedin: { icon: Linkedin, color: 'text-blue-400', bg: 'bg-blue-500/10' },
-  twitter: { icon: Twitter, color: 'text-sky-400', bg: 'bg-sky-500/10' },
-  youtube: { icon: Youtube, color: 'text-red-400', bg: 'bg-red-500/10' },
-  tiktok: { icon: Music, color: 'text-pink-400', bg: 'bg-pink-500/10' }
+  linkedin: { icon: Linkedin, color: '#0A66C2' },
+  twitter: { icon: Twitter, color: '#1DA1F2' },
+  youtube: { icon: Youtube, color: '#FF0000' },
+  tiktok: { icon: Music, color: '#FE2C55' }
 };
 
 export default function SwipeCard({ draft, onSwipe, isTop }) {
   const x = useMotionValue(0);
-  const rotate = useTransform(x, [-200, 200], [-20, 20]);
+  const rotate = useTransform(x, [-200, 200], [-15, 15]);
   const opacity = useTransform(x, [-200, -100, 0, 100, 200], [0.5, 1, 1, 1, 0.5]);
 
   const config = platformConfig[draft.platform] || platformConfig.linkedin;
@@ -25,10 +25,13 @@ export default function SwipeCard({ draft, onSwipe, isTop }) {
     }
   };
 
-  const viralityColor = 
-    draft.virality_score >= 80 ? 'from-green-500 to-emerald-400' :
-    draft.virality_score >= 60 ? 'from-yellow-500 to-orange-400' :
-    'from-red-500 to-pink-400';
+  const handleApprove = () => {
+    onSwipe('right', draft);
+  };
+
+  const handleReject = () => {
+    onSwipe('left', draft);
+  };
 
   return (
     <motion.div
@@ -48,94 +51,109 @@ export default function SwipeCard({ draft, onSwipe, isTop }) {
       dragConstraints={{ left: 0, right: 0 }}
       onDragEnd={handleDragEnd}
       whileTap={isTop ? { cursor: 'grabbing' } : {}}
-      className="p-4"
+      className="px-4"
     >
-      <Card className="h-full bg-slate-900/90 backdrop-blur-sm border-2 border-purple-500/30 overflow-hidden relative">
-        {/* Platform Watermark */}
-        <div className={`absolute top-4 right-4 ${config.bg} p-3 rounded-full`}>
-          <Icon className={`w-8 h-8 ${config.color}`} />
+      <Card 
+        className="h-full bg-[#111827] border border-white/10 overflow-hidden relative flex flex-col"
+        style={{
+          borderRadius: '18px',
+          padding: '22px',
+          boxShadow: '0px 4px 20px rgba(0,0,0,0.4)'
+        }}
+      >
+        {/* Platform Badge - Top Left */}
+        <div 
+          className="absolute top-5 left-5 flex items-center justify-center"
+          style={{
+            width: '36px',
+            height: '36px',
+            background: 'rgba(255,255,255,0.06)',
+            borderRadius: '12px'
+          }}
+        >
+          <Icon style={{ color: config.color, width: '20px', height: '20px' }} />
         </div>
 
-        {/* Virality Score Ring */}
-        <div className="absolute top-4 left-4">
-          <div className="relative w-16 h-16">
-            <svg className="w-full h-full transform -rotate-90">
-              <circle
-                cx="32"
-                cy="32"
-                r="28"
-                stroke="rgba(255,255,255,0.1)"
-                strokeWidth="6"
-                fill="none"
+        {/* Virality Badge - Top Right */}
+        <div 
+          className="absolute top-5 right-5 flex items-center gap-1.5"
+          style={{
+            background: 'rgba(6,182,212,0.18)',
+            color: '#06B6D4',
+            borderRadius: '999px',
+            padding: '8px 14px',
+            fontSize: '14px',
+            fontWeight: '600'
+          }}
+        >
+          <Flame style={{ width: '16px', height: '16px' }} />
+          <span>{draft.virality_score}/100</span>
+        </div>
+
+        {/* Content Area */}
+        <div className="flex-1 overflow-auto mt-14 space-y-3.5">
+          {/* Post Text Block */}
+          <div 
+            style={{
+              background: 'rgba(255,255,255,0.04)',
+              padding: '14px',
+              borderRadius: '12px',
+              fontSize: '15px',
+              lineHeight: '1.4',
+              color: '#CBD5E1'
+            }}
+          >
+            {draft.text_content}
+          </div>
+
+          {/* Media Preview */}
+          {draft.media_url && (
+            <div 
+              className="w-full overflow-hidden"
+              style={{
+                aspectRatio: '16/9',
+                borderRadius: '14px',
+                border: '1px solid rgba(255,255,255,0.08)',
+                position: 'relative'
+              }}
+            >
+              <img 
+                src={draft.media_url} 
+                alt="Generated media" 
+                className="w-full h-full object-cover"
               />
-              <circle
-                cx="32"
-                cy="32"
-                r="28"
-                stroke="url(#gradient)"
-                strokeWidth="6"
-                fill="none"
-                strokeDasharray={`${draft.virality_score * 1.75} 175`}
-                className="transition-all duration-500"
+              <div 
+                className="absolute bottom-0 left-0 right-0 h-20"
+                style={{
+                  background: 'linear-gradient(to top, rgba(0,0,0,0.3), transparent)'
+                }}
               />
-              <defs>
-                <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" className={viralityColor.split(' ')[0].replace('from-', 'stop-')} />
-                  <stop offset="100%" className={viralityColor.split(' ')[1].replace('to-', 'stop-')} />
-                </linearGradient>
-              </defs>
-            </svg>
-            <div className="absolute inset-0 flex items-center justify-center">
-              <span className="text-white font-bold text-sm">{draft.virality_score}</span>
             </div>
-          </div>
+          )}
         </div>
 
-        {/* Content */}
-        <div className="p-6 pt-24 h-full flex flex-col">
-          <div className="flex-1 overflow-auto">
-            <div className="space-y-3 mb-4">
-              <Badge className={`${config.bg} ${config.color} border border-current`}>
-                {draft.content_type.replace('_', ' ')}
-              </Badge>
-              {draft.topic && (
-                <Badge variant="outline" className="text-slate-400">
-                  {draft.topic}
-                </Badge>
-              )}
-            </div>
-
-            {draft.media_url && (
-              <div className="mb-4 rounded-lg overflow-hidden">
-                <img 
-                  src={draft.media_url} 
-                  alt="Generated media" 
-                  className="w-full max-h-64 object-cover"
-                />
-              </div>
-            )}
-
-            <div className="prose prose-invert max-w-none">
-              <p className="text-slate-200 whitespace-pre-wrap leading-relaxed">
-                {draft.text_content}
-              </p>
-            </div>
-          </div>
-
-          {/* Swipe Indicators */}
-          <div className="flex justify-between mt-6 pt-6 border-t border-slate-700">
-            <div className="flex items-center gap-2 text-red-400">
-              <ThumbsDown className="w-5 h-5" />
-              <span className="text-sm">Reject</span>
-            </div>
-            <div className="flex items-center gap-2 text-green-400">
-              <span className="text-sm">Approve</span>
-              <ThumbsUp className="w-5 h-5" />
-            </div>
-          </div>
+        {/* Bottom Action Buttons */}
+        <div className="flex gap-3 mt-4 pt-4 border-t border-white/10">
+          <Button
+            onClick={handleReject}
+            variant="outline"
+            className="flex-1 h-11 rounded-xl border-[#F87171] text-[#F87171] bg-transparent hover:bg-[#F87171]/10"
+            style={{ fontSize: '15px', fontWeight: '600' }}
+          >
+            <ThumbsDown className="w-4 h-4 mr-2" />
+            Reject
+          </Button>
+          <Button
+            onClick={handleApprove}
+            className="flex-1 h-11 rounded-xl bg-[#4ADE80] text-[#052e16] hover:bg-[#4ADE80]/90"
+            style={{ fontSize: '15px', fontWeight: '600' }}
+          >
+            <ThumbsUp className="w-4 h-4 mr-2" />
+            Approve
+          </Button>
         </div>
 
-        {/* Swipe Overlay */}
+        {/* Swipe Overlay - Reject */}
         <motion.div
           style={{
             opacity: useTransform(x, [-200, 0], [1, 0]),
@@ -144,16 +162,18 @@ export default function SwipeCard({ draft, onSwipe, isTop }) {
             left: 0,
             right: 0,
             bottom: 0,
-            background: 'rgba(239, 68, 68, 0.2)',
+            background: 'rgba(248, 113, 113, 0.3)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            pointerEvents: 'none'
+            pointerEvents: 'none',
+            borderRadius: '18px'
           }}
         >
-          <ThumbsDown className="w-24 h-24 text-red-500" />
+          <ThumbsDown className="w-24 h-24 text-[#F87171]" strokeWidth={2.5} />
         </motion.div>
 
+        {/* Swipe Overlay - Approve */}
         <motion.div
           style={{
             opacity: useTransform(x, [0, 200], [0, 1]),
@@ -162,14 +182,15 @@ export default function SwipeCard({ draft, onSwipe, isTop }) {
             left: 0,
             right: 0,
             bottom: 0,
-            background: 'rgba(34, 197, 94, 0.2)',
+            background: 'rgba(74, 222, 128, 0.3)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            pointerEvents: 'none'
+            pointerEvents: 'none',
+            borderRadius: '18px'
           }}
         >
-          <ThumbsUp className="w-24 h-24 text-green-500" />
+          <ThumbsUp className="w-24 h-24 text-[#4ADE80]" strokeWidth={2.5} />
         </motion.div>
       </Card>
     </motion.div>

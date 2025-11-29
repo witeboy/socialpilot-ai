@@ -32,7 +32,7 @@ export default function Layout({ children, currentPageName }) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-purple-950 to-slate-900 pb-20">
+    <div className="min-h-screen bg-gradient-to-br from-[#0F0F1A] to-[#121B2E] pb-20">
       <Toaster />
       {/* Page Content */}
       <main className="min-h-screen">
@@ -40,7 +40,7 @@ export default function Layout({ children, currentPageName }) {
       </main>
 
       {/* Bottom Tab Navigation - Mobile First */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-slate-900/80 backdrop-blur-xl border-t border-purple-500/20 z-50">
+      <nav className="fixed bottom-0 left-0 right-0 bg-[#111827]/80 backdrop-blur-xl border-t border-white/10 z-50">
         <div className="flex items-center justify-around h-16 max-w-2xl mx-auto px-2">
           {tabs.map((tab) => {
             const Icon = tab.icon;
@@ -69,17 +69,17 @@ export default function Layout({ children, currentPageName }) {
                 to={tab.path}
                 className={`flex flex-col items-center justify-center flex-1 h-full transition-all duration-200 ${
                   active 
-                    ? 'text-cyan-400' 
-                    : 'text-slate-400 hover:text-slate-200'
+                    ? 'text-[#06B6D4]' 
+                    : 'text-[#64748B] hover:text-[#CBD5E1]'
                 }`}
               >
                 <div className={`relative ${active ? 'scale-110' : ''}`}>
                   <Icon className="w-6 h-6" strokeWidth={active ? 2.5 : 2} />
                   {active && (
-                    <div className="absolute -top-1 -right-1 w-2 h-2 bg-cyan-400 rounded-full animate-pulse" />
+                    <div className="absolute -top-1 -right-1 w-2 h-2 bg-[#06B6D4] rounded-full animate-pulse" />
                   )}
                 </div>
-                <span className={`text-xs mt-1 font-medium ${active ? 'text-cyan-400' : ''}`}>
+                <span className={`text-xs mt-1 font-medium ${active ? 'text-[#06B6D4]' : ''}`}>
                   {tab.name}
                 </span>
               </Link>

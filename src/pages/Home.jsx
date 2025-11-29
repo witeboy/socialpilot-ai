@@ -137,7 +137,7 @@ Make it punchy and actionable. Return ONLY the briefing text.`;
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-950 to-black p-4 pb-24">
+    <div className="min-h-screen bg-gradient-to-br from-[#0F0F1A] to-[#121B2E] p-4 pb-24">
       <div className="max-w-2xl mx-auto space-y-5">
         {/* Header with Credits Widget */}
         <div className="flex items-center justify-between pt-4 px-2">

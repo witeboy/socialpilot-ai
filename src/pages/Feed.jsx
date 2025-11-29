@@ -97,18 +97,25 @@ export default function Feed() {
   const needsManualApproval = (userPersona?.approved_posts_count || 0) < 3;
 
   return (
-    <div className="h-screen flex flex-col bg-gradient-to-br from-slate-950 via-purple-950 to-slate-900">
+    <div className="h-screen flex flex-col bg-gradient-to-br from-[#0F0F1A] to-[#121B2E]">
       {/* Header */}
-      <div className="pt-6 px-4 pb-4">
-        <h1 className="text-2xl font-bold text-white text-center">Review Feed</h1>
-        <p className="text-sm text-slate-400 text-center mt-1">
+      <div className="pt-8 px-4 pb-4">
+        <h1 className="text-[22px] font-bold text-[#F8FAFC] text-center">Review Feed</h1>
+        <p className="text-[14px] text-[#64748B] text-center mt-1">
           Swipe right to approve, left to reject
         </p>
         {needsManualApproval && (
-          <div className="mt-3 p-3 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
-            <p className="text-xs text-yellow-400 text-center">
+          <div 
+            className="mt-4 mx-auto max-w-sm flex items-center justify-center gap-2"
+            style={{
+              background: 'rgba(255,255,255,0.08)',
+              padding: '10px 16px',
+              borderRadius: '999px'
+            }}
+          >
+            <span className="text-[13px] text-[#FACC15] font-medium">
               ⚠️ First 3 approvals required: {userPersona?.approved_posts_count || 0}/3
-            </p>
+            </span>
           </div>
         )}
       </div>
@@ -128,8 +135,8 @@ export default function Feed() {
       </div>
 
       {/* Card Counter */}
-      <div className="p-4 text-center">
-        <p className="text-slate-400 text-sm">
+      <div className="p-4 text-center pb-20">
+        <p className="text-[#64748B] text-sm font-medium">
           {currentIndex + 1} of {drafts.length}
         </p>
       </div>

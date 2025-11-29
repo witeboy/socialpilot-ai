@@ -51,7 +51,7 @@ export default function Create() {
 
   if (isAutoMode) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-950 to-black p-4 pb-24">
+      <div className="min-h-screen bg-gradient-to-br from-[#0F0F1A] to-[#121B2E] p-4 pb-24">
         <div className="max-w-2xl mx-auto space-y-4">
           <div className="text-center pt-20">
             <div className="bg-gradient-to-br from-indigo-500/20 to-purple-500/20 border border-indigo-500/30 rounded-2xl p-8 space-y-4">

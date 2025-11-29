@@ -17,41 +17,35 @@ export default function AccountSettings() {
 
   return (
     <div className="space-y-4">
-      <Card className="bg-slate-900/50 backdrop-blur-sm border border-purple-500/20 p-6 space-y-4">
-        <h3 className="text-lg font-bold text-white mb-4">Account Info</h3>
-
-        <div className="space-y-4">
-          <div className="flex items-center gap-3 p-4 bg-slate-800/30 rounded-lg">
-            <User className="w-5 h-5 text-purple-400" />
-            <div>
-              <p className="text-xs text-slate-400">Full Name</p>
-              <p className="text-white font-medium">{user?.full_name || 'Not set'}</p>
-            </div>
+      <Card className="bg-white border border-slate-200 rounded-xl shadow-md p-5 sm:p-7 space-y-4">
+        <div className="flex items-center gap-3">
+          <div className="p-3 bg-[#DDF7F8] rounded-lg">
+            <User className="w-6 h-6 text-[#0FB5BA]" />
           </div>
-
-          <div className="flex items-center gap-3 p-4 bg-slate-800/30 rounded-lg">
-            <Mail className="w-5 h-5 text-cyan-400" />
-            <div>
-              <p className="text-xs text-slate-400">Email</p>
-              <p className="text-white font-medium">{user?.email}</p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3 p-4 bg-slate-800/30 rounded-lg">
-            <Shield className="w-5 h-5 text-green-400" />
-            <div>
-              <p className="text-xs text-slate-400">Role</p>
-              <p className="text-white font-medium capitalize">{user?.role || 'User'}</p>
-            </div>
+          <div>
+            <h3 className="text-lg font-bold text-slate-900">Account Information</h3>
+            <p className="text-sm text-slate-600">Your profile details</p>
           </div>
         </div>
-      </Card>
 
-      <Card className="bg-slate-900/50 backdrop-blur-sm border border-purple-500/20 p-6">
+        <div className="space-y-4">
+          <div className="p-4 bg-slate-50 rounded-lg border border-slate-200">
+            <p className="text-xs text-slate-600 mb-1 font-semibold">Full Name</p>
+            <p className="text-slate-900 font-medium">{user?.full_name || 'Not set'}</p>
+          </div>
+          <div className="p-4 bg-slate-50 rounded-lg border border-slate-200">
+            <p className="text-xs text-slate-600 mb-1 font-semibold">Email</p>
+            <p className="text-slate-900 font-medium">{user?.email || 'Not set'}</p>
+          </div>
+          <div className="p-4 bg-slate-50 rounded-lg border border-slate-200">
+            <p className="text-xs text-slate-600 mb-1 font-semibold">Role</p>
+            <p className="text-slate-900 font-medium capitalize">{user?.role || 'user'}</p>
+          </div>
+        </div>
+
         <Button
           onClick={handleLogout}
-          variant="outline"
-          className="w-full border-red-500/50 text-red-400"
+          className="w-full h-12 px-4 rounded-lg bg-white border-2 border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300 font-semibold transition-all"
         >
           <LogOut className="w-5 h-5 mr-2" />
           Logout

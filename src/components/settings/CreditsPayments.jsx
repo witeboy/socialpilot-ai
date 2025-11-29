@@ -35,60 +35,56 @@ export default function CreditsPayments({ userPersona }) {
 
   return (
     <div className="space-y-4">
-      <Card className="bg-gradient-to-br from-indigo-600/10 to-purple-600/10 backdrop-blur-xl border border-indigo-500/20 p-6">
-        <div className="space-y-4">
-          <div>
-            <p className="text-indigo-300 text-sm mb-2">Total Balance</p>
-            <div className="flex items-center gap-3">
-              <Coins className="w-10 h-10 text-yellow-400" />
-              <span className="text-5xl font-bold text-white">{totalCredits}</span>
-            </div>
+      <Card className="bg-white border border-slate-200 rounded-xl shadow-md p-5 sm:p-7">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="p-3 bg-[#DDF7F8] rounded-lg">
+            <Coins className="w-6 h-6 text-[#0FB5BA]" />
           </div>
-          
-          <div className="grid grid-cols-2 gap-4 pt-4 border-t border-white/10">
-            <div>
-              <div className="flex items-center gap-2 mb-1">
-                <Coins className="w-4 h-4 text-blue-400" />
-                <p className="text-xs text-indigo-300">Purchased</p>
-              </div>
-              <p className="text-2xl font-bold text-white">{userPersona?.purchased_credits || 0}</p>
-              <p className="text-xs text-slate-400">Never expire</p>
+          <div>
+            <h3 className="text-lg font-bold text-slate-900">Credit Balance</h3>
+            <p className="text-sm text-slate-600">Your available credits</p>
+          </div>
+        </div>
+
+        <div className="text-center py-6">
+          <p className="text-5xl font-bold text-slate-900 mb-4">{totalCredits}</p>
+          <div className="grid grid-cols-2 gap-4 max-w-sm mx-auto">
+            <div className="p-3 bg-slate-50 rounded-lg border border-slate-200">
+              <p className="text-xs text-slate-600 mb-1 font-semibold">Purchased</p>
+              <p className="text-xl font-bold text-green-600">{userPersona?.purchased_credits || 0}</p>
+              <p className="text-xs text-slate-500 mt-1">Never expire</p>
             </div>
-            
-            <div>
-              <div className="flex items-center gap-2 mb-1">
-                <Zap className="w-4 h-4 text-green-400" />
-                <p className="text-xs text-indigo-300">Daily Free</p>
-              </div>
-              <p className="text-2xl font-bold text-white">{userPersona?.daily_ad_credits || 0}</p>
-              <p className="text-xs text-slate-400">Reset at midnight</p>
+            <div className="p-3 bg-slate-50 rounded-lg border border-slate-200">
+              <p className="text-xs text-slate-600 mb-1 font-semibold">Daily Ad Credits</p>
+              <p className="text-xl font-bold text-amber-500">{userPersona?.daily_ad_credits || 0}</p>
+              <p className="text-xs text-slate-500 mt-1">Expire at midnight</p>
             </div>
           </div>
         </div>
       </Card>
 
-      <Card className="bg-slate-900/50 backdrop-blur-sm border border-purple-500/20 p-6">
-        <h3 className="text-lg font-bold text-white mb-4">Buy Credits</h3>
+      <Card className="bg-white border border-slate-200 rounded-xl shadow-md p-5 sm:p-7">
+        <h3 className="text-lg font-bold text-slate-900 mb-4">Buy Credits</h3>
         
         <div className="grid gap-3">
           {creditPackages.map((pkg, idx) => (
             <div
               key={idx}
-              className={`relative p-4 rounded-lg border-2 cursor-pointer ${
-                selectedPkg === idx ? 'border-cyan-500 bg-cyan-500/10' : 'border-slate-700 bg-slate-800/30'
+              className={`relative p-4 rounded-xl border-2 cursor-pointer transition-all ${
+                selectedPkg === idx ? 'border-[#0FB5BA] bg-[#DDF7F8]' : 'border-slate-200 bg-white hover:border-slate-300'
               }`}
               onClick={() => setSelectedPkg(idx)}
             >
               {pkg.popular && (
-                <Badge className="absolute -top-2 -right-2 bg-gradient-to-r from-purple-600 to-cyan-600">
+                <Badge className="absolute -top-2 -right-2 bg-[#0FB5BA] text-white font-semibold">
                   Popular
                 </Badge>
               )}
               
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-2xl font-bold text-white">{pkg.credits} Credits</p>
-                  <p className="text-sm text-slate-400">${pkg.price}</p>
+                  <p className="text-2xl font-bold text-slate-900">{pkg.credits} Credits</p>
+                  <p className="text-sm text-slate-600">${pkg.price}</p>
                 </div>
               </div>
             </div>
@@ -98,7 +94,7 @@ export default function CreditsPayments({ userPersona }) {
         {selectedPkg !== null && (
           <Button
             onClick={() => handlePurchase(creditPackages[selectedPkg])}
-            className="w-full mt-4 bg-gradient-to-r from-indigo-600 to-indigo-400"
+            className="w-full mt-4 h-12 px-4 rounded-lg text-white font-semibold bg-gradient-to-r from-[#0FB5BA] to-[#14D4BA] shadow-md hover:scale-105 transition-transform"
           >
             <CreditCard className="w-5 h-5 mr-2" />
             Pay with {isAfrican ? 'Flutterwave' : 'Stripe'}
@@ -106,23 +102,23 @@ export default function CreditsPayments({ userPersona }) {
         )}
       </Card>
 
-      <Card className="bg-slate-900/50 backdrop-blur-sm border border-purple-500/20 p-6">
-        <h3 className="text-lg font-bold text-white mb-4">Transactions</h3>
+      <Card className="bg-white border border-slate-200 rounded-xl shadow-md p-5 sm:p-7">
+        <h3 className="text-lg font-bold text-slate-900 mb-4">Transactions</h3>
         
         {transactions.length === 0 ? (
-          <p className="text-center text-slate-400 py-4">No transactions yet</p>
+          <p className="text-center text-slate-600 py-4">No transactions yet</p>
         ) : (
           <div className="space-y-2">
             {transactions.map((tx) => (
-              <div key={tx.id} className="flex items-center justify-between p-3 bg-slate-800/30 rounded-lg">
+              <div key={tx.id} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg border border-slate-200">
                 <div className="flex items-center gap-3">
-                  {tx.amount > 0 ? <TrendingUp className="w-5 h-5 text-green-400" /> : <TrendingDown className="w-5 h-5 text-red-400" />}
+                  {tx.amount > 0 ? <TrendingUp className="w-5 h-5 text-green-600" /> : <TrendingDown className="w-5 h-5 text-red-600" />}
                   <div>
-                    <p className="text-sm text-white">{tx.description}</p>
+                    <p className="text-sm text-slate-900 font-medium">{tx.description}</p>
                     <p className="text-xs text-slate-500">{format(new Date(tx.created_date), 'MMM d, h:mm a')}</p>
                   </div>
                 </div>
-                <p className={`font-bold ${tx.amount > 0 ? 'text-green-400' : 'text-red-400'}`}>
+                <p className={`font-bold ${tx.amount > 0 ? 'text-green-600' : 'text-red-600'}`}>
                   {tx.amount > 0 ? '+' : ''}{tx.amount}
                 </p>
               </div>

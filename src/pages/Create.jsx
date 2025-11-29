@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { Link } from 'react-router-dom';
+import { PlusSquare } from 'lucide-react';
+import { createPageUrl } from '../utils';
 import ContentGenerator from '../components/create/ContentGenerator';
 import SourcesManager from '../components/create/SourcesManager';
-
 import PersonaAdjust from '../components/create/PersonaAdjust';
 
 export default function Create() {
@@ -30,6 +32,36 @@ export default function Create() {
 
   const hasSources = sources.length > 0;
   const hasTone = !!userPersona?.persona_profile?.tone;
+
+  const isAutoMode = userPersona?.automation_mode === 'auto';
+
+  if (isAutoMode) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-950 to-black p-4 pb-24">
+        <div className="max-w-2xl mx-auto space-y-4">
+          <div className="text-center pt-20">
+            <div className="bg-gradient-to-br from-indigo-500/20 to-purple-500/20 border border-indigo-500/30 rounded-2xl p-8 space-y-4">
+              <div className="w-16 h-16 mx-auto bg-indigo-500/20 rounded-full flex items-center justify-center">
+                <PlusSquare className="w-8 h-8 text-indigo-400" />
+              </div>
+              <h2 className="text-xl font-bold text-white">Automatic Mode Active</h2>
+              <p className="text-slate-300 text-sm">
+                Manual content creation is disabled. Your content is being generated automatically based on your schedule.
+              </p>
+              <p className="text-indigo-300 text-sm">
+                Simply approve the first 3 posts in the Feed, and the system will handle everything else automatically.
+              </p>
+              <Link to={createPageUrl('Settings')}>
+                <button className="mt-4 px-6 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-sm">
+                  Change to Semi-Auto Mode
+                </button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-950 to-black p-4 pb-24">

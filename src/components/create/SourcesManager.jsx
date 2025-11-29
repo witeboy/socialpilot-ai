@@ -54,9 +54,6 @@ export default function SourcesManager({ onComplete }) {
       setText('');
       setShowAddForm(false);
       queryClient.invalidateQueries(['sources']);
-      if (onComplete) {
-        setTimeout(() => onComplete(), 500);
-      }
     },
     onError: (error) => {
       toast({ title: '❌ Failed', description: error.message, variant: 'destructive', duration: 3000 });

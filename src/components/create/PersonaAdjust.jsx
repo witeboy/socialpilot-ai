@@ -27,9 +27,6 @@ export default function PersonaAdjust({ userPersona, onComplete }) {
     onSuccess: () => {
       toast({ title: '✅ Tone Saved', duration: 3000 });
       queryClient.invalidateQueries(['userPersona']);
-      if (onComplete) {
-        setTimeout(() => onComplete(), 500);
-      }
     }
   });
 

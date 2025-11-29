@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { PlusSquare } from 'lucide-react';
 import { createPageUrl } from '../utils';
@@ -34,6 +35,19 @@ export default function Create() {
   const hasTone = !!userPersona?.persona_profile?.tone;
 
   const isAutoMode = userPersona?.automation_mode === 'auto';
+
+  // Auto-progress through tabs
+  React.useEffect(() => {
+    if (activeTab === 'sources' && hasSources) {
+      setTimeout(() => setActiveTab('tone'), 300);
+    }
+  }, [hasSources, activeTab]);
+
+  React.useEffect(() => {
+    if (activeTab === 'tone' && hasTone) {
+      setTimeout(() => setActiveTab('generate'), 300);
+    }
+  }, [hasTone, activeTab]);
 
   if (isAutoMode) {
     return (
@@ -82,10 +96,26 @@ export default function Create() {
 
         <TabsContent value="sources" className="space-y-4 mt-4">
           <SourcesManager onComplete={() => setActiveTab('tone')} />
+          {hasSources && (
+            <Button 
+              onClick={() => setActiveTab('tone')}
+              className="w-full bg-gradient-to-r from-indigo-600 to-purple-600"
+            >
+              Next: Set Tone →
+            </Button>
+          )}
         </TabsContent>
 
         <TabsContent value="tone" className="space-y-4 mt-4">
           <PersonaAdjust userPersona={userPersona} onComplete={() => setActiveTab('generate')} />
+          {hasTone && (
+            <Button 
+              onClick={() => setActiveTab('generate')}
+              className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 mt-4"
+            >
+              Next: Generate Content →
+            </Button>
+          )}
         </TabsContent>
 
         <TabsContent value="generate" className="space-y-4 mt-4">

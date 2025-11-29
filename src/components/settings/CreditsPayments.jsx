@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Coins, CreditCard, TrendingUp, TrendingDown } from 'lucide-react';
+import { Coins, CreditCard, TrendingUp, TrendingDown, Zap } from 'lucide-react';
 import { format } from 'date-fns';
 
 const creditPackages = [
@@ -25,18 +25,43 @@ export default function CreditsPayments({ userPersona }) {
   });
 
   const handlePurchase = (pkg) => {
-    alert(`Payment integration coming soon!\n\n${pkg.credits} credits for $${pkg.price}`);
+    const isAfrican = ['Nigeria', 'South Africa', 'Kenya', 'Ghana', 'Egypt', 'Morocco', 'Ethiopia', 'Tanzania'].includes(userPersona?.country);
+    const gateway = isAfrican ? 'Flutterwave' : 'Stripe';
+    alert(`${gateway} Payment Integration Coming Soon!\n\n${pkg.credits} credits for $${pkg.price}`);
   };
+  
+  const totalCredits = (userPersona?.purchased_credits || 0) + (userPersona?.daily_ad_credits || 0);
+  const isAfrican = ['Nigeria', 'South Africa', 'Kenya', 'Ghana', 'Egypt', 'Morocco', 'Ethiopia', 'Tanzania'].includes(userPersona?.country);
 
   return (
     <div className="space-y-4">
-      <Card className="bg-gradient-to-br from-purple-900/40 to-cyan-900/40 backdrop-blur-sm border border-purple-500/30 p-6">
-        <div className="flex items-center justify-between">
+      <Card className="bg-gradient-to-br from-indigo-600/10 to-purple-600/10 backdrop-blur-xl border border-indigo-500/20 p-6">
+        <div className="space-y-4">
           <div>
-            <p className="text-slate-400 text-sm mb-2">Available Credits</p>
+            <p className="text-indigo-300 text-sm mb-2">Total Balance</p>
             <div className="flex items-center gap-3">
-              <Coins className="w-8 h-8 text-yellow-400" />
-              <span className="text-5xl font-bold text-white">{userPersona?.credits_balance || 0}</span>
+              <Coins className="w-10 h-10 text-yellow-400" />
+              <span className="text-5xl font-bold text-white">{totalCredits}</span>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-2 gap-4 pt-4 border-t border-white/10">
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <Coins className="w-4 h-4 text-blue-400" />
+                <p className="text-xs text-indigo-300">Purchased</p>
+              </div>
+              <p className="text-2xl font-bold text-white">{userPersona?.purchased_credits || 0}</p>
+              <p className="text-xs text-slate-400">Never expire</p>
+            </div>
+            
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <Zap className="w-4 h-4 text-green-400" />
+                <p className="text-xs text-indigo-300">Daily Free</p>
+              </div>
+              <p className="text-2xl font-bold text-white">{userPersona?.daily_ad_credits || 0}</p>
+              <p className="text-xs text-slate-400">Reset at midnight</p>
             </div>
           </div>
         </div>
@@ -73,10 +98,10 @@ export default function CreditsPayments({ userPersona }) {
         {selectedPkg !== null && (
           <Button
             onClick={() => handlePurchase(creditPackages[selectedPkg])}
-            className="w-full mt-4 bg-gradient-to-r from-purple-600 to-cyan-600"
+            className="w-full mt-4 bg-gradient-to-r from-indigo-600 to-indigo-400"
           >
             <CreditCard className="w-5 h-5 mr-2" />
-            Purchase Credits
+            Pay with {isAfrican ? 'Flutterwave' : 'Stripe'}
           </Button>
         )}
       </Card>

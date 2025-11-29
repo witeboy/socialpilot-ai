@@ -19,7 +19,9 @@ export default function MediaGenerator({ userPersona }) {
   const generateImageMutation = useMutation({
     mutationFn: async () => {
       if (!imagePrompt.trim()) throw new Error('Enter image description');
-      if (userPersona?.credits_balance < 2) throw new Error('Need 2 credits');
+      
+      const totalCredits = (userPersona?.purchased_credits || 0) + (userPersona?.daily_ad_credits || 0);
+      if (totalCredits < 2) throw new Error('Need 2 credits');
 
       const result = await base44.integrations.Core.GenerateImage({
         prompt: imagePrompt
@@ -34,8 +36,22 @@ export default function MediaGenerator({ userPersona }) {
         status: 'pending'
       });
 
+      // Deduct from daily_ad_credits first, then purchased_credits
+      let newDailyCredits = userPersona.daily_ad_credits || 0;
+      let newPurchasedCredits = userPersona.purchased_credits || 0;
+      let remaining = 2;
+      
+      if (newDailyCredits >= remaining) {
+        newDailyCredits -= remaining;
+      } else {
+        remaining -= newDailyCredits;
+        newDailyCredits = 0;
+        newPurchasedCredits -= remaining;
+      }
+
       await base44.entities.UserPersona.update(userPersona.id, {
-        credits_balance: userPersona.credits_balance - 2
+        daily_ad_credits: newDailyCredits,
+        purchased_credits: newPurchasedCredits
       });
 
       await base44.entities.CreditTransaction.create({
@@ -43,7 +59,7 @@ export default function MediaGenerator({ userPersona }) {
         amount: -2,
         description: 'Generated AI image',
         payment_gateway: 'none',
-        balance_after: userPersona.credits_balance - 2
+        balance_after: newDailyCredits + newPurchasedCredits
       });
 
       return result;
@@ -61,7 +77,9 @@ export default function MediaGenerator({ userPersona }) {
   const generateVideoScriptMutation = useMutation({
     mutationFn: async () => {
       if (!videoTopic.trim()) throw new Error('Enter video topic');
-      if (userPersona?.credits_balance < 1) throw new Error('Need 1 credit');
+      
+      const totalCredits = (userPersona?.purchased_credits || 0) + (userPersona?.daily_ad_credits || 0);
+      if (totalCredits < 1) throw new Error('Need 1 credit');
 
       const prompt = `Create a compelling 10-second video script for TikTok/YouTube Shorts about: ${videoTopic}
 
@@ -87,8 +105,19 @@ Format as:
         topic: videoTopic
       });
 
+      // Deduct from daily_ad_credits first, then purchased_credits
+      let newDailyCredits = userPersona.daily_ad_credits || 0;
+      let newPurchasedCredits = userPersona.purchased_credits || 0;
+      
+      if (newDailyCredits > 0) {
+        newDailyCredits -= 1;
+      } else {
+        newPurchasedCredits -= 1;
+      }
+
       await base44.entities.UserPersona.update(userPersona.id, {
-        credits_balance: userPersona.credits_balance - 1
+        daily_ad_credits: newDailyCredits,
+        purchased_credits: newPurchasedCredits
       });
 
       await base44.entities.CreditTransaction.create({
@@ -96,7 +125,7 @@ Format as:
         amount: -1,
         description: 'Generated video script',
         payment_gateway: 'none',
-        balance_after: userPersona.credits_balance - 1
+        balance_after: newDailyCredits + newPurchasedCredits
       });
 
       return script;
@@ -117,7 +146,9 @@ Format as:
         <h3 className="text-lg font-bold text-white">AI Media Generator</h3>
         <div className="flex items-center gap-2 text-sm">
           <Coins className="w-4 h-4 text-yellow-400" />
-          <span className="text-yellow-400 font-medium">{userPersona?.credits_balance || 0}</span>
+          <span className="text-yellow-400 font-medium">
+            {(userPersona?.purchased_credits || 0) + (userPersona?.daily_ad_credits || 0)}
+          </span>
         </div>
       </div>
 

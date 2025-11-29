@@ -69,22 +69,22 @@ export default function SocialConnections() {
             return (
               <div
                 key={platform.id}
-                className={`p-4 rounded-lg border-2 ${
+                className={`p-4 rounded-xl border-2 ${
                   isConnected ? 'border-green-500/50 bg-green-500/5' : 'border-slate-700 bg-slate-800/30'
                 }`}
               >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className={`${platform.bg} p-3 rounded-lg`}>
-                      <Icon className={`w-6 h-6 ${platform.color}`} />
+                <div className="flex items-center justify-between gap-3 flex-wrap sm:flex-nowrap">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className={`${platform.bg} p-2.5 sm:p-3 rounded-lg flex-shrink-0`}>
+                      <Icon className={`w-5 h-5 sm:w-6 sm:h-6 ${platform.color}`} />
                     </div>
-                    <p className="font-semibold text-white">{platform.name}</p>
+                    <p className="font-semibold text-white text-sm sm:text-base truncate">{platform.name}</p>
                   </div>
 
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
                     {isConnected ? (
                       <>
-                        <Badge className="bg-green-500/20 text-green-400">
+                        <Badge className="bg-green-500/20 text-green-400 text-xs whitespace-nowrap">
                           <CheckCircle2 className="w-3 h-3 mr-1" />
                           Connected
                         </Badge>
@@ -92,21 +92,21 @@ export default function SocialConnections() {
                           size="sm"
                           variant="outline"
                           onClick={() => disconnectMutation.mutate(connection.id)}
-                          className="border-red-500/50 text-red-400"
+                          className="border-red-500/50 text-red-400 h-9 px-3 text-xs sm:text-sm whitespace-nowrap"
                         >
                           Disconnect
                         </Button>
                       </>
                     ) : (
                       <>
-                        <Badge variant="outline" className="text-slate-400">
+                        <Badge variant="outline" className="text-slate-400 text-xs whitespace-nowrap hidden sm:inline-flex">
                           <XCircle className="w-3 h-3 mr-1" />
                           Not Connected
                         </Badge>
                         <Button
                           size="sm"
                           onClick={() => connectMutation.mutate(platform.id)}
-                          className="bg-purple-600 hover:bg-purple-700"
+                          className="bg-purple-600 hover:bg-purple-700 h-9 px-4 text-xs sm:text-sm whitespace-nowrap"
                         >
                           Connect
                         </Button>

@@ -5,7 +5,6 @@ import { AnimatePresence } from 'framer-motion';
 import SwipeCard from '../components/feed/SwipeCard';
 import EmptyFeed from '../components/feed/EmptyFeed';
 import { useToast } from '@/components/ui/use-toast';
-import { useToast } from '@/components/ui/use-toast';
 
 export default function Feed() {
   const { toast } = useToast();
@@ -28,10 +27,42 @@ export default function Feed() {
 
   const approveMutation = useMutation({
     mutationFn: async (draft) => {
+      // Check if social account is connected
+      const user = await base44.auth.me();
+      const socialAccounts = await base44.entities.SocialAccount.filter({ 
+        created_by: user.email,
+        platform: draft.platform,
+        is_connected: true
+      });
+
+      let postStatus = 'scheduled';
+      let platformPostId = null;
+      let postedAt = null;
+
+      // If connected, attempt to post immediately
+      if (socialAccounts.length > 0) {
+        try {
+          const result = await base44.functions.invoke('autopost', {
+            platform: draft.platform,
+            text_content: draft.text_content,
+            media_url: draft.media_url,
+            account_id: socialAccounts[0].id
+          });
+          
+          if (result.data.success) {
+            postStatus = 'posted';
+            platformPostId = result.data.post_id;
+            postedAt = new Date().toISOString();
+          }
+        } catch (error) {
+          console.error('Autopost failed, scheduling instead:', error);
+        }
+      }
+
       // Update draft status
       await base44.entities.ContentDraft.update(draft.id, { status: 'approved' });
 
-      // Create scheduled post
+      // Create post record
       const scheduledTime = new Date();
       scheduledTime.setHours(
         parseInt(userPersona?.posting_time?.split(':')[0] || 12),
@@ -46,7 +77,9 @@ export default function Feed() {
         media_url: draft.media_url,
         virality_score: draft.virality_score,
         scheduled_for: scheduledTime.toISOString(),
-        post_status: 'scheduled'
+        posted_at: postedAt,
+        post_status: postStatus,
+        platform_post_id: platformPostId
       });
 
       // Update approval count
@@ -56,10 +89,14 @@ export default function Feed() {
         });
       }
 
-      return draft;
+      return { posted: postStatus === 'posted' };
     },
-    onSuccess: () => {
-      toast({ title: '✅ Post Approved!', description: 'Scheduled for posting' });
+    onSuccess: (data) => {
+      if (data?.posted) {
+        toast({ title: '✅ Posted Live!', description: 'Content published to your platform', duration: 3000 });
+      } else {
+        toast({ title: '✅ Approved!', description: 'Content scheduled for posting', duration: 3000 });
+      }
       queryClient.invalidateQueries(['pendingDrafts']);
       queryClient.invalidateQueries(['userPersona']);
       setCurrentIndex((prev) => prev + 1);

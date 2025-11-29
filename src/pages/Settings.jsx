@@ -26,7 +26,8 @@ export default function Settings() {
   }
 
   return (
-    <div className="p-4 max-w-2xl mx-auto space-y-4 pb-6">
+    <div className="min-h-screen bg-gradient-to-br from-[#0F0F1A] to-[#121B2E] p-4 pb-24">
+      <div className="max-w-2xl mx-auto space-y-4">
       <div className="text-center pt-4 pb-2">
         <h1 className="text-3xl font-bold text-white mb-2">Settings</h1>
         <p className="text-slate-400 text-sm">Configure your SocialPilot experience</p>
@@ -56,6 +57,7 @@ export default function Settings() {
           <AccountSettings />
         </TabsContent>
       </Tabs>
+      </div>
     </div>
   );
 }

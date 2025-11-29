@@ -51,102 +51,107 @@ export default function SwipeCard({ draft, onSwipe, isTop }) {
       dragConstraints={{ left: 0, right: 0 }}
       onDragEnd={handleDragEnd}
       whileTap={isTop ? { cursor: 'grabbing' } : {}}
-      className="px-4"
+      className="px-4 sm:px-6 md:px-8"
     >
       <Card 
         className="h-full bg-[#111827] border border-white/10 overflow-hidden relative flex flex-col"
         style={{
-          borderRadius: '18px',
-          padding: '22px',
-          boxShadow: '0px 4px 20px rgba(0,0,0,0.4)'
+          borderRadius: '16px',
+          padding: '16px',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.25)'
         }}
       >
         {/* Platform Badge - Top Left */}
         <div 
-          className="absolute top-5 left-5 flex items-center justify-center"
+          className="absolute top-4 left-4 flex items-center justify-center"
           style={{
-            width: '36px',
-            height: '36px',
+            width: '32px',
+            height: '32px',
             background: 'rgba(255,255,255,0.06)',
-            borderRadius: '12px'
+            borderRadius: '10px'
           }}
         >
-          <Icon style={{ color: config.color, width: '20px', height: '20px' }} />
+          <Icon style={{ color: config.color, width: '18px', height: '18px' }} />
         </div>
 
         {/* Virality Badge - Top Right */}
         <div 
-          className="absolute top-5 right-5 flex items-center gap-1.5"
+          className="absolute top-4 right-4 flex items-center gap-1.5"
           style={{
             background: 'rgba(6,182,212,0.18)',
             color: '#06B6D4',
             borderRadius: '999px',
-            padding: '8px 14px',
-            fontSize: '14px',
+            padding: '6px 12px',
+            fontSize: '13px',
             fontWeight: '600'
           }}
         >
-          <Flame style={{ width: '16px', height: '16px' }} />
+          <Flame style={{ width: '14px', height: '14px' }} />
           <span>{draft.virality_score}/100</span>
         </div>
 
         {/* Content Area */}
-        <div className="flex-1 overflow-auto mt-14 space-y-3.5">
+        <div className="flex-1 overflow-auto mt-12 space-y-3 sm:space-y-4">
           {/* Post Text Block */}
           <div 
             style={{
               background: 'rgba(255,255,255,0.04)',
               padding: '14px',
               borderRadius: '12px',
-              fontSize: '15px',
+              fontSize: '14px',
               lineHeight: '1.4',
               color: '#CBD5E1'
             }}
+            className="sm:text-[15px] md:text-[16px]"
           >
             {draft.text_content}
           </div>
 
-          {/* Media Preview */}
+          {/* Media Preview with Aspect Ratio */}
           {draft.media_url && (
             <div 
-              className="w-full overflow-hidden"
+              className="w-full overflow-hidden relative"
               style={{
                 aspectRatio: '16/9',
                 borderRadius: '14px',
                 border: '1px solid rgba(255,255,255,0.08)',
-                position: 'relative'
+                background: 'rgba(255,255,255,0.02)'
               }}
             >
               <img 
                 src={draft.media_url} 
                 alt="Generated media" 
-                className="w-full h-full object-cover"
+                className="w-full h-full"
+                style={{ objectFit: 'cover', objectPosition: 'center' }}
               />
               <div 
-                className="absolute bottom-0 left-0 right-0 h-20"
+                className="absolute bottom-0 left-0 right-0"
                 style={{
-                  background: 'linear-gradient(to top, rgba(0,0,0,0.3), transparent)'
+                  height: '80px',
+                  background: 'linear-gradient(to top, rgba(0,0,0,0.3), transparent)',
+                  pointerEvents: 'none'
                 }}
               />
             </div>
           )}
         </div>
 
-        {/* Bottom Action Buttons */}
-        <div className="flex gap-3 mt-4 pt-4 border-t border-white/10">
+        {/* Bottom Action Buttons - Responsive Grid */}
+        <div 
+          className="grid grid-cols-2 gap-3 mt-4 pt-4 border-t border-white/10"
+          style={{ gridTemplateColumns: 'repeat(2, 1fr)' }}
+        >
           <Button
             onClick={handleReject}
             variant="outline"
-            className="flex-1 h-11 rounded-xl border-[#F87171] text-[#F87171] bg-transparent hover:bg-[#F87171]/10"
-            style={{ fontSize: '15px', fontWeight: '600' }}
+            className="h-11 rounded-xl border-[#F87171] text-[#F87171] bg-transparent hover:bg-[#F87171]/10 text-[14px] sm:text-[15px] font-semibold"
           >
             <ThumbsDown className="w-4 h-4 mr-2" />
             Reject
           </Button>
           <Button
             onClick={handleApprove}
-            className="flex-1 h-11 rounded-xl bg-[#4ADE80] text-[#052e16] hover:bg-[#4ADE80]/90"
-            style={{ fontSize: '15px', fontWeight: '600' }}
+            className="h-11 rounded-xl bg-[#4ADE80] text-[#052e16] hover:bg-[#4ADE80]/90 text-[14px] sm:text-[15px] font-semibold"
           >
             <ThumbsUp className="w-4 h-4 mr-2" />
             Approve
@@ -167,10 +172,10 @@ export default function SwipeCard({ draft, onSwipe, isTop }) {
             alignItems: 'center',
             justifyContent: 'center',
             pointerEvents: 'none',
-            borderRadius: '18px'
+            borderRadius: '16px'
           }}
         >
-          <ThumbsDown className="w-24 h-24 text-[#F87171]" strokeWidth={2.5} />
+          <ThumbsDown className="w-20 h-20 sm:w-24 sm:h-24 text-[#F87171]" strokeWidth={2.5} />
         </motion.div>
 
         {/* Swipe Overlay - Approve */}
@@ -187,10 +192,10 @@ export default function SwipeCard({ draft, onSwipe, isTop }) {
             alignItems: 'center',
             justifyContent: 'center',
             pointerEvents: 'none',
-            borderRadius: '18px'
+            borderRadius: '16px'
           }}
         >
-          <ThumbsUp className="w-24 h-24 text-[#4ADE80]" strokeWidth={2.5} />
+          <ThumbsUp className="w-20 h-20 sm:w-24 sm:h-24 text-[#4ADE80]" strokeWidth={2.5} />
         </motion.div>
       </Card>
     </motion.div>

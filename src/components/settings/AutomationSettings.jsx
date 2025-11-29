@@ -23,7 +23,7 @@ export default function AutomationSettings({ userPersona }) {
       });
     },
     onSuccess: () => {
-      toast({ title: '✅ Settings Saved' });
+      toast({ title: '✅ Settings Saved', duration: 3000 });
       queryClient.invalidateQueries(['userPersona']);
     }
   });

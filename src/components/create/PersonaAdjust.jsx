@@ -32,13 +32,15 @@ export default function PersonaAdjust({ userPersona }) {
 
   const regeneratePersonaMutation = useMutation({
     mutationFn: async () => {
-      if (!userPersona?.resume_text) {
-        throw new Error('No resume found');
+      if (!userPersona?.resumes || userPersona.resumes.length === 0) {
+        throw new Error('No resumes found');
       }
 
-      const prompt = `Analyze this resume and create a professional persona profile:
+      const combinedText = userPersona.resumes.map(r => r.text_content).join('\n\n---\n\n');
 
-${userPersona.resume_text}
+      const prompt = `Analyze these resumes and create a comprehensive professional persona profile:
+
+${combinedText}
 
 Generate a JSON response with:
 {

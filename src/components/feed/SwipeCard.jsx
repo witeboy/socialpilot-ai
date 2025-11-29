@@ -94,21 +94,15 @@ export default function SwipeCard({ draft, onSwipe, isTop }) {
 
         {/* Content Area - Scrollable with Read More */}
         <div className="flex-1 overflow-auto mt-12 space-y-3 sm:space-y-4 no-scrollbar">
-          {/* Post Text Block with Markdown */}
-          <div 
-            style={{
-              background: 'rgba(255,255,255,0.04)',
-              padding: '16px',
-              borderRadius: '12px'
-            }}
-          >
-            <div className={`prose prose-invert prose-sm max-w-none ${!isExpanded ? 'line-clamp-6' : ''}`}>
+        {/* Post Text Block with Markdown */}
+        <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
+            <div className={`prose prose-slate prose-sm max-w-none ${!isExpanded ? 'line-clamp-6' : ''}`}>
               <ReactMarkdown
                 components={{
                   a: ({ node, ...props }) => (
                     <a 
                       {...props} 
-                      className="text-indigo-400 hover:text-indigo-300 underline font-medium" 
+                      className="text-[#0FB5BA] hover:text-[#14D4BA] underline font-medium" 
                       target="_blank" 
                       rel="noopener noreferrer" 
                     />
@@ -116,14 +110,14 @@ export default function SwipeCard({ draft, onSwipe, isTop }) {
                   p: ({ node, ...props }) => (
                     <p 
                       {...props} 
-                      className="text-slate-200 text-sm sm:text-base leading-relaxed mb-2 last:mb-0" 
+                      className="text-slate-700 text-sm sm:text-base leading-relaxed mb-2 last:mb-0" 
                     />
                   ),
                   strong: ({ node, ...props }) => (
-                    <strong {...props} className="text-white font-semibold" />
+                    <strong {...props} className="text-slate-900 font-semibold" />
                   ),
                   em: ({ node, ...props }) => (
-                    <em {...props} className="text-slate-300 italic" />
+                    <em {...props} className="text-slate-600 italic" />
                   )
                 }}
               >
@@ -133,7 +127,7 @@ export default function SwipeCard({ draft, onSwipe, isTop }) {
             {draft.text_content && draft.text_content.length > 300 && (
               <button
                 onClick={() => setIsExpanded(!isExpanded)}
-                className="mt-3 text-indigo-400 hover:text-indigo-300 text-xs sm:text-sm font-medium flex items-center gap-1"
+                className="mt-3 text-[#0FB5BA] hover:text-[#14D4BA] text-xs sm:text-sm font-medium flex items-center gap-1"
               >
                 {isExpanded ? (
                   <>
@@ -151,13 +145,8 @@ export default function SwipeCard({ draft, onSwipe, isTop }) {
           {/* Media Preview with Aspect Ratio */}
           {draft.media_url && (
             <div 
-              className="w-full overflow-hidden relative"
-              style={{
-                aspectRatio: '16/9',
-                borderRadius: '14px',
-                border: '1px solid rgba(255,255,255,0.08)',
-                background: 'rgba(255,255,255,0.02)'
-              }}
+              className="w-full overflow-hidden relative rounded-xl border border-slate-200 bg-slate-50"
+              style={{ aspectRatio: '16/9' }}
             >
               <img 
                 src={draft.media_url} 

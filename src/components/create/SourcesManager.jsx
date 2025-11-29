@@ -49,7 +49,7 @@ export default function SourcesManager({ onComplete }) {
       });
     },
     onSuccess: () => {
-      toast({ title: '✅ Source Added' });
+      toast({ title: '✅ Source Added', duration: 3000 });
       setUrl('');
       setText('');
       setShowAddForm(false);
@@ -59,14 +59,14 @@ export default function SourcesManager({ onComplete }) {
       }
     },
     onError: (error) => {
-      toast({ title: '❌ Failed', description: error.message, variant: 'destructive' });
+      toast({ title: '❌ Failed', description: error.message, variant: 'destructive', duration: 3000 });
     }
   });
 
   const deleteSourceMutation = useMutation({
     mutationFn: (id) => base44.entities.Source.delete(id),
     onSuccess: () => {
-      toast({ title: '🗑️ Source Removed' });
+      toast({ title: '🗑️ Source Removed', duration: 3000 });
       queryClient.invalidateQueries(['sources']);
     }
   });

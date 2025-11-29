@@ -169,15 +169,22 @@ Return ONLY the topic, nothing else.`;
       const mediaPromptText = await base44.integrations.Core.InvokeLLM({
         prompt: `Based on this content topic: "${topic}"
 
-Generate a detailed, creative image prompt for AI image generation that would make compelling visual content for social media.
+      Generate a detailed, creative image prompt for AI image generation that would make compelling visual content for social media.
 
-Guidelines:
-- Be specific about composition, lighting, and style
-- Match professional social media aesthetics
-- Keep it concise but descriptive
-- Focus on visual elements that support the topic
+      Guidelines:
+      - Be specific about composition, lighting, and style
+      - Match professional social media aesthetics
+      - Keep it concise but descriptive
+      - Focus on visual elements that support the topic
 
-Return ONLY the image prompt, nothing else.`
+      CRITICAL STYLE REQUIREMENTS:
+      Create a highly realistic, natural-looking photographic image.  
+      No AI glow, no plastic skin, no distortions.  
+      Use real human proportions, natural expressions, correct hands, and believable lighting.  
+      Modern environment, minimalistic background, clean color palette.  
+      Never depict real people—only generic, anonymous individuals.
+
+      Return ONLY the image prompt, nothing else.`
       });
 
       // Step 3: Generate image
@@ -250,13 +257,13 @@ Generate the content following ALL the rules above.`;
       return { topic, platformContent };
     },
     onSuccess: (data) => {
-      toast({ title: '✨ Content Generated!', description: 'Preview your content below' });
+      toast({ title: '✨ Content Generated!', description: 'Preview your content below', duration: 3000 });
       setGeneratedContent(data);
       setSelectedPreviewPlatform(selectedPlatforms[0]);
       queryClient.invalidateQueries(['userPersona']);
     },
     onError: (error) => {
-      toast({ title: '❌ Failed', description: error.message, variant: 'destructive' });
+      toast({ title: '❌ Failed', description: error.message, variant: 'destructive', duration: 3000 });
     }
   });
 

@@ -81,34 +81,34 @@ export default function Create() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-950 to-black p-4 pb-24">
+    <div className="min-h-screen bg-slate-50 p-4 pb-24">
       <div className="max-w-2xl mx-auto space-y-4">
         {/* Header */}
         <div className="text-center pt-4 pb-2">
-          <h1 className="text-xl sm:text-2xl font-bold text-white mb-1">Create Content</h1>
-          <p className="text-xs sm:text-sm text-indigo-300">AI-Powered Content Lab</p>
+          <h1 className="text-xl sm:text-2xl font-bold text-slate-900 mb-1">Create Content</h1>
+          <p className="text-xs sm:text-sm text-slate-600">AI-Powered Content Lab</p>
         </div>
 
       {/* Tabs - Segmented Control Style */}
       <Tabs value={activeTab} onValueChange={(val) => { setActiveTab(val); setManualMode(true); }} className="w-full">
-        <TabsList className="grid w-full grid-cols-3 bg-slate-900/50 border border-white/10 backdrop-blur-xl rounded-full p-1 gap-1 text-xs sm:text-sm">
+        <TabsList className="grid w-full grid-cols-3 bg-slate-100 border border-slate-200 rounded-full p-1 text-xs sm:text-sm">
           <TabsTrigger 
             value="sources" 
-            className="data-[state=active]:bg-indigo-600 data-[state=active]:shadow-lg data-[state=active]:text-white text-slate-400 rounded-full h-10 sm:h-11 font-semibold transition-all px-4"
+            className="data-[state=active]:bg-[#0FB5BA] data-[state=active]:shadow-md data-[state=active]:text-white text-slate-700 rounded-full h-11 font-semibold transition-all"
           >
             Sources
           </TabsTrigger>
           <TabsTrigger 
             value="tone" 
             disabled={!hasSources} 
-            className="data-[state=active]:bg-indigo-600 data-[state=active]:shadow-lg data-[state=active]:text-white text-slate-400 rounded-full h-10 sm:h-11 font-semibold disabled:opacity-40 disabled:cursor-not-allowed transition-all px-4"
+            className="data-[state=active]:bg-[#0FB5BA] data-[state=active]:shadow-md data-[state=active]:text-white text-slate-700 rounded-full h-11 font-semibold disabled:opacity-30 disabled:cursor-not-allowed transition-all"
           >
             Tone
           </TabsTrigger>
           <TabsTrigger 
             value="generate" 
             disabled={!hasTone} 
-            className="data-[state=active]:bg-indigo-600 data-[state=active]:shadow-lg data-[state=active]:text-white text-slate-400 rounded-full h-10 sm:h-11 font-semibold disabled:opacity-40 disabled:cursor-not-allowed transition-all px-4"
+            className="data-[state=active]:bg-[#0FB5BA] data-[state=active]:shadow-md data-[state=active]:text-white text-slate-700 rounded-full h-11 font-semibold disabled:opacity-30 disabled:cursor-not-allowed transition-all"
           >
             Generate
           </TabsTrigger>
@@ -119,7 +119,7 @@ export default function Create() {
           {hasSources && (
             <Button 
               onClick={() => { setActiveTab('tone'); setManualMode(false); }}
-              className="w-full h-12 sm:h-14 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 rounded-xl sm:rounded-2xl text-sm sm:text-base font-semibold shadow-lg"
+              className="w-full h-12 px-4 rounded-lg text-white font-semibold bg-gradient-to-r from-[#0FB5BA] to-[#14D4BA] shadow-md hover:scale-105 transition-transform"
             >
               Next: Set Tone →
             </Button>
@@ -131,7 +131,7 @@ export default function Create() {
           {hasTone && (
             <Button 
               onClick={() => { setActiveTab('generate'); setManualMode(false); }}
-              className="w-full h-12 sm:h-14 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 rounded-xl sm:rounded-2xl text-sm sm:text-base font-semibold shadow-lg mt-4"
+              className="w-full h-12 px-4 rounded-lg text-white font-semibold bg-gradient-to-r from-[#0FB5BA] to-[#14D4BA] shadow-md hover:scale-105 transition-transform mt-4"
             >
               Next: Generate Content →
             </Button>

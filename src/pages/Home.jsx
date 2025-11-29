@@ -136,41 +136,41 @@ Make it punchy and actionable. Return ONLY the briefing text.`;
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-4 pb-24">
+    <div className="min-h-screen bg-slate-50 p-4 pb-24">
       <div className="max-w-2xl mx-auto space-y-5">
         {/* Header with Credits Widget */}
         <div className="flex items-center justify-between pt-4 px-2">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-white">Dashboard</h1>
-            <p className="text-xs sm:text-sm text-indigo-400">Your Control Hub</p>
+            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">Dashboard</h1>
+            <p className="text-xs sm:text-sm text-slate-600">Your Control Hub</p>
           </div>
           <div 
             onClick={() => navigate(createPageUrl('Settings'))}
-            className="flex items-center gap-2 bg-slate-900/50 backdrop-blur-xl border border-indigo-500/30 rounded-2xl px-4 py-3 cursor-pointer hover:border-indigo-500/50 transition-all"
+            className="flex items-center gap-3 bg-white border border-slate-200 rounded-xl px-4 py-3 cursor-pointer hover:bg-[#DDF7F8] hover:border-[#0FB5BA] transition-all shadow-md"
           >
-            <Coins className="w-5 h-5 text-yellow-400" />
+            <Coins className="w-5 h-5 text-[#0FB5BA]" />
             <div className="text-right">
-              <p className="text-xl sm:text-2xl font-bold text-white">{totalCredits}</p>
-              <p className="text-xs text-indigo-300">Credits</p>
+              <p className="text-xl sm:text-2xl font-bold text-slate-900">{totalCredits}</p>
+              <p className="text-xs text-slate-600">Credits</p>
             </div>
           </div>
         </div>
 
         {/* AI Daily Briefing with Markdown */}
         {briefing && (
-          <Card className="bg-gradient-to-br from-purple-900/30 to-indigo-900/30 backdrop-blur-xl border border-purple-500/20 rounded-2xl p-5 sm:p-6 space-y-3">
+          <Card className="bg-white border border-slate-200 rounded-xl p-5 sm:p-6 space-y-3 shadow-md">
             <div className="flex items-center gap-2">
-              <Sparkles className="w-5 h-5 text-purple-400" />
-              <h3 className="text-base sm:text-lg font-bold text-white">Daily AI Briefing</h3>
+              <Sparkles className="w-5 h-5 text-[#0FB5BA]" />
+              <h3 className="text-base sm:text-lg font-bold text-slate-900">Daily AI Briefing</h3>
             </div>
-            <div className="prose prose-invert prose-sm max-w-none">
+            <div className="prose prose-sm max-w-none">
               <ReactMarkdown
                 components={{
                   a: ({ node, ...props }) => (
-                    <a {...props} className="text-indigo-400 hover:text-indigo-300 underline" target="_blank" rel="noopener noreferrer" />
+                    <a {...props} className="text-[#0FB5BA] hover:text-[#14D4BA] underline" target="_blank" rel="noopener noreferrer" />
                   ),
                   p: ({ node, ...props }) => (
-                    <p {...props} className="text-slate-300 text-sm leading-relaxed mb-2" />
+                    <p {...props} className="text-slate-700 text-sm leading-relaxed mb-2" />
                   )
                 }}
               >
@@ -182,85 +182,85 @@ Make it punchy and actionable. Return ONLY the briefing text.`;
 
         {/* Quick Stats - Enhanced with Icons */}
         <div className="grid grid-cols-2 gap-3 sm:gap-4">
-          <div className="bg-slate-900/50 backdrop-blur-xl border border-cyan-500/20 rounded-2xl p-4 space-y-2 hover:border-cyan-500/40 transition-all">
-            <div className="flex items-center gap-2 text-cyan-400">
-              <div className="w-8 h-8 bg-cyan-500/20 rounded-lg flex items-center justify-center">
-                <Calendar className="w-4 h-4" />
+          <Card className="bg-white border border-slate-200 rounded-xl p-5 space-y-2 hover:border-[#0FB5BA] transition-all shadow-md">
+            <div className="flex items-center gap-2">
+              <div className="w-9 h-9 bg-[#DDF7F8] rounded-lg flex items-center justify-center">
+                <Calendar className="w-5 h-5 text-[#0FB5BA]" />
               </div>
-              <span className="text-xs font-medium">Scheduled</span>
+              <span className="text-xs font-semibold text-slate-700">Scheduled</span>
             </div>
-            <p className="text-2xl sm:text-3xl font-bold text-white">{scheduledPosts.length}</p>
-            <p className="text-xs text-slate-400">Posts in queue</p>
-          </div>
-          <div className="bg-slate-900/50 backdrop-blur-xl border border-green-500/20 rounded-2xl p-4 space-y-2 hover:border-green-500/40 transition-all">
-            <div className="flex items-center gap-2 text-green-400">
-              <div className="w-8 h-8 bg-green-500/20 rounded-lg flex items-center justify-center">
-                <TrendingUp className="w-4 h-4" />
+            <p className="text-2xl sm:text-3xl font-bold text-slate-900">{scheduledPosts.length}</p>
+            <p className="text-xs text-slate-600">Posts in queue</p>
+          </Card>
+          <Card className="bg-white border border-slate-200 rounded-xl p-5 space-y-2 hover:border-[#0FB5BA] transition-all shadow-md">
+            <div className="flex items-center gap-2">
+              <div className="w-9 h-9 bg-green-50 rounded-lg flex items-center justify-center">
+                <TrendingUp className="w-5 h-5 text-green-600" />
               </div>
-              <span className="text-xs font-medium">Approved</span>
+              <span className="text-xs font-semibold text-slate-700">Approved</span>
             </div>
-            <p className="text-2xl sm:text-3xl font-bold text-white">{userPersona?.approved_posts_count || 0}</p>
-            <p className="text-xs text-slate-400">Total this month</p>
-          </div>
+            <p className="text-2xl sm:text-3xl font-bold text-slate-900">{userPersona?.approved_posts_count || 0}</p>
+            <p className="text-xs text-slate-600">Total this month</p>
+          </Card>
         </div>
 
         {/* Quick Actions - Glass Cards with Icons */}
         <div className="space-y-3">
           <Link to={createPageUrl('Create')}>
-            <div className="bg-slate-900/50 backdrop-blur-xl border border-white/10 rounded-2xl p-4 hover:border-indigo-500/30 transition-all group">
+            <Card className="bg-white border border-slate-200 rounded-xl p-5 hover:border-[#0FB5BA] hover:shadow-lg transition-all group shadow-md">
               <div className="flex items-center gap-4">
-                <div className="w-14 h-14 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg">
-                  <PlusSquare className="w-7 h-7 text-white" />
+                <div className="w-12 h-12 bg-gradient-to-r from-[#0FB5BA] to-[#14D4BA] rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform shadow-md">
+                  <PlusSquare className="w-6 h-6 text-white" />
                 </div>
                 <div className="flex-1">
-                  <p className="font-bold text-white text-base">Create Content</p>
-                  <p className="text-xs text-slate-400 mt-0.5">Generate new posts with AI</p>
+                  <p className="font-bold text-slate-900 text-base">Create Content</p>
+                  <p className="text-xs text-slate-600 mt-0.5">Generate new posts with AI</p>
                 </div>
               </div>
-            </div>
+            </Card>
           </Link>
           <Link to={createPageUrl('Create') + '?tab=sources'}>
-            <div className="bg-slate-900/50 backdrop-blur-xl border border-white/10 rounded-2xl p-4 hover:border-cyan-500/30 transition-all group">
+            <Card className="bg-white border border-slate-200 rounded-xl p-5 hover:border-[#0FB5BA] hover:shadow-lg transition-all group shadow-md">
               <div className="flex items-center gap-4">
-                <div className="w-14 h-14 bg-gradient-to-br from-cyan-600 to-teal-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg">
-                  <Layers className="w-7 h-7 text-white" />
+                <div className="w-12 h-12 bg-gradient-to-r from-[#0FB5BA] to-[#14D4BA] rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform shadow-md">
+                  <Layers className="w-6 h-6 text-white" />
                 </div>
                 <div className="flex-1">
-                  <p className="font-bold text-white text-base">Manage Sources</p>
-                  <p className="text-xs text-slate-400 mt-0.5">Configure content sources</p>
+                  <p className="font-bold text-slate-900 text-base">Manage Sources</p>
+                  <p className="text-xs text-slate-600 mt-0.5">Configure content sources</p>
                 </div>
               </div>
-            </div>
+            </Card>
           </Link>
         </div>
 
         {/* Watch to Earn Section */}
-        <Card className="bg-gradient-to-br from-green-600/10 to-emerald-600/10 border border-green-500/20 backdrop-blur-xl rounded-2xl shadow-xl p-5">
+        <Card className="bg-white border border-slate-200 rounded-xl shadow-md p-5">
           <div className="flex items-center justify-between mb-3">
             <div>
-              <h3 className="text-white font-bold text-base sm:text-lg flex items-center gap-2">
-                <Play className="w-5 h-5 text-green-400" />
+              <h3 className="text-slate-900 font-bold text-base sm:text-lg flex items-center gap-2">
+                <Play className="w-5 h-5 text-green-600" />
                 Watch to Earn
               </h3>
-              <p className="text-xs text-green-300 mt-1">
+              <p className="text-xs text-slate-600 mt-1">
                 {userPersona?.ad_credits_earned_today || 0} / 10 ads watched today
               </p>
             </div>
             <div className="text-right">
-              <p className="text-xs sm:text-sm text-indigo-300">Daily Credits</p>
-              <p className="text-xl sm:text-2xl font-bold text-green-400">{userPersona?.daily_ad_credits || 0}</p>
+              <p className="text-xs sm:text-sm text-slate-600">Daily Credits</p>
+              <p className="text-xl sm:text-2xl font-bold text-green-600">{userPersona?.daily_ad_credits || 0}</p>
             </div>
           </div>
           <Button
             onClick={() => watchAdMutation.mutate()}
             disabled={watchAdMutation.isPending || (userPersona?.ad_credits_earned_today || 0) >= 10}
-            className="w-full h-12 sm:h-14 bg-gradient-to-r from-green-600 to-emerald-500 hover:from-green-500 hover:to-emerald-400 text-white rounded-xl sm:rounded-2xl font-semibold text-sm sm:text-base shadow-lg"
+            className="w-full h-12 px-4 rounded-lg text-white font-semibold bg-gradient-to-r from-[#0FB5BA] to-[#14D4BA] shadow-md hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:bg-slate-200 disabled:text-slate-500 disabled:shadow-none"
           >
             {watchAdMutation.isPending ? 'Playing Ad...' : 
              (userPersona?.ad_credits_earned_today || 0) >= 10 ? 'Daily Limit Reached' : 
              '▶ Watch 15s Ad (+1 Credit)'}
           </Button>
-          <p className="text-xs text-center text-indigo-400 mt-2">
+          <p className="text-xs text-center text-slate-600 mt-2">
             💡 Daily credits expire at midnight
           </p>
         </Card>

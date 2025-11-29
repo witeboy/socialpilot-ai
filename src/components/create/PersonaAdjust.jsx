@@ -33,21 +33,21 @@ export default function PersonaAdjust({ userPersona, onComplete }) {
 
 
   return (
-    <Card className="bg-slate-900/50 backdrop-blur-sm border border-purple-500/20 p-6 space-y-6">
+    <Card className="bg-white border border-slate-200 rounded-xl shadow-md p-5 sm:p-7 space-y-6">
       <div className="flex items-center gap-3">
-        <div className="p-3 bg-purple-500/20 rounded-lg">
-          <User className="w-6 h-6 text-purple-400" />
+        <div className="p-3 bg-[#DDF7F8] rounded-lg">
+          <User className="w-6 h-6 text-[#0FB5BA]" />
         </div>
         <div>
-          <h3 className="text-lg font-bold text-white">Persona Settings</h3>
-          <p className="text-sm text-slate-400">Adjust your AI content persona</p>
+          <h3 className="text-lg font-bold text-slate-900">Persona Settings</h3>
+          <p className="text-sm text-slate-600">Adjust your AI content persona</p>
         </div>
       </div>
 
       <div>
-        <Label className="text-slate-300">Professional Tone</Label>
+        <Label className="text-slate-700 font-semibold">Professional Tone</Label>
         <Select value={tone} onValueChange={setTone}>
-          <SelectTrigger className="bg-slate-800/50 border-slate-700 text-white mt-2">
+          <SelectTrigger className="h-11 rounded-lg bg-white border border-slate-200 px-4 text-slate-900 mt-2 focus:outline-none focus:ring-4 focus:ring-teal-100">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -60,25 +60,25 @@ export default function PersonaAdjust({ userPersona, onComplete }) {
         <Button
           onClick={() => updateToneMutation.mutate()}
           disabled={updateToneMutation.isPending}
-          className="w-full h-12 mt-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 rounded-xl text-sm sm:text-base font-semibold shadow-lg"
+          className="w-full h-12 px-4 mt-3 rounded-lg text-white font-semibold bg-gradient-to-r from-[#0FB5BA] to-[#14D4BA] shadow-md hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
         >
           {updateToneMutation.isPending ? 'Saving...' : 'Save & Continue'}
         </Button>
       </div>
 
       {userPersona?.persona_profile && (
-        <div className="space-y-3 p-4 bg-slate-800/30 rounded-lg border border-slate-700">
+        <div className="space-y-3 p-4 bg-slate-50 rounded-xl border border-slate-200">
           <div>
-            <p className="text-xs text-slate-400 mb-1">Writing Style</p>
-            <p className="text-sm text-slate-200">{userPersona.persona_profile.writing_style || 'Not set'}</p>
+            <p className="text-xs text-slate-600 mb-1 font-semibold">Writing Style</p>
+            <p className="text-sm text-slate-900">{userPersona.persona_profile.writing_style || 'Not set'}</p>
           </div>
           
           {userPersona.persona_profile.expertise_areas?.length > 0 && (
             <div>
-              <p className="text-xs text-slate-400 mb-1">Expertise Areas</p>
+              <p className="text-xs text-slate-600 mb-1 font-semibold">Expertise Areas</p>
               <div className="flex flex-wrap gap-1">
                 {userPersona.persona_profile.expertise_areas.map((area, idx) => (
-                  <span key={idx} className="text-xs bg-cyan-500/20 text-cyan-300 px-2 py-1 rounded">
+                  <span key={idx} className="text-xs bg-[#DDF7F8] text-[#0FB5BA] px-3 py-1 rounded-full font-semibold">
                     {area}
                   </span>
                 ))}

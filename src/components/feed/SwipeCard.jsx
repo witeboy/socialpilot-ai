@@ -154,6 +154,7 @@ export default function SwipeCard({ draft, onSwipe, isTop }) {
         {/* Bottom Action Buttons - Sticky with Gradient */}
         <div 
           className="sticky bottom-0 pt-6 mt-4 border-t border-slate-200 bg-white"
+          onPointerDown={(e) => e.stopPropagation()}
           style={{
             marginLeft: '-16px',
             marginRight: '-16px',
@@ -161,32 +162,27 @@ export default function SwipeCard({ draft, onSwipe, isTop }) {
             paddingLeft: '16px',
             paddingRight: '16px',
             paddingBottom: '16px',
-            zIndex: 30
+            zIndex: 30,
+            touchAction: 'auto'
           }}
         >
           <div className="grid grid-cols-2 gap-3">
-            <Button
-              onClick={(e) => {
-                e.stopPropagation();
-                handleReject();
-              }}
+            <button
+              onClick={handleReject}
               disabled={!isTop}
-              className="h-12 sm:h-14 rounded-lg bg-white border-2 border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300 text-sm sm:text-base font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+              className="h-12 sm:h-14 rounded-lg bg-white border-2 border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300 text-sm sm:text-base font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
             >
               <ThumbsDown className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
               Reject
-            </Button>
-            <Button
-              onClick={(e) => {
-                e.stopPropagation();
-                handleApprove();
-              }}
+            </button>
+            <button
+              onClick={handleApprove}
               disabled={!isTop}
-              className="h-12 sm:h-14 rounded-lg bg-gradient-to-r from-[#0FB5BA] to-[#14D4BA] hover:scale-105 text-white text-sm sm:text-base font-semibold shadow-md transition-transform disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+              className="h-12 sm:h-14 rounded-lg bg-gradient-to-r from-[#0FB5BA] to-[#14D4BA] hover:scale-105 text-white text-sm sm:text-base font-semibold shadow-md transition-transform disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center"
             >
               <ThumbsUp className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
               Approve
-            </Button>
+            </button>
           </div>
         </div>
 

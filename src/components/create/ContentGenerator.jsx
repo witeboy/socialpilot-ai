@@ -25,7 +25,9 @@ export default function ContentGenerator({ userPersona }) {
   const generateMutation = useMutation({
     mutationFn: async () => {
       if (!input.trim()) throw new Error('Please enter a topic or URL');
-      if (!userPersona || userPersona.credits_balance < 1) throw new Error('Insufficient credits');
+
+      const totalCredits = (userPersona?.purchased_credits || 0) + (userPersona?.daily_ad_credits || 0);
+      if (!userPersona || totalCredits < 1) throw new Error('Insufficient credits');
 
       const prompt = `Create a LinkedIn post in a ${selectedTone.replace('_', ' ')} tone about: ${input}
       
@@ -54,8 +56,19 @@ Return ONLY the post text, no additional commentary.`;
         generation_metadata: { model_used: 'gpt-4o', generation_cost: 1, tone_applied: selectedTone }
       });
 
+      // Deduct from daily_ad_credits first, then purchased_credits
+      let newDailyCredits = userPersona.daily_ad_credits || 0;
+      let newPurchasedCredits = userPersona.purchased_credits || 0;
+
+      if (newDailyCredits > 0) {
+        newDailyCredits -= 1;
+      } else {
+        newPurchasedCredits -= 1;
+      }
+
       await base44.entities.UserPersona.update(userPersona.id, {
-        credits_balance: userPersona.credits_balance - 1
+        daily_ad_credits: newDailyCredits,
+        purchased_credits: newPurchasedCredits
       });
 
       await base44.entities.CreditTransaction.create({
@@ -63,7 +76,7 @@ Return ONLY the post text, no additional commentary.`;
         amount: -1,
         description: `Generated LinkedIn post`,
         payment_gateway: 'none',
-        balance_after: userPersona.credits_balance - 1
+        balance_after: newDailyCredits + newPurchasedCredits
       });
     },
     onSuccess: () => {
@@ -82,7 +95,9 @@ Return ONLY the post text, no additional commentary.`;
         <h3 className="text-lg font-bold text-white">Content Generator</h3>
         <div className="flex items-center gap-2">
           <Coins className="w-4 h-4 text-yellow-400" />
-          <span className="text-yellow-400 font-medium">{userPersona?.credits_balance || 0}</span>
+          <span className="text-yellow-400 font-medium">
+            {(userPersona?.purchased_credits || 0) + (userPersona?.daily_ad_credits || 0)}
+          </span>
         </div>
       </div>
 

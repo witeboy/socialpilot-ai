@@ -92,7 +92,10 @@ Generate JSON with:
         automation_mode: automationMode,
         generation_time: '08:00',
         posting_time: '09:00',
-        credits_balance: 10,
+        purchased_credits: 10,
+        daily_ad_credits: 0,
+        ad_credits_earned_today: 0,
+        last_ad_reset_date: new Date().toISOString().split('T')[0],
         country,
         approved_posts_count: 0,
         subscription_status: 'free'

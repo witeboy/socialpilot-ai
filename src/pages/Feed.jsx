@@ -5,6 +5,7 @@ import { AnimatePresence } from 'framer-motion';
 import SwipeCard from '../components/feed/SwipeCard';
 import EmptyFeed from '../components/feed/EmptyFeed';
 import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/components/ui/use-toast';
 
 export default function Feed() {
   const { toast } = useToast();

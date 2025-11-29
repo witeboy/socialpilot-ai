@@ -142,8 +142,8 @@ Make it punchy and actionable. Return ONLY the briefing text.`;
         {/* Header with Credits Widget */}
         <div className="flex items-center justify-between pt-4 px-2">
           <div>
-            <h1 className="text-xl font-bold text-white">Command Center</h1>
-            <p className="text-xs text-indigo-400">High-Tech HUD</p>
+            <h1 className="text-xl font-bold text-white">Dashboard</h1>
+            <p className="text-xs text-indigo-400">Your Control Hub</p>
           </div>
           <div 
             onClick={() => navigate(createPageUrl('Settings'))}

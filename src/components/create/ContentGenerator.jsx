@@ -31,7 +31,8 @@ RULES:
 5. No politics, controversy, sensitive claims, or unverifiable facts.
 6. Avoid emojis unless extremely subtle.
 7. Do not mention "AI", "as an AI", "according to the article", or anything meta.
-8. End with exactly 3–5 relevant, professional, industry-specific hashtags.
+8. NEVER include URLs, links, or web addresses in the post.
+9. End with exactly 3–5 relevant, professional, industry-specific hashtags.
 
 GOAL:
 Transform the SOURCE into an insight-driven, high-authority LinkedIn post
@@ -54,7 +55,8 @@ RULES:
 5. No politics, hate, controversy, medical claims, or false promises.
 6. No complex jargon.
 7. Do not mention the source directly.
-8. Add exactly 2–4 relevant hashtags at the END of the final tweet only.
+8. NEVER include URLs, links, or web addresses in tweets.
+9. Add exactly 2–4 relevant hashtags at the END of the final tweet only.
 
 FORMAT:
 If a single tweet → return tweet + hashtags.
@@ -83,7 +85,8 @@ RULES:
 4. Keep script under 10 seconds.
 5. Use friendly, simple language; no jargon.
 6. No politics, sensitive topics, or controversy.
-7. After the JSON, output 3–6 relevant TikTok hashtags.
+7. NEVER mention or include URLs, links, or web addresses.
+8. After the JSON, output 3–6 relevant TikTok hashtags.
 
 Return ONLY the JSON then hashtags.`,
 
@@ -106,7 +109,8 @@ RULES:
 4. No complicated language or long sentences.
 5. 4–6 short lines total for a 10-second delivery.
 6. No politics, controversy, claims, or misinformation.
-7. After the JSON, output exactly 5–8 relevant YouTube Shorts hashtags.
+7. NEVER mention or include URLs, links, or web addresses.
+8. After the JSON, output exactly 5–8 relevant YouTube Shorts hashtags.
 
 Return ONLY the JSON then hashtags.`
 };

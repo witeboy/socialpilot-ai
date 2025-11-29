@@ -28,17 +28,14 @@ export default function SocialConnections() {
 
   const connectMutation = useMutation({
     mutationFn: async (platform) => {
-      // In production, this would trigger OAuth flow
-      // For now, we'll create a mock connection
       toast({ 
-        title: '🔗 OAuth Integration Coming Soon', 
-        description: `${platform} connection will be available in production`
+        title: '🔗 OAuth Coming Soon', 
+        description: `${platform} connection available in production`
       });
       
       return base44.entities.SocialAccount.create({
         platform: platform,
-        is_connected: false,
-        account_username: 'demo_user'
+        is_connected: false
       });
     },
     onSuccess: () => {
@@ -49,36 +46,31 @@ export default function SocialConnections() {
   const disconnectMutation = useMutation({
     mutationFn: (id) => base44.entities.SocialAccount.delete(id),
     onSuccess: () => {
-      toast({ title: '🔌 Account Disconnected' });
+      toast({ title: '🔌 Disconnected' });
       queryClient.invalidateQueries(['socialAccounts']);
     }
   });
 
-  const getConnectionStatus = (platformId) => {
+  const getConnection = (platformId) => {
     return connections.find(c => c.platform === platformId);
   };
 
   return (
     <div className="space-y-4">
       <Card className="bg-slate-900/50 backdrop-blur-sm border border-purple-500/20 p-6">
-        <h3 className="text-lg font-bold text-white mb-4">Social Media Accounts</h3>
-        <p className="text-sm text-slate-400 mb-6">
-          Connect your accounts to enable automatic posting
-        </p>
+        <h3 className="text-lg font-bold text-white mb-4">Social Accounts</h3>
 
         <div className="space-y-3">
           {platforms.map((platform) => {
             const Icon = platform.icon;
-            const connection = getConnectionStatus(platform.id);
+            const connection = getConnection(platform.id);
             const isConnected = connection?.is_connected;
 
             return (
               <div
                 key={platform.id}
-                className={`p-4 rounded-lg border-2 transition-all ${
-                  isConnected 
-                    ? 'border-green-500/50 bg-green-500/5' 
-                    : 'border-slate-700 bg-slate-800/30'
+                className={`p-4 rounded-lg border-2 ${
+                  isConnected ? 'border-green-500/50 bg-green-500/5' : 'border-slate-700 bg-slate-800/30'
                 }`}
               >
                 <div className="flex items-center justify-between">
@@ -86,18 +78,13 @@ export default function SocialConnections() {
                     <div className={`${platform.bg} p-3 rounded-lg`}>
                       <Icon className={`w-6 h-6 ${platform.color}`} />
                     </div>
-                    <div>
-                      <p className="font-semibold text-white">{platform.name}</p>
-                      {connection && connection.account_username && (
-                        <p className="text-xs text-slate-400">@{connection.account_username}</p>
-                      )}
-                    </div>
+                    <p className="font-semibold text-white">{platform.name}</p>
                   </div>
 
                   <div className="flex items-center gap-3">
                     {isConnected ? (
                       <>
-                        <Badge className="bg-green-500/20 text-green-400 border-green-500/50">
+                        <Badge className="bg-green-500/20 text-green-400">
                           <CheckCircle2 className="w-3 h-3 mr-1" />
                           Connected
                         </Badge>
@@ -105,14 +92,14 @@ export default function SocialConnections() {
                           size="sm"
                           variant="outline"
                           onClick={() => disconnectMutation.mutate(connection.id)}
-                          className="border-red-500/50 text-red-400 hover:bg-red-500/10"
+                          className="border-red-500/50 text-red-400"
                         >
                           Disconnect
                         </Button>
                       </>
                     ) : (
                       <>
-                        <Badge variant="outline" className="border-slate-600 text-slate-400">
+                        <Badge variant="outline" className="text-slate-400">
                           <XCircle className="w-3 h-3 mr-1" />
                           Not Connected
                         </Badge>
@@ -132,10 +119,6 @@ export default function SocialConnections() {
           })}
         </div>
       </Card>
-
-      <div className="text-xs text-slate-400 text-center">
-        🔒 All connections use secure OAuth authentication
-      </div>
     </div>
   );
 }

@@ -65,16 +65,16 @@ export default function MediaGenerator({ userPersona }) {
 
       const prompt = `Create a compelling 10-second video script for TikTok/YouTube Shorts about: ${videoTopic}
 
-      Requirements:
-      - Hook in first 2 seconds
-      - Clear value/message
-      - Call to action at end
-      - Energetic and engaging tone
-      
-      Format as:
-      [VISUAL]: What's on screen
-      [VOICEOVER]: What's being said
-      [TEXT OVERLAY]: On-screen text`;
+Requirements:
+- Hook in first 2 seconds
+- Clear value/message
+- Call to action at end
+- Energetic and engaging tone
+
+Format as:
+[VISUAL]: What's on screen
+[VOICEOVER]: What's being said
+[TEXT OVERLAY]: On-screen text`;
 
       const script = await base44.integrations.Core.InvokeLLM({ prompt });
 
@@ -156,10 +156,6 @@ export default function MediaGenerator({ userPersona }) {
               </>
             )}
           </Button>
-
-          <p className="text-xs text-slate-400 text-center">
-            🎨 Creates unique AI-generated images for social posts
-          </p>
         </TabsContent>
 
         <TabsContent value="video" className="space-y-4 mt-4">
@@ -191,10 +187,6 @@ export default function MediaGenerator({ userPersona }) {
               </>
             )}
           </Button>
-
-          <p className="text-xs text-slate-400 text-center">
-            🎬 Creates 10-second TikTok/YouTube Shorts scripts
-          </p>
         </TabsContent>
       </Tabs>
     </Card>

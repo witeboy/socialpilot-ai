@@ -33,7 +33,7 @@ export default function PersonaAdjust({ userPersona }) {
   const regeneratePersonaMutation = useMutation({
     mutationFn: async () => {
       if (!userPersona?.resume_text) {
-        throw new Error('No resume found. Please upload your resume first.');
+        throw new Error('No resume found');
       }
 
       const prompt = `Analyze this resume and create a professional persona profile:
@@ -42,7 +42,7 @@ ${userPersona.resume_text}
 
 Generate a JSON response with:
 {
-  "writing_style": "brief description of writing style that matches this professional",
+  "writing_style": "brief description of writing style",
   "expertise_areas": ["area1", "area2", "area3"],
   "content_pillars": ["pillar1", "pillar2", "pillar3"]
 }`;
@@ -59,13 +59,8 @@ Generate a JSON response with:
         }
       });
 
-      const updatedProfile = {
-        tone,
-        ...result
-      };
-
       return base44.entities.UserPersona.update(userPersona.id, {
-        persona_profile: updatedProfile
+        persona_profile: { tone, ...result }
       });
     },
     onSuccess: () => {
@@ -104,7 +99,7 @@ Generate a JSON response with:
         </Select>
         <Button
           onClick={() => updateToneMutation.mutate()}
-          disabled={updateToneMutation.isPending || tone === userPersona?.persona_profile?.tone}
+          disabled={updateToneMutation.isPending}
           className="w-full mt-3 bg-purple-600 hover:bg-purple-700"
         >
           Update Tone
@@ -130,19 +125,6 @@ Generate a JSON response with:
               </div>
             </div>
           )}
-          
-          {userPersona.persona_profile.content_pillars?.length > 0 && (
-            <div>
-              <p className="text-xs text-slate-400 mb-1">Content Pillars</p>
-              <div className="flex flex-wrap gap-1">
-                {userPersona.persona_profile.content_pillars.map((pillar, idx) => (
-                  <span key={idx} className="text-xs bg-purple-500/20 text-purple-300 px-2 py-1 rounded">
-                    {pillar}
-                  </span>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
       )}
 
@@ -160,7 +142,7 @@ Generate a JSON response with:
         ) : (
           <>
             <Sparkles className="w-5 h-5 mr-2" />
-            Regenerate Persona from Resume
+            Regenerate Persona
           </>
         )}
       </Button>

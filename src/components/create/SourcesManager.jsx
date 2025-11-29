@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Plus, Trash2, Sparkles, Rss, Link as LinkIcon, FileText } from 'lucide-react';
+import { Plus, Trash2, Rss, Link as LinkIcon, FileText } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 import { Badge } from '@/components/ui/badge';
 
@@ -182,10 +182,6 @@ export default function SourcesManager() {
           )}
         </div>
       </Card>
-
-      <div className="text-xs text-slate-400 text-center">
-        💡 Sources are used for automatic daily content generation
-      </div>
     </div>
   );
 }

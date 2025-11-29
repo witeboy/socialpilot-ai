@@ -54,6 +54,7 @@ export default function Create() {
           <PersonaAdjust userPersona={userPersona} />
         </TabsContent>
       </Tabs>
+      </div>
     </div>
   );
 }

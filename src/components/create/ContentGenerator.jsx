@@ -1,20 +1,12 @@
 import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { Sparkles, Loader2, Coins, Linkedin, Twitter, Youtube, Video, Wand2, Image as ImageIcon } from 'lucide-react';
+import { Sparkles, Loader2, Coins, Linkedin, Twitter, Youtube, Video, Check } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
-
-const tones = [
-  { value: 'thought_leader', label: 'Thought Leader' },
-  { value: 'founder', label: 'Founder' },
-  { value: 'policy_maker', label: 'Policy Maker' },
-  { value: 'subject_matter_expert', label: 'SME' },
-  { value: 'casual_creator', label: 'Casual' }
-];
 
 const platforms = [
   { id: 'linkedin', name: 'LinkedIn', icon: Linkedin, color: 'text-blue-400' },
@@ -23,16 +15,113 @@ const platforms = [
   { id: 'tiktok', name: 'TikTok', icon: Video, color: 'text-pink-400' }
 ];
 
+const CONTENT_RULES = {
+  linkedin: `GLOBAL CONTENT RULES:
+- Never generate harmful, political, hateful, adult, medical, illegal, or misleading content.
+- Do not fabricate facts. Only summarize or infer from the user's material.
+- Maintain the user's persona tone.
+- Keep language clear, respectful, and professional.
+- No sensitive demographic claims, religious directives, or targeted political persuasion.
+- No financial claims ("guaranteed returns", "get-rich-quick").
+- No medical claims ("cures", "treatments").
+- Avoid over-promotion or spammy language.
+
+LINKEDIN CONTENT RULES:
+- Begin with a strong hook (1–2 lines).
+- Keep paragraphs short (1–3 sentences).
+- Avoid emojis except occasionally and sparingly.
+- Keep tone professional, insightful, credible, and value-driven.
+- Content should highlight expertise, leadership, or strategic thinking.
+- Avoid slang, clickbait, or overly casual tone.
+- Do not reference trends like internet memes.
+- Do not use all caps, hype language, or sensationalism.
+- Avoid controversial political or cultural opinions.
+- Hashtags: output exactly 3–5, each relevant to the topic and industry.
+- Output only the post text—no explanation, no meta text, no notes.`,
+
+  twitter: `GLOBAL CONTENT RULES:
+- Never generate harmful, political, hateful, adult, medical, illegal, or misleading content.
+- Do not fabricate facts. Only summarize or infer from the user's material.
+- Maintain the user's persona tone.
+- Keep language clear, respectful, and professional.
+- No sensitive demographic claims, religious directives, or targeted political persuasion.
+- No financial claims ("guaranteed returns", "get-rich-quick").
+- No medical claims ("cures", "treatments").
+- Avoid over-promotion or spammy language.
+
+X/TWITTER CONTENT RULES:
+- Tweets must fit within 280 characters.
+- Use a punchy, conversational, high-engagement tone.
+- Hooks must be sharp and scroll-stopping.
+- Emojis allowed but limited to relevance (max 2 per tweet).
+- Avoid long sentences or complex structure.
+- Avoid corporate language.
+- Avoid political, hateful, or divisive phrasing.
+- Make content actionable (tips, frameworks, insights).
+- Hashtags: output 2–4 relevant and concise hashtags at the end.
+- Output only the tweet text—no explanation, no meta text, no notes.`,
+
+  tiktok: `GLOBAL CONTENT RULES:
+- Never generate harmful, political, hateful, adult, medical, illegal, or misleading content.
+- Do not fabricate facts. Only summarize or infer from the user's material.
+- Maintain the user's persona tone.
+- Keep language clear, respectful, and professional.
+- No sensitive demographic claims, religious directives, or targeted political persuasion.
+- No financial claims ("guaranteed returns", "get-rich-quick").
+- No medical claims ("cures", "treatments").
+- Avoid over-promotion or spammy language.
+
+TIKTOK CONTENT RULES:
+- Output as a JSON script: { "hook": "...", "lines": ["...", "..."], "cta": "..." }.
+- Use short, high-energy, plain-language phrases.
+- Create visually-clear moments for voiceover and screen captions.
+- Avoid long sentences; use punchy beats.
+- Maintain a friendly, relatable tone.
+- No jargon. No corporate speak.
+- Do not reference politics, sensitive issues, or controversial opinions.
+- Keep timing realistic for a 10s video (max 4–6 spoken lines).
+- Avoid over-promotional calls to action.
+- Hashtags: After the JSON, output 3–6 relevant and trending hashtags.`,
+
+  youtube: `GLOBAL CONTENT RULES:
+- Never generate harmful, political, hateful, adult, medical, illegal, or misleading content.
+- Do not fabricate facts. Only summarize or infer from the user's material.
+- Maintain the user's persona tone.
+- Keep language clear, respectful, and professional.
+- No sensitive demographic claims, religious directives, or targeted political persuasion.
+- No financial claims ("guaranteed returns", "get-rich-quick").
+- No medical claims ("cures", "treatments").
+- Avoid over-promotion or spammy language.
+
+YOUTUBE SHORTS CONTENT RULES:
+- Output as a JSON script: { "hook": "...", "lines": ["...", "..."], "cta": "..." }.
+- Maintain louder, punch-ready energy (Shorts favors high retention).
+- Use educational or insight-packed lines.
+- Aim for 4–6 lines fitting 10 seconds total.
+- Avoid clickbait or misleading statements.
+- Avoid controversial claims or unverifiable facts.
+- Use crisp, clean language — safe for global audiences.
+- Call-to-action should be soft, not pushy.
+- Hashtags: After the JSON, output exactly 5–8 niche-relevant Shorts hashtags.`
+};
+
 export default function ContentGenerator({ userPersona, hasSources, hasTone }) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const [input, setInput] = useState('');
-  const [selectedTone, setSelectedTone] = useState(userPersona?.persona_profile?.tone || 'thought_leader');
   const [selectedPlatforms, setSelectedPlatforms] = useState(['linkedin']);
-  const [mediaPrompt, setMediaPrompt] = useState('');
-  const [isGeneratingPrompt, setIsGeneratingPrompt] = useState(false);
+  const [generatedContent, setGeneratedContent] = useState(null);
+  const [selectedPreviewPlatform, setSelectedPreviewPlatform] = useState(null);
+
+  const { data: sources = [] } = useQuery({
+    queryKey: ['sources'],
+    queryFn: async () => {
+      const user = await base44.auth.me();
+      return base44.entities.Source.filter({ created_by: user.email });
+    }
+  });
 
   const togglePlatform = (platformId) => {
+    if (generatedContent) return; // Lock after generation
     setSelectedPlatforms(prev => 
       prev.includes(platformId) 
         ? prev.filter(id => id !== platformId)
@@ -40,15 +129,39 @@ export default function ContentGenerator({ userPersona, hasSources, hasTone }) {
     );
   };
 
-  const generateMediaPrompt = async () => {
-    if (!input.trim()) {
-      toast({ title: '⚠️ Add a topic first', variant: 'destructive' });
-      return;
-    }
+  const generateMutation = useMutation({
+    mutationFn: async () => {
+      if (selectedPlatforms.length === 0) throw new Error('Select at least one platform');
 
-    setIsGeneratingPrompt(true);
-    try {
-      const prompt = `Based on this content topic: "${input}"
+      const totalCredits = (userPersona?.purchased_credits || 0) + (userPersona?.daily_ad_credits || 0);
+      const creditsNeeded = selectedPlatforms.length + 2; // platforms + media
+      
+      if (totalCredits < creditsNeeded) throw new Error(`Need ${creditsNeeded} credits`);
+
+      const tone = userPersona?.persona_profile?.tone || 'thought_leader';
+      const expertise = userPersona?.persona_profile?.expertise_areas?.join(', ') || 'general topics';
+
+      // Step 1: Generate topic from sources
+      const sourceContent = sources.map(s => 
+        s.source_type === 'text' ? s.source_text : `Source: ${s.title} (${s.source_url})`
+      ).join('\n\n');
+
+      const topicPrompt = `Based on these content sources:
+${sourceContent}
+
+Generate ONE compelling content topic that would work well for social media.
+The topic should be relevant to: ${expertise}
+Keep it concise (1-2 sentences max).
+Return ONLY the topic, nothing else.`;
+
+      const topic = await base44.integrations.Core.InvokeLLM({ 
+        prompt: topicPrompt,
+        add_context_from_internet: sources.some(s => s.source_url)
+      });
+
+      // Step 2: Generate media prompt
+      const mediaPromptText = await base44.integrations.Core.InvokeLLM({
+        prompt: `Based on this content topic: "${topic}"
 
 Generate a detailed, creative image prompt for AI image generation that would make compelling visual content for social media.
 
@@ -58,91 +171,47 @@ Guidelines:
 - Keep it concise but descriptive
 - Focus on visual elements that support the topic
 
-Return ONLY the image prompt, nothing else.`;
+Return ONLY the image prompt, nothing else.`
+      });
 
-      const result = await base44.integrations.Core.InvokeLLM({ prompt });
-      setMediaPrompt(result);
-      toast({ title: '✨ Media Prompt Generated!' });
-    } catch (error) {
-      toast({ title: '❌ Failed', description: error.message, variant: 'destructive' });
-    } finally {
-      setIsGeneratingPrompt(false);
-    }
-  };
+      // Step 3: Generate image
+      const imageResult = await base44.integrations.Core.GenerateImage({
+        prompt: mediaPromptText
+      });
 
-  const generateMutation = useMutation({
-    mutationFn: async () => {
-      if (!input.trim()) throw new Error('Please enter a topic or URL');
-      if (selectedPlatforms.length === 0) throw new Error('Select at least one platform');
-
-      const totalCredits = (userPersona?.purchased_credits || 0) + (userPersona?.daily_ad_credits || 0);
-      let creditsNeeded = selectedPlatforms.length;
-      
-      // Add 2 credits if generating media
-      let mediaUrl = null;
-      if (mediaPrompt.trim()) {
-        creditsNeeded += 2;
-        if (totalCredits < creditsNeeded) throw new Error(`Need ${creditsNeeded} credits (${selectedPlatforms.length} for content + 2 for media)`);
-        
-        const imageResult = await base44.integrations.Core.GenerateImage({
-          prompt: mediaPrompt
-        });
-        mediaUrl = imageResult.url;
-      } else {
-        if (totalCredits < creditsNeeded) throw new Error(`Need ${creditsNeeded} credits`);
-      }
-
-      // Generate content for each platform
+      // Step 4: Generate platform-specific content
+      const platformContent = {};
       for (const platformId of selectedPlatforms) {
-        const platformName = platforms.find(p => p.id === platformId)?.name || platformId;
-        
-        let prompt;
-        if (platformId === 'linkedin') {
-          prompt = `Create a LinkedIn post in a ${selectedTone.replace('_', ' ')} tone about: ${input}
-          
-Guidelines:
-- Make it engaging and valuable
-- Use appropriate hashtags
-- Keep it concise but impactful
-- Professional tone
+        const rules = CONTENT_RULES[platformId];
+        const contentPrompt = `${rules}
 
-Return ONLY the post text.`;
-        } else if (platformId === 'twitter') {
-          prompt = `Create a Twitter/X post (max 280 characters) in a ${selectedTone.replace('_', ' ')} tone about: ${input}
-          
-Guidelines:
-- Punchy and engaging
-- Use 1-2 hashtags
-- Keep under 280 characters
+Topic: ${topic}
+Tone: ${tone.replace('_', ' ')}
 
-Return ONLY the tweet text.`;
-        } else if (platformId === 'youtube' || platformId === 'tiktok') {
-          prompt = `Create a ${platformId === 'youtube' ? 'YouTube Shorts' : 'TikTok'} script (15 seconds) about: ${input}
-          
-Format:
-[HOOK]: (first 2 seconds)
-[VALUE]: (core message)
-[CTA]: (call to action)
+Generate the content following ALL the rules above.`;
 
-Return structured script.`;
-        }
-
-        const response = await base44.integrations.Core.InvokeLLM({
-          prompt,
-          add_context_from_internet: input.startsWith('http')
+        const content = await base44.integrations.Core.InvokeLLM({
+          prompt: contentPrompt,
+          add_context_from_internet: sources.some(s => s.source_url)
         });
 
-        const viralityScore = Math.floor(Math.random() * 40) + 60;
+        platformContent[platformId] = {
+          text: content,
+          mediaPrompt: mediaPromptText,
+          mediaUrl: imageResult.url
+        };
 
+        // Save to database
+        const viralityScore = Math.floor(Math.random() * 40) + 60;
         await base44.entities.ContentDraft.create({
           platform: platformId,
           content_type: platformId === 'youtube' || platformId === 'tiktok' ? 'video_script' : 'post',
-          text_content: response,
-          media_url: mediaUrl,
+          text_content: content,
+          media_url: imageResult.url,
           virality_score: viralityScore,
           status: 'pending',
-          topic: input,
-          generation_metadata: { model_used: 'gpt-4o', generation_cost: 1, tone_applied: selectedTone }
+          topic: topic,
+          generation_metadata: { model_used: 'gpt-4o', generation_cost: 1, tone_applied: tone }
         });
       }
 
@@ -167,15 +236,17 @@ Return structured script.`;
       await base44.entities.CreditTransaction.create({
         transaction_type: 'usage',
         amount: -creditsNeeded,
-        description: `Generated content for ${selectedPlatforms.length} platform(s)${mediaPrompt.trim() ? ' with media' : ''}`,
+        description: `Generated content for ${selectedPlatforms.length} platform(s) with media`,
         payment_gateway: 'none',
         balance_after: newDailyCredits + newPurchasedCredits
       });
+
+      return { topic, platformContent };
     },
-    onSuccess: () => {
-      toast({ title: '✨ Content Generated!', description: 'Check your Feed to review' });
-      setInput('');
-      setMediaPrompt('');
+    onSuccess: (data) => {
+      toast({ title: '✨ Content Generated!', description: 'Preview your content below' });
+      setGeneratedContent(data);
+      setSelectedPreviewPlatform(selectedPlatforms[0]);
       queryClient.invalidateQueries(['userPersona']);
     },
     onError: (error) => {
@@ -183,12 +254,101 @@ Return structured script.`;
     }
   });
 
+  const resetGenerator = () => {
+    setGeneratedContent(null);
+    setSelectedPreviewPlatform(null);
+    setSelectedPlatforms(['linkedin']);
+  };
+
+  if (generatedContent) {
+    const previewData = generatedContent.platformContent[selectedPreviewPlatform];
+    
+    return (
+      <Card className="bg-white/5 border border-white/10 backdrop-blur-xl rounded-2xl shadow-xl p-4 sm:p-6 space-y-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="text-base sm:text-lg font-bold text-white">Content Preview</h3>
+            <p className="text-xs text-indigo-300 mt-0.5">Review your generated content</p>
+          </div>
+          <Button onClick={resetGenerator} size="sm" variant="outline" className="text-xs">
+            Generate New
+          </Button>
+        </div>
+
+        {/* Platform Selector */}
+        <div>
+          <Label className="text-indigo-300 mb-2 block text-xs sm:text-sm">Select Platform to Preview</Label>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            {selectedPlatforms.map((platformId) => {
+              const platform = platforms.find(p => p.id === platformId);
+              const Icon = platform.icon;
+              const isActive = selectedPreviewPlatform === platformId;
+              return (
+                <button
+                  key={platformId}
+                  onClick={() => setSelectedPreviewPlatform(platformId)}
+                  className={`p-3 rounded-xl border-2 transition-all ${
+                    isActive
+                      ? 'border-indigo-500 bg-indigo-500/20'
+                      : 'border-white/10 bg-white/5 hover:border-white/20'
+                  }`}
+                >
+                  <Icon className={`w-5 h-5 mx-auto mb-1 ${isActive ? 'text-white' : platform.color}`} />
+                  <p className={`text-xs font-medium ${isActive ? 'text-white' : 'text-slate-400'}`}>
+                    {platform.name}
+                  </p>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Topic */}
+        <div>
+          <Label className="text-indigo-300 mb-2 block text-xs sm:text-sm">Generated Topic</Label>
+          <div className="bg-white/10 rounded-xl p-3 border border-white/10">
+            <p className="text-white text-sm">{generatedContent.topic}</p>
+          </div>
+        </div>
+
+        {/* Media Preview */}
+        <div>
+          <Label className="text-indigo-300 mb-2 block text-xs sm:text-sm">Generated Media</Label>
+          <div className="bg-white/10 rounded-xl p-3 border border-white/10 space-y-2">
+            <img 
+              src={previewData.mediaUrl} 
+              alt="Generated media" 
+              className="w-full rounded-lg"
+            />
+            <p className="text-xs text-slate-400 mt-2">Prompt: {previewData.mediaPrompt}</p>
+          </div>
+        </div>
+
+        {/* Content Preview */}
+        <div>
+          <Label className="text-indigo-300 mb-2 block text-xs sm:text-sm">Post Content</Label>
+          <Textarea
+            value={previewData.text}
+            readOnly
+            className="w-full rounded-xl bg-white/10 text-white p-3 border border-white/10 text-xs sm:text-sm"
+            rows={8}
+          />
+        </div>
+
+        <div className="bg-green-500/20 border border-green-500/30 rounded-xl p-3 flex items-center gap-2">
+          <Check className="w-5 h-5 text-green-400" />
+          <p className="text-sm text-green-300">Content saved to Feed for review!</p>
+        </div>
+      </Card>
+    );
+  }
+
   return (
     <Card className="bg-white/5 border border-white/10 backdrop-blur-xl rounded-2xl shadow-xl p-4 sm:p-6 space-y-4">
       <div className="flex items-center justify-between">
         <div>
           <h3 className="text-base sm:text-lg font-bold text-white">Content Generator</h3>
-          <p className="text-xs text-indigo-300 mt-0.5">Generate multi-platform content</p>
+          <p className="text-xs text-indigo-300 mt-0.5">AI generates everything automatically</p>
         </div>
         <div className="flex items-center gap-2">
           <Coins className="w-4 h-4 text-yellow-400" />
@@ -229,60 +389,19 @@ Return structured script.`;
         )}
       </div>
 
-      <div>
-        <Label className="text-indigo-300 mb-2 block text-xs sm:text-sm">Topic or URL</Label>
-        <Textarea
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="Enter a topic, paste a URL, or leave blank to use your saved sources..."
-          className="w-full rounded-xl bg-white/10 text-white p-3 sm:p-4 focus:ring-2 focus:ring-indigo-500 border border-white/10 text-xs sm:text-sm"
-          rows={3}
-        />
-      </div>
-
-      <div className="border-t border-white/10 pt-4">
-        <div className="flex items-center justify-between mb-2">
-          <Label className="text-indigo-300 text-xs sm:text-sm flex items-center gap-2">
-            <ImageIcon className="w-4 h-4" />
-            Media Prompt (Optional)
-          </Label>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={generateMediaPrompt}
-            disabled={isGeneratingPrompt || !input.trim()}
-            className="text-cyan-400 hover:text-cyan-300 text-xs"
-          >
-            {isGeneratingPrompt ? (
-              <>
-                <Loader2 className="w-3 h-3 mr-1 animate-spin" />
-                Generating...
-              </>
-            ) : (
-              <>
-                <Wand2 className="w-3 h-3 mr-1" />
-                Auto-Generate
-              </>
-            )}
-          </Button>
-        </div>
-        <Textarea
-          value={mediaPrompt}
-          onChange={(e) => setMediaPrompt(e.target.value)}
-          placeholder="Click Auto-Generate or write your own image description..."
-          className="w-full rounded-xl bg-white/10 text-white p-3 border border-white/10 text-xs sm:text-sm"
-          rows={3}
-        />
-        {mediaPrompt.trim() && (
-          <p className="text-xs text-yellow-400 mt-1">
-            💡 Media generation will cost +2 credits
-          </p>
-        )}
+      <div className="bg-indigo-500/10 border border-indigo-500/20 rounded-xl p-4 space-y-2">
+        <p className="text-sm text-indigo-300 font-medium">🤖 AI will automatically:</p>
+        <ul className="text-xs text-slate-300 space-y-1 ml-4">
+          <li>• Generate a topic from your sources</li>
+          <li>• Create platform-optimized content</li>
+          <li>• Generate a media prompt & image</li>
+          <li>• Apply your persona tone</li>
+        </ul>
       </div>
 
       <Button
         onClick={() => generateMutation.mutate()}
-        disabled={generateMutation.isPending || !input.trim() || selectedPlatforms.length === 0 || !hasSources || !hasTone}
+        disabled={generateMutation.isPending || selectedPlatforms.length === 0 || !hasSources || !hasTone}
         className="w-full bg-gradient-to-r from-indigo-600 to-indigo-400 text-white py-3 sm:py-4 rounded-xl sm:rounded-2xl shadow-lg hover:from-indigo-500 hover:to-indigo-300 text-xs sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {generateMutation.isPending ? (
@@ -293,7 +412,7 @@ Return structured script.`;
         ) : (
           <>
             <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
-            Generate ({selectedPlatforms.length + (mediaPrompt.trim() ? 2 : 0)} Credit{(selectedPlatforms.length + (mediaPrompt.trim() ? 2 : 0)) > 1 ? 's' : ''})
+            Generate ({selectedPlatforms.length + 2} Credits)
           </>
         )}
       </Button>

@@ -91,10 +91,10 @@ export default function Create() {
 
       {/* Tabs - Segmented Control Style */}
       <Tabs value={activeTab} onValueChange={(val) => { setActiveTab(val); setManualMode(true); }} className="w-full">
-        <TabsList className="grid w-full grid-cols-3 bg-slate-900/50 border border-white/10 backdrop-blur-xl rounded-full p-1 text-xs sm:text-sm">
-          <TabsTrigger value="sources" className="data-[state=active]:bg-indigo-600 data-[state=active]:shadow-lg rounded-full h-10 font-semibold transition-all">Sources</TabsTrigger>
-          <TabsTrigger value="tone" disabled={!hasSources} className="data-[state=active]:bg-indigo-600 data-[state=active]:shadow-lg rounded-full h-10 font-semibold disabled:opacity-40 disabled:cursor-not-allowed transition-all">Tone</TabsTrigger>
-          <TabsTrigger value="generate" disabled={!hasTone} className="data-[state=active]:bg-indigo-600 data-[state=active]:shadow-lg rounded-full h-10 font-semibold disabled:opacity-40 disabled:cursor-not-allowed transition-all">Generate</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-3 bg-slate-900/50 border border-white/10 backdrop-blur-xl rounded-full p-1.5 text-xs sm:text-sm">
+          <TabsTrigger value="sources" className="data-[state=active]:bg-indigo-600 data-[state=active]:shadow-lg data-[state=active]:text-white rounded-full h-9 sm:h-10 font-semibold transition-all relative z-10">Sources</TabsTrigger>
+          <TabsTrigger value="tone" disabled={!hasSources} className="data-[state=active]:bg-indigo-600 data-[state=active]:shadow-lg data-[state=active]:text-white rounded-full h-9 sm:h-10 font-semibold disabled:opacity-40 disabled:cursor-not-allowed transition-all relative z-10">Tone</TabsTrigger>
+          <TabsTrigger value="generate" disabled={!hasTone} className="data-[state=active]:bg-indigo-600 data-[state=active]:shadow-lg data-[state=active]:text-white rounded-full h-9 sm:h-10 font-semibold disabled:opacity-40 disabled:cursor-not-allowed transition-all relative z-10">Generate</TabsTrigger>
         </TabsList>
 
         <TabsContent value="sources" className="space-y-4 mt-6">

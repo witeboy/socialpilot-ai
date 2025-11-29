@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion, useMotionValue, useTransform } from 'framer-motion';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Linkedin, Twitter, Youtube, Music, ThumbsUp, ThumbsDown, Flame } from 'lucide-react';
+import { Linkedin, Twitter, Youtube, Music, ThumbsUp, ThumbsDown, Flame, ChevronDown, ChevronUp } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
 
 const platformConfig = {
   linkedin: { icon: Linkedin, color: '#0A66C2' },
@@ -12,6 +13,7 @@ const platformConfig = {
 };
 
 export default function SwipeCard({ draft, onSwipe, isTop }) {
+  const [isExpanded, setIsExpanded] = useState(false);
   const x = useMotionValue(0);
   const rotate = useTransform(x, [-200, 200], [-15, 15]);
   const opacity = useTransform(x, [-200, -100, 0, 100, 200], [0.5, 1, 1, 1, 0.5]);
@@ -90,21 +92,60 @@ export default function SwipeCard({ draft, onSwipe, isTop }) {
           <span>{draft.virality_score}/100</span>
         </div>
 
-        {/* Content Area */}
-        <div className="flex-1 overflow-auto mt-12 space-y-3 sm:space-y-4">
-          {/* Post Text Block */}
+        {/* Content Area - Scrollable with Read More */}
+        <div className="flex-1 overflow-auto mt-12 space-y-3 sm:space-y-4 no-scrollbar">
+          {/* Post Text Block with Markdown */}
           <div 
             style={{
               background: 'rgba(255,255,255,0.04)',
-              padding: '14px',
-              borderRadius: '12px',
-              fontSize: '14px',
-              lineHeight: '1.4',
-              color: '#CBD5E1'
+              padding: '16px',
+              borderRadius: '12px'
             }}
-            className="sm:text-[15px] md:text-[16px]"
           >
-            {draft.text_content}
+            <div className={`prose prose-invert prose-sm max-w-none ${!isExpanded ? 'line-clamp-6' : ''}`}>
+              <ReactMarkdown
+                components={{
+                  a: ({ node, ...props }) => (
+                    <a 
+                      {...props} 
+                      className="text-indigo-400 hover:text-indigo-300 underline font-medium" 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                    />
+                  ),
+                  p: ({ node, ...props }) => (
+                    <p 
+                      {...props} 
+                      className="text-slate-200 text-sm sm:text-base leading-relaxed mb-2 last:mb-0" 
+                    />
+                  ),
+                  strong: ({ node, ...props }) => (
+                    <strong {...props} className="text-white font-semibold" />
+                  ),
+                  em: ({ node, ...props }) => (
+                    <em {...props} className="text-slate-300 italic" />
+                  )
+                }}
+              >
+                {draft.text_content}
+              </ReactMarkdown>
+            </div>
+            {draft.text_content && draft.text_content.length > 300 && (
+              <button
+                onClick={() => setIsExpanded(!isExpanded)}
+                className="mt-3 text-indigo-400 hover:text-indigo-300 text-xs sm:text-sm font-medium flex items-center gap-1"
+              >
+                {isExpanded ? (
+                  <>
+                    Show Less <ChevronUp className="w-4 h-4" />
+                  </>
+                ) : (
+                  <>
+                    Read More <ChevronDown className="w-4 h-4" />
+                  </>
+                )}
+              </button>
+            )}
           </div>
 
           {/* Media Preview with Aspect Ratio */}
@@ -136,26 +177,36 @@ export default function SwipeCard({ draft, onSwipe, isTop }) {
           )}
         </div>
 
-        {/* Bottom Action Buttons - Responsive Grid */}
+        {/* Bottom Action Buttons - Sticky with Gradient */}
         <div 
-          className="grid grid-cols-2 gap-3 mt-4 pt-4 border-t border-white/10"
-          style={{ gridTemplateColumns: 'repeat(2, 1fr)' }}
+          className="sticky bottom-0 pt-6 mt-4 border-t border-white/10"
+          style={{
+            background: 'linear-gradient(to top, rgba(17,24,39,1) 70%, rgba(17,24,39,0.7))',
+            marginLeft: '-16px',
+            marginRight: '-16px',
+            marginBottom: '-16px',
+            paddingLeft: '16px',
+            paddingRight: '16px',
+            paddingBottom: '16px'
+          }}
         >
-          <Button
-            onClick={handleReject}
-            variant="outline"
-            className="h-11 rounded-xl border-[#F87171] text-[#F87171] bg-transparent hover:bg-[#F87171]/10 text-[14px] sm:text-[15px] font-semibold"
-          >
-            <ThumbsDown className="w-4 h-4 mr-2" />
-            Reject
-          </Button>
-          <Button
-            onClick={handleApprove}
-            className="h-11 rounded-xl bg-[#4ADE80] text-[#052e16] hover:bg-[#4ADE80]/90 text-[14px] sm:text-[15px] font-semibold"
-          >
-            <ThumbsUp className="w-4 h-4 mr-2" />
-            Approve
-          </Button>
+          <div className="grid grid-cols-2 gap-3">
+            <Button
+              onClick={handleReject}
+              variant="outline"
+              className="h-12 sm:h-14 rounded-xl sm:rounded-2xl border-2 border-[#F87171] text-[#F87171] bg-transparent hover:bg-[#F87171]/10 text-sm sm:text-base font-semibold"
+            >
+              <ThumbsDown className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
+              Reject
+            </Button>
+            <Button
+              onClick={handleApprove}
+              className="h-12 sm:h-14 rounded-xl sm:rounded-2xl bg-[#4ADE80] text-[#052e16] hover:bg-[#4ADE80]/90 text-sm sm:text-base font-semibold shadow-lg"
+            >
+              <ThumbsUp className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
+              Approve
+            </Button>
+          </div>
         </div>
 
         {/* Swipe Overlay - Reject */}

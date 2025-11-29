@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Sparkles, TrendingUp, Calendar, Target, Coins, Plus, Play, Layers } from 'lucide-react';
+import { Sparkles, TrendingUp, Calendar, Target, Coins, Plus, Play, Layers, PlusSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '../utils';
 import { toast } from 'sonner';
+import ReactMarkdown from 'react-markdown';
 
 export default function Home() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [user, setUser] = useState(null);
-  const [dailyBriefing, setDailyBriefing] = useState('');
 
   // Fetch user and persona
   const { data: userPersona, isLoading: personaLoading } = useQuery({
@@ -136,98 +136,109 @@ Make it punchy and actionable. Return ONLY the briefing text.`;
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0F0F1A] to-[#121B2E] p-4 pb-24">
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-4 pb-24">
       <div className="max-w-2xl mx-auto space-y-5">
         {/* Header with Credits Widget */}
         <div className="flex items-center justify-between pt-4 px-2">
           <div>
-            <h1 className="text-xl font-bold text-white">Dashboard</h1>
-            <p className="text-xs text-indigo-400">Your Control Hub</p>
+            <h1 className="text-2xl sm:text-3xl font-bold text-white">Dashboard</h1>
+            <p className="text-xs sm:text-sm text-indigo-400">Your Control Hub</p>
           </div>
           <div 
             onClick={() => navigate(createPageUrl('Settings'))}
-            className="flex items-center gap-2 bg-gradient-to-br from-indigo-600/20 to-purple-600/20 backdrop-blur-xl border border-indigo-500/30 rounded-2xl px-4 py-2 cursor-pointer hover:scale-105 transition-transform"
+            className="flex items-center gap-2 bg-slate-900/50 backdrop-blur-xl border border-indigo-500/30 rounded-2xl px-4 py-3 cursor-pointer hover:border-indigo-500/50 transition-all"
           >
             <Coins className="w-5 h-5 text-yellow-400" />
             <div className="text-right">
-              <p className="text-2xl font-bold text-white">{totalCredits}</p>
+              <p className="text-xl sm:text-2xl font-bold text-white">{totalCredits}</p>
               <p className="text-xs text-indigo-300">Credits</p>
             </div>
           </div>
         </div>
 
-        {/* AI Daily Briefing */}
-        <Card className="bg-gradient-to-br from-indigo-600/10 to-purple-600/10 border border-indigo-500/20 backdrop-blur-xl rounded-2xl shadow-xl p-4">
-          <div className="flex items-start gap-3">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center flex-shrink-0">
-              <Sparkles className="w-5 h-5 text-white" />
+        {/* AI Daily Briefing with Markdown */}
+        {briefing && (
+          <Card className="bg-gradient-to-br from-purple-900/30 to-indigo-900/30 backdrop-blur-xl border border-purple-500/20 rounded-2xl p-5 sm:p-6 space-y-3">
+            <div className="flex items-center gap-2">
+              <Sparkles className="w-5 h-5 text-purple-400" />
+              <h3 className="text-base sm:text-lg font-bold text-white">Daily AI Briefing</h3>
             </div>
-            <div className="flex-1">
-              <p className="text-xs text-indigo-300 font-semibold mb-1">Daily Briefing</p>
-              <p className="text-sm text-white/90 leading-relaxed font-['Plus_Jakarta_Sans']">
-                {briefing || 'Loading your personalized briefing...'}
-              </p>
+            <div className="prose prose-invert prose-sm max-w-none">
+              <ReactMarkdown
+                components={{
+                  a: ({ node, ...props }) => (
+                    <a {...props} className="text-indigo-400 hover:text-indigo-300 underline" target="_blank" rel="noopener noreferrer" />
+                  ),
+                  p: ({ node, ...props }) => (
+                    <p {...props} className="text-slate-300 text-sm leading-relaxed mb-2" />
+                  )
+                }}
+              >
+                {briefing}
+              </ReactMarkdown>
             </div>
+          </Card>
+        )}
+
+        {/* Quick Stats - Enhanced with Icons */}
+        <div className="grid grid-cols-2 gap-3 sm:gap-4">
+          <div className="bg-slate-900/50 backdrop-blur-xl border border-cyan-500/20 rounded-2xl p-4 space-y-2 hover:border-cyan-500/40 transition-all">
+            <div className="flex items-center gap-2 text-cyan-400">
+              <div className="w-8 h-8 bg-cyan-500/20 rounded-lg flex items-center justify-center">
+                <Calendar className="w-4 h-4" />
+              </div>
+              <span className="text-xs font-medium">Scheduled</span>
+            </div>
+            <p className="text-2xl sm:text-3xl font-bold text-white">{scheduledPosts.length}</p>
+            <p className="text-xs text-slate-400">Posts in queue</p>
           </div>
-        </Card>
-
-        {/* Quick Stats - 3 Cards */}
-        <div className="grid grid-cols-3 gap-3">
-          <Card className="bg-white/5 border border-white/10 backdrop-blur-xl rounded-xl p-4">
-            <div className="flex flex-col items-center text-center">
-              <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center mb-2">
-                <Calendar className="w-5 h-5 text-blue-400" />
+          <div className="bg-slate-900/50 backdrop-blur-xl border border-green-500/20 rounded-2xl p-4 space-y-2 hover:border-green-500/40 transition-all">
+            <div className="flex items-center gap-2 text-green-400">
+              <div className="w-8 h-8 bg-green-500/20 rounded-lg flex items-center justify-center">
+                <TrendingUp className="w-4 h-4" />
               </div>
-              <p className="text-2xl font-bold text-white">{scheduledPosts.length}</p>
-              <p className="text-xs text-indigo-300 mt-1">Scheduled</p>
+              <span className="text-xs font-medium">Approved</span>
             </div>
-          </Card>
-
-          <Card className="bg-white/5 border border-white/10 backdrop-blur-xl rounded-xl p-4">
-            <div className="flex flex-col items-center text-center">
-              <div className="w-10 h-10 rounded-full bg-green-500/20 flex items-center justify-center mb-2">
-                <TrendingUp className="w-5 h-5 text-green-400" />
-              </div>
-              <p className="text-2xl font-bold text-white">{avgVirality}%</p>
-              <p className="text-xs text-indigo-300 mt-1">Avg Score</p>
-            </div>
-          </Card>
-
-          <Card className="bg-white/5 border border-white/10 backdrop-blur-xl rounded-xl p-4">
-            <div className="flex flex-col items-center text-center">
-              <div className="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center mb-2">
-                <Target className="w-5 h-5 text-purple-400" />
-              </div>
-              <p className="text-lg font-bold text-white">{nextPost}</p>
-              <p className="text-xs text-indigo-300 mt-1">Next Post</p>
-            </div>
-          </Card>
+            <p className="text-2xl sm:text-3xl font-bold text-white">{userPersona?.approved_posts_count || 0}</p>
+            <p className="text-xs text-slate-400">Total this month</p>
+          </div>
         </div>
 
-        {/* Quick Actions - Large Thumb-Friendly Buttons */}
-        <div className="grid grid-cols-2 gap-4">
-          <Button
-            onClick={() => navigate(createPageUrl('Create'))}
-            className="h-28 flex flex-col items-center justify-center gap-3 bg-gradient-to-br from-indigo-600 to-indigo-400 hover:from-indigo-500 hover:to-indigo-300 rounded-2xl text-white shadow-xl hover:scale-105 transition-transform"
-          >
-            <Plus className="w-8 h-8" />
-            <span className="text-sm font-bold">Create New Post</span>
-          </Button>
-
-          <Button
-            onClick={() => navigate(createPageUrl('Create') + '?tab=sources')}
-            className="h-28 flex flex-col items-center justify-center gap-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl text-white hover:scale-105 transition-transform"
-          >
-            <Layers className="w-8 h-8 text-indigo-400" />
-            <span className="text-sm font-bold">Manage Sources</span>
-          </Button>
+        {/* Quick Actions - Glass Cards with Icons */}
+        <div className="space-y-3">
+          <Link to={createPageUrl('Create')}>
+            <div className="bg-slate-900/50 backdrop-blur-xl border border-white/10 rounded-2xl p-4 hover:border-indigo-500/30 transition-all group">
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg">
+                  <PlusSquare className="w-7 h-7 text-white" />
+                </div>
+                <div className="flex-1">
+                  <p className="font-bold text-white text-base">Create Content</p>
+                  <p className="text-xs text-slate-400 mt-0.5">Generate new posts with AI</p>
+                </div>
+              </div>
+            </div>
+          </Link>
+          <Link to={createPageUrl('Create') + '?tab=sources'}>
+            <div className="bg-slate-900/50 backdrop-blur-xl border border-white/10 rounded-2xl p-4 hover:border-cyan-500/30 transition-all group">
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 bg-gradient-to-br from-cyan-600 to-teal-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg">
+                  <Layers className="w-7 h-7 text-white" />
+                </div>
+                <div className="flex-1">
+                  <p className="font-bold text-white text-base">Manage Sources</p>
+                  <p className="text-xs text-slate-400 mt-0.5">Configure content sources</p>
+                </div>
+              </div>
+            </div>
+          </Link>
         </div>
 
         {/* Watch to Earn Section */}
         <Card className="bg-gradient-to-br from-green-600/10 to-emerald-600/10 border border-green-500/20 backdrop-blur-xl rounded-2xl shadow-xl p-5">
           <div className="flex items-center justify-between mb-3">
             <div>
-              <h3 className="text-white font-bold text-lg flex items-center gap-2">
+              <h3 className="text-white font-bold text-base sm:text-lg flex items-center gap-2">
                 <Play className="w-5 h-5 text-green-400" />
                 Watch to Earn
               </h3>
@@ -236,14 +247,14 @@ Make it punchy and actionable. Return ONLY the briefing text.`;
               </p>
             </div>
             <div className="text-right">
-              <p className="text-sm text-indigo-300">Daily Credits</p>
-              <p className="text-2xl font-bold text-green-400">{userPersona?.daily_ad_credits || 0}</p>
+              <p className="text-xs sm:text-sm text-indigo-300">Daily Credits</p>
+              <p className="text-xl sm:text-2xl font-bold text-green-400">{userPersona?.daily_ad_credits || 0}</p>
             </div>
           </div>
           <Button
             onClick={() => watchAdMutation.mutate()}
             disabled={watchAdMutation.isPending || (userPersona?.ad_credits_earned_today || 0) >= 10}
-            className="w-full bg-gradient-to-r from-green-600 to-emerald-500 hover:from-green-500 hover:to-emerald-400 text-white py-3 rounded-xl font-semibold"
+            className="w-full h-12 sm:h-14 bg-gradient-to-r from-green-600 to-emerald-500 hover:from-green-500 hover:to-emerald-400 text-white rounded-xl sm:rounded-2xl font-semibold text-sm sm:text-base shadow-lg"
           >
             {watchAdMutation.isPending ? 'Playing Ad...' : 
              (userPersona?.ad_credits_earned_today || 0) >= 10 ? 'Daily Limit Reached' : 

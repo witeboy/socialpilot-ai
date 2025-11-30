@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { AnimatePresence } from 'framer-motion';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { Card } from '@/components/ui/card';
+import { AnimatePresence, motion } from 'framer-motion';
 import SwipeCard from '../components/feed/SwipeCard';
-import EmptyFeed from '../components/feed/EmptyFeed';
+import ContentCard from '../components/feed/ContentCard';
+import { Clock, CheckCircle, XCircle, Send, Calendar } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function Feed() {
@@ -19,14 +22,33 @@ export default function Feed() {
     }
   });
 
-  const { data: drafts = [], isLoading } = useQuery({
+  const { data: pendingDrafts = [], isLoading: loadingPending } = useQuery({
     queryKey: ['pendingDrafts'],
     queryFn: () => base44.entities.ContentDraft.filter({ status: 'pending' }, '-created_date')
   });
 
+  const { data: approvedDrafts = [] } = useQuery({
+    queryKey: ['approvedDrafts'],
+    queryFn: () => base44.entities.ContentDraft.filter({ status: 'approved' }, '-created_date')
+  });
+
+  const { data: rejectedDrafts = [] } = useQuery({
+    queryKey: ['rejectedDrafts'],
+    queryFn: () => base44.entities.ContentDraft.filter({ status: 'rejected' }, '-created_date')
+  });
+
+  const { data: scheduledPosts = [] } = useQuery({
+    queryKey: ['scheduledPosts'],
+    queryFn: () => base44.entities.ContentPost.filter({ post_status: 'scheduled' }, '-scheduled_for')
+  });
+
+  const { data: postedContent = [] } = useQuery({
+    queryKey: ['postedContent'],
+    queryFn: () => base44.entities.ContentPost.filter({ post_status: 'posted' }, '-posted_at')
+  });
+
   const approveMutation = useMutation({
     mutationFn: async (draft) => {
-      // Check if social account is connected
       const user = await base44.auth.me();
       const socialAccounts = await base44.entities.SocialAccount.filter({ 
         created_by: user.email,
@@ -38,7 +60,6 @@ export default function Feed() {
       let platformPostId = null;
       let postedAt = null;
 
-      // If connected, attempt to post immediately
       if (socialAccounts.length > 0) {
         try {
           const result = await base44.functions.invoke('autopost', {
@@ -58,10 +79,8 @@ export default function Feed() {
         }
       }
 
-      // Update draft status
       await base44.entities.ContentDraft.update(draft.id, { status: 'approved' });
 
-      // Create post record
       const scheduledTime = new Date();
       scheduledTime.setHours(
         parseInt(userPersona?.posting_time?.split(':')[0] || 12),
@@ -81,7 +100,6 @@ export default function Feed() {
         platform_post_id: platformPostId
       });
 
-      // Update approval count
       if (userPersona) {
         await base44.entities.UserPersona.update(userPersona.id, {
           approved_posts_count: (userPersona.approved_posts_count || 0) + 1
@@ -97,6 +115,9 @@ export default function Feed() {
         toast.success('Approved!', { description: 'Content scheduled for posting', duration: 3000 });
       }
       queryClient.invalidateQueries(['pendingDrafts']);
+      queryClient.invalidateQueries(['approvedDrafts']);
+      queryClient.invalidateQueries(['scheduledPosts']);
+      queryClient.invalidateQueries(['postedContent']);
       queryClient.invalidateQueries(['userPersona']);
       setCurrentIndex((prev) => prev + 1);
     }
@@ -107,6 +128,7 @@ export default function Feed() {
     onSuccess: () => {
       toast.error('Post Rejected');
       queryClient.invalidateQueries(['pendingDrafts']);
+      queryClient.invalidateQueries(['rejectedDrafts']);
       setCurrentIndex((prev) => prev + 1);
     }
   });
@@ -119,65 +141,148 @@ export default function Feed() {
     }
   };
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-400"></div>
-      </div>
-    );
-  }
-
-  if (!drafts || drafts.length === 0 || currentIndex >= drafts.length) {
-    return <EmptyFeed />;
-  }
-
   const needsManualApproval = (userPersona?.approved_posts_count || 0) < 3;
 
   return (
-    <div className="h-screen flex flex-col bg-slate-50">
-      {/* Sticky Header */}
-      <div className="sticky top-0 z-20 pt-6 pb-4 px-4 bg-slate-50">
-        <div className="mx-auto" style={{ maxWidth: 'clamp(360px, 90vw, 760px)' }}>
-          <h1 className="text-[20px] sm:text-[24px] md:text-[28px] font-bold text-slate-900 text-center">
-            Review Feed
-          </h1>
-          <p className="text-[13px] sm:text-[14px] md:text-[16px] text-slate-600 text-center mt-1">
-            Swipe right to approve, left to reject
-          </p>
-          {needsManualApproval && (
-            <div 
-              className="mt-3 mx-auto flex items-center justify-center gap-2 bg-amber-50 border border-amber-200 rounded-full px-4 py-2"
-              style={{ maxWidth: '280px' }}
-            >
-              <span className="text-[12px] sm:text-[13px] text-amber-700 font-medium">
-                ⚠️ First 3 approvals: {userPersona?.approved_posts_count || 0}/3
-              </span>
-            </div>
-          )}
+    <div className="min-h-screen bg-slate-50 p-4 pb-24">
+      <div className="max-w-2xl mx-auto space-y-4">
+        {/* Header */}
+        <div className="text-center pt-4 pb-2">
+          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">Content Feed</h1>
+          <p className="text-xs sm:text-sm text-slate-600 mt-1">Manage your content pipeline</p>
         </div>
-      </div>
 
-      {/* Constraint-Based Content Column */}
-      <div className="flex-1 relative mx-auto w-full" style={{ maxWidth: 'clamp(360px, 90vw, 760px)' }}>
-        <AnimatePresence>
-          {drafts.slice(currentIndex, currentIndex + 2).map((draft, idx) => (
-            <SwipeCard
-              key={draft.id}
-              draft={draft}
-              onSwipe={handleSwipe}
-              isTop={idx === 0}
-            />
-          ))}
-        </AnimatePresence>
-      </div>
-
-      {/* Sticky Counter */}
-      <div className="sticky bottom-20 z-20 pb-4 text-center">
-        <div className="inline-block bg-white shadow-md px-4 py-2 rounded-full border border-slate-200">
-          <p className="text-slate-700 text-sm font-semibold">
-            {currentIndex + 1} of {drafts.length}
-          </p>
+        {/* Stats Cards */}
+        <div className="grid grid-cols-4 gap-2">
+          <Card className="bg-white border border-slate-200 rounded-xl p-3 text-center shadow-sm">
+            <Clock className="w-5 h-5 mx-auto mb-1 text-amber-500" />
+            <p className="text-lg font-bold text-slate-900">{pendingDrafts.length}</p>
+            <p className="text-[10px] text-slate-600">In Queue</p>
+          </Card>
+          <Card className="bg-white border border-slate-200 rounded-xl p-3 text-center shadow-sm">
+            <CheckCircle className="w-5 h-5 mx-auto mb-1 text-green-500" />
+            <p className="text-lg font-bold text-slate-900">{approvedDrafts.length}</p>
+            <p className="text-[10px] text-slate-600">Approved</p>
+          </Card>
+          <Card className="bg-white border border-slate-200 rounded-xl p-3 text-center shadow-sm">
+            <Calendar className="w-5 h-5 mx-auto mb-1 text-blue-500" />
+            <p className="text-lg font-bold text-slate-900">{scheduledPosts.length}</p>
+            <p className="text-[10px] text-slate-600">Scheduled</p>
+          </Card>
+          <Card className="bg-white border border-slate-200 rounded-xl p-3 text-center shadow-sm">
+            <Send className="w-5 h-5 mx-auto mb-1 text-[#0FB5BA]" />
+            <p className="text-lg font-bold text-slate-900">{postedContent.length}</p>
+            <p className="text-[10px] text-slate-600">Posted</p>
+          </Card>
         </div>
+
+        {/* Tabs for Content Sections */}
+        <Tabs defaultValue="queue" className="w-full">
+          <TabsList className="grid w-full grid-cols-4 bg-slate-100 border border-slate-200 rounded-full p-1 text-xs">
+            <TabsTrigger value="queue" className="data-[state=active]:bg-[#0FB5BA] data-[state=active]:text-white text-slate-700 rounded-full h-10 font-semibold">
+              Queue
+            </TabsTrigger>
+            <TabsTrigger value="approved" className="data-[state=active]:bg-[#0FB5BA] data-[state=active]:text-white text-slate-700 rounded-full h-10 font-semibold">
+              Approved
+            </TabsTrigger>
+            <TabsTrigger value="scheduled" className="data-[state=active]:bg-[#0FB5BA] data-[state=active]:text-white text-slate-700 rounded-full h-10 font-semibold">
+              Scheduled
+            </TabsTrigger>
+            <TabsTrigger value="posted" className="data-[state=active]:bg-[#0FB5BA] data-[state=active]:text-white text-slate-700 rounded-full h-10 font-semibold">
+              Posted
+            </TabsTrigger>
+          </TabsList>
+
+          {/* Queue Tab - Swipeable Cards */}
+          <TabsContent value="queue" className="space-y-4 mt-4">
+            {loadingPending ? (
+              <div className="flex items-center justify-center h-64">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-400"></div>
+              </div>
+            ) : pendingDrafts.length === 0 || currentIndex >= pendingDrafts.length ? (
+              <Card className="bg-white border border-slate-200 rounded-xl p-8 text-center shadow-md">
+                <Clock className="w-12 h-12 mx-auto mb-3 text-slate-300" />
+                <h3 className="text-lg font-bold text-slate-900 mb-1">No Pending Posts</h3>
+                <p className="text-sm text-slate-600">All caught up! Create new content to get started.</p>
+              </Card>
+            ) : (
+              <>
+                {needsManualApproval && (
+                  <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 flex items-center gap-2">
+                    <span className="text-xs text-amber-700 font-medium">
+                      ⚠️ First 3 approvals: {userPersona?.approved_posts_count || 0}/3
+                    </span>
+                  </div>
+                )}
+                <p className="text-center text-sm text-slate-600 mb-2">Swipe right to approve, left to reject</p>
+                <div className="relative" style={{ minHeight: '500px' }}>
+                  <AnimatePresence>
+                    {pendingDrafts.slice(currentIndex, currentIndex + 2).map((draft, idx) => (
+                      <SwipeCard
+                        key={draft.id}
+                        draft={draft}
+                        onSwipe={handleSwipe}
+                        isTop={idx === 0}
+                      />
+                    ))}
+                  </AnimatePresence>
+                </div>
+                <div className="text-center mt-4">
+                  <div className="inline-block bg-white shadow-md px-4 py-2 rounded-full border border-slate-200">
+                    <p className="text-slate-700 text-sm font-semibold">
+                      {currentIndex + 1} of {pendingDrafts.length}
+                    </p>
+                  </div>
+                </div>
+              </>
+            )}
+          </TabsContent>
+
+          {/* Approved Tab */}
+          <TabsContent value="approved" className="space-y-3 mt-4">
+            {approvedDrafts.length === 0 ? (
+              <Card className="bg-white border border-slate-200 rounded-xl p-8 text-center shadow-md">
+                <CheckCircle className="w-12 h-12 mx-auto mb-3 text-slate-300" />
+                <h3 className="text-lg font-bold text-slate-900 mb-1">No Approved Posts</h3>
+                <p className="text-sm text-slate-600">Approve posts from the queue to see them here.</p>
+              </Card>
+            ) : (
+              approvedDrafts.map((draft) => (
+                <ContentCard key={draft.id} content={draft} type="approved" />
+              ))
+            )}
+          </TabsContent>
+
+          {/* Scheduled Tab */}
+          <TabsContent value="scheduled" className="space-y-3 mt-4">
+            {scheduledPosts.length === 0 ? (
+              <Card className="bg-white border border-slate-200 rounded-xl p-8 text-center shadow-md">
+                <Calendar className="w-12 h-12 mx-auto mb-3 text-slate-300" />
+                <h3 className="text-lg font-bold text-slate-900 mb-1">No Scheduled Posts</h3>
+                <p className="text-sm text-slate-600">Posts will appear here when scheduled.</p>
+              </Card>
+            ) : (
+              scheduledPosts.map((post) => (
+                <ContentCard key={post.id} content={post} type="scheduled" />
+              ))
+            )}
+          </TabsContent>
+
+          {/* Posted Tab */}
+          <TabsContent value="posted" className="space-y-3 mt-4">
+            {postedContent.length === 0 ? (
+              <Card className="bg-white border border-slate-200 rounded-xl p-8 text-center shadow-md">
+                <Send className="w-12 h-12 mx-auto mb-3 text-slate-300" />
+                <h3 className="text-lg font-bold text-slate-900 mb-1">No Posted Content</h3>
+                <p className="text-sm text-slate-600">Published posts will appear here.</p>
+              </Card>
+            ) : (
+              postedContent.map((post) => (
+                <ContentCard key={post.id} content={post} type="posted" />
+              ))
+            )}
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );

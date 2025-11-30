@@ -41,36 +41,23 @@ export default function SourcesManager({ onComplete }) {
         autoTitle = text.substring(0, 50) + (text.length > 50 ? '...' : '');
         scrapedContent = text;
       } else {
-        // Scrape content from URL or RSS using Base44's fetch_website
-        sonnerToast.loading('Fetching content from source...');
+        // Scrape content from URL or RSS
         try {
-          const response = await base44.integrations.Core.FetchWebsite({
-            url: url,
-            formats: ['markdown']
-          });
-
-          scrapedContent = response.markdown || '';
+          const response = await base44.functions.invoke('scrapeUrl', { url });
           
-          // Limit to first 8000 characters
-          if (scrapedContent.length > 8000) {
-            scrapedContent = scrapedContent.substring(0, 8000) + '...';
+          if (!response.data.success) {
+            throw new Error(response.data.error || 'Failed to fetch content');
           }
 
-          // Extract title from URL
-          try {
-            const urlObj = new URL(url);
-            autoTitle = urlObj.hostname + urlObj.pathname;
-          } catch {
-            autoTitle = url;
-          }
+          scrapedContent = response.data.content;
+          autoTitle = response.data.title;
 
           if (!scrapedContent || scrapedContent.trim().length === 0) {
-            throw new Error('No content extracted');
+            throw new Error('No content extracted from URL');
           }
         } catch (error) {
           console.error('Scraping error:', error);
-          sonnerToast.error('Failed to fetch content from URL');
-          throw error;
+          throw new Error('Failed to fetch content: ' + error.message);
         }
       }
 

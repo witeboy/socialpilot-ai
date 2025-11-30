@@ -66,7 +66,7 @@ If a thread → return JSON:
  "hashtags": ["#tag1", "#tag2"]
 }`,
 
-  tiktok: `SYSTEM PROMPT — TIKTOK SCRIPT GENERATION
+  tiktok: `SYSTEM PROMPT — TIKTOK VIDEO SCRIPT GENERATION
 
   You generate a 10-second TikTok video script using:
   - SOURCE: Content or URL summary.
@@ -81,12 +81,12 @@ If a thread → return JSON:
   5. Keep the entire script deliverable in under 10 seconds.
   6. Use friendly, simple language; no jargon.
   7. No politics, sensitive topics, or controversy.
-  8. NEVER mention or include URLs, links, or web addresses.
-  9. End with exactly 3–6 relevant TikTok hashtags on separate lines.
+  8. NEVER include URLs, links, web addresses, or hashtags in the script.
+  9. This is a VIDEO SCRIPT meant to be spoken on camera, not a social media post.
 
-  Return ONLY the video script followed by hashtags.`,
+  Return ONLY the video script - pure spoken dialogue.`,
 
-  youtube: `SYSTEM PROMPT — YOUTUBE SHORTS GENERATION
+  youtube: `SYSTEM PROMPT — YOUTUBE SHORTS VIDEO SCRIPT GENERATION
 
   You generate a 10-second YouTube Shorts video script using:
   - SOURCE: The article/topic/URL summary.
@@ -101,10 +101,10 @@ If a thread → return JSON:
   5. Keep the entire script deliverable in under 10 seconds.
   6. No complicated language or long sentences.
   7. No politics, controversy, claims, or misinformation.
-  8. NEVER mention or include URLs, links, or web addresses.
-  9. End with exactly 5–8 relevant YouTube Shorts hashtags on separate lines.
+  8. NEVER include URLs, links, web addresses, or hashtags in the script.
+  9. This is a VIDEO SCRIPT meant to be spoken on camera, not a social media post.
 
-  Return ONLY the video script followed by hashtags.`
+  Return ONLY the video script - pure spoken dialogue.`
 };
 
 export default function ContentGenerator({ userPersona, hasSources, hasTone }) {
@@ -112,6 +112,7 @@ export default function ContentGenerator({ userPersona, hasSources, hasTone }) {
   const [selectedPlatforms, setSelectedPlatforms] = useState(['linkedin']);
   const [generatedContent, setGeneratedContent] = useState(null);
   const [selectedPreviewPlatform, setSelectedPreviewPlatform] = useState(null);
+  const [generatedDraftIds, setGeneratedDraftIds] = useState({});
 
   const { data: sources = [] } = useQuery({
     queryKey: ['sources'],
@@ -234,7 +235,7 @@ Generate the content following ALL the rules above.`;
 
         // Save to database
         const viralityScore = Math.floor(Math.random() * 40) + 60;
-        await base44.entities.ContentDraft.create({
+        const draft = await base44.entities.ContentDraft.create({
           platform: platformId,
           content_type: platformId === 'youtube' || platformId === 'tiktok' ? 'video_script' : 'post',
           text_content: content,
@@ -244,6 +245,8 @@ Generate the content following ALL the rules above.`;
           topic: topic,
           generation_metadata: { model_used: 'gpt-4o', generation_cost: 1, tone_applied: tone }
         });
+        
+        platformContent[platformId].draftId = draft.id;
       }
 
       // Deduct credits
@@ -278,6 +281,14 @@ Generate the content following ALL the rules above.`;
       toast.success('Content Generated!', { description: 'Preview your content below', duration: 3000 });
       setGeneratedContent(data);
       setSelectedPreviewPlatform(selectedPlatforms[0]);
+      
+      // Store draft IDs
+      const draftIds = {};
+      Object.keys(data.platformContent).forEach(platformId => {
+        draftIds[platformId] = data.platformContent[platformId].draftId;
+      });
+      setGeneratedDraftIds(draftIds);
+      
       queryClient.invalidateQueries(['userPersona']);
     },
     onError: (error) => {
@@ -289,10 +300,32 @@ Generate the content following ALL the rules above.`;
     setGeneratedContent(null);
     setSelectedPreviewPlatform(null);
     setSelectedPlatforms(['linkedin']);
+    setGeneratedDraftIds({});
   };
+  
+  // Generate Video Mutation
+  const generateVideoMutation = useMutation({
+    mutationFn: async ({ draftId, aspectRatio }) => {
+      const totalCredits = (userPersona?.purchased_credits || 0) + (userPersona?.daily_ad_credits || 0);
+      if (totalCredits < 5) throw new Error('Need 5 credits to generate video');
+      
+      const response = await base44.functions.invoke('generateVideo', { draftId, aspectRatio });
+      return response.data;
+    },
+    onSuccess: (data) => {
+      toast.success('Video Generated!', { description: 'Video is ready to view', duration: 3000 });
+      queryClient.invalidateQueries(['userPersona']);
+      queryClient.invalidateQueries(['drafts']);
+    },
+    onError: (error) => {
+      toast.error('Failed to generate video', { description: error.message, duration: 3000 });
+    }
+  });
 
   if (generatedContent) {
     const previewData = generatedContent.platformContent[selectedPreviewPlatform];
+    const isVideoPlatform = selectedPreviewPlatform === 'youtube' || selectedPreviewPlatform === 'tiktok';
+    const currentDraftId = generatedDraftIds[selectedPreviewPlatform];
     
     return (
       <Card className="bg-white border border-slate-200 rounded-xl shadow-md p-4 sm:p-6 space-y-4">
@@ -357,7 +390,9 @@ Generate the content following ALL the rules above.`;
 
         {/* Content Preview */}
         <div>
-          <Label className="text-slate-700 mb-2 block text-xs sm:text-sm font-semibold">Post Content</Label>
+          <Label className="text-slate-700 mb-2 block text-xs sm:text-sm font-semibold">
+            {isVideoPlatform ? 'Video Script' : 'Post Content'}
+          </Label>
           <Textarea
             value={previewData.text}
             readOnly
@@ -365,6 +400,43 @@ Generate the content following ALL the rules above.`;
             rows={8}
           />
         </div>
+
+        {isVideoPlatform && (
+          <div className="space-y-2">
+            <Label className="text-slate-700 mb-2 block text-xs sm:text-sm font-semibold">Generate Video</Label>
+            <div className="grid grid-cols-2 gap-2">
+              <Button
+                onClick={() => generateVideoMutation.mutate({ draftId: currentDraftId, aspectRatio: '16:9' })}
+                disabled={generateVideoMutation.isPending}
+                className="h-11 px-4 rounded-lg text-white font-semibold bg-gradient-to-r from-[#0FB5BA] to-[#14D4BA] shadow-md hover:scale-105 transition-transform disabled:opacity-50"
+              >
+                {generateVideoMutation.isPending ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Generating...
+                  </>
+                ) : (
+                  '16:9 Video (5 Credits)'
+                )}
+              </Button>
+              <Button
+                onClick={() => generateVideoMutation.mutate({ draftId: currentDraftId, aspectRatio: '9:16' })}
+                disabled={generateVideoMutation.isPending}
+                className="h-11 px-4 rounded-lg text-white font-semibold bg-gradient-to-r from-[#0FB5BA] to-[#14D4BA] shadow-md hover:scale-105 transition-transform disabled:opacity-50"
+              >
+                {generateVideoMutation.isPending ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Generating...
+                  </>
+                ) : (
+                  '9:16 Video (5 Credits)'
+                )}
+              </Button>
+            </div>
+            <p className="text-xs text-slate-600 text-center">Choose aspect ratio for your video</p>
+          </div>
+        )}
 
         <div className="bg-green-50 border border-green-200 rounded-xl p-3 flex items-center gap-2">
           <Check className="w-5 h-5 text-green-600" />

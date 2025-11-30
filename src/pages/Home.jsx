@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Sparkles, TrendingUp, Calendar, Target, Coins, Plus, Play, Layers, PlusSquare } from 'lucide-react';
@@ -13,18 +13,8 @@ export default function Home() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [user, setUser] = useState(null);
-  const [adLoaded, setAdLoaded] = useState(false);
-  
-  // Load AdMob SDK
-  useEffect(() => {
-    if (window.adsbygoogle) return;
-    
-    const script = document.createElement('script');
-    script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js';
-    script.async = true;
-    script.onload = () => setAdLoaded(true);
-    document.head.appendChild(script);
-  }, []);
+  const [showAdModal, setShowAdModal] = useState(false);
+  const [adCountdown, setAdCountdown] = useState(15);
 
   // Fetch user and persona
   const { data: userPersona, isLoading: personaLoading } = useQuery({
@@ -88,8 +78,8 @@ Make it punchy and actionable. Return ONLY the briefing text.`;
     staleTime: 1000 * 60 * 60 * 12
   });
 
-  // Show AdMob Reward Ad
-  const showRewardAd = async () => {
+  // Show Ad Modal
+  const handleWatchAd = async () => {
     if (!userPersona) {
       toast.error('Error', { description: 'User persona not found' });
       return;
@@ -109,18 +99,25 @@ Make it punchy and actionable. Return ONLY the briefing text.`;
       return;
     }
     
-    try {
-      // Initialize AdMob Reward Ad
-      const rewardedAd = new window.google.ads.rewarded.RewardedAd();
-      
-      await rewardedAd.load({
-        adUnitId: 'ca-app-pub-3940256099942544/5224354917' // AdMob test ad unit
+    // Show ad modal
+    setShowAdModal(true);
+    setAdCountdown(15);
+    
+    // Start countdown
+    const interval = setInterval(() => {
+      setAdCountdown(prev => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          completeAdWatch();
+          return 0;
+        }
+        return prev - 1;
       });
-      
-      // Show the ad
-      await rewardedAd.show();
-      
-      // User watched the ad successfully
+    }, 1000);
+  };
+  
+  const completeAdWatch = async () => {
+    try {
       await base44.entities.UserPersona.update(userPersona.id, {
         daily_ad_credits: (userPersona.daily_ad_credits || 0) + 1
       });
@@ -128,19 +125,17 @@ Make it punchy and actionable. Return ONLY the briefing text.`;
       await base44.entities.CreditTransaction.create({
         transaction_type: 'reward_ad',
         amount: 1,
-        description: 'Earned from watching AdMob ad',
+        description: 'Earned from watching ad',
         payment_gateway: 'none',
         balance_after: (userPersona.purchased_credits || 0) + (userPersona.daily_ad_credits || 0) + 1
       });
       
+      setShowAdModal(false);
       toast.success('+1 Credit Earned!', { description: 'Ad credit added to your wallet' });
       queryClient.invalidateQueries(['userPersona']);
     } catch (error) {
-      if (error.message.includes('ad failed to load')) {
-        toast.error('No Ad Available', { description: 'Try again in a moment' });
-      } else {
-        toast.error('Error', { description: 'Failed to show ad' });
-      }
+      setShowAdModal(false);
+      toast.error('Error', { description: 'Failed to award credit' });
     }
   };
 
@@ -277,18 +272,44 @@ Make it punchy and actionable. Return ONLY the briefing text.`;
             </div>
           </div>
           <Button
-            onClick={showRewardAd}
-            disabled={!adLoaded || (userPersona?.daily_ad_credits || 0) >= 10}
+            onClick={handleWatchAd}
+            disabled={(userPersona?.daily_ad_credits || 0) >= 10}
             className="w-full h-12 px-4 rounded-lg text-white font-semibold bg-gradient-to-r from-[#0FB5BA] to-[#14D4BA] shadow-md hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:bg-slate-200 disabled:text-slate-500 disabled:shadow-none"
           >
-            {!adLoaded ? 'Loading Ad...' : 
-             (userPersona?.daily_ad_credits || 0) >= 10 ? 'Daily Limit Reached (10 Credits)' : 
-             '▶ Watch Ad (+1 Credit)'}
+            {(userPersona?.daily_ad_credits || 0) >= 10 ? 'Daily Limit Reached (10 Credits)' : '▶ Watch Ad (+1 Credit)'}
           </Button>
           <p className="text-xs text-center text-slate-600 mt-2">
             💡 Daily credits expire at midnight
           </p>
         </Card>
+        
+        {/* Ad Modal */}
+        {showAdModal && (
+          <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-2xl p-6 max-w-md w-full space-y-4">
+              <div className="aspect-video bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl flex items-center justify-center relative overflow-hidden">
+                <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1557821552-17105176677c?w=800')] bg-cover bg-center opacity-30"></div>
+                <div className="relative z-10 text-center">
+                  <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-3 backdrop-blur-sm">
+                    <Play className="w-8 h-8 text-white" />
+                  </div>
+                  <p className="text-white text-sm font-medium">Advertisement Playing</p>
+                  <p className="text-white/80 text-xs mt-1">Please wait {adCountdown}s</p>
+                </div>
+              </div>
+              <div className="bg-slate-50 rounded-lg p-4 text-center">
+                <p className="text-slate-900 font-semibold text-sm">🎁 +1 Credit Reward</p>
+                <p className="text-slate-600 text-xs mt-1">You'll earn 1 credit after watching</p>
+              </div>
+              <div className="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
+                <div 
+                  className="h-full bg-gradient-to-r from-[#0FB5BA] to-[#14D4BA] transition-all duration-1000"
+                  style={{ width: `${((15 - adCountdown) / 15) * 100}%` }}
+                ></div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

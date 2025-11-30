@@ -20,7 +20,7 @@ Deno.serve(async (req) => {
     }
 
     // Fetch the draft
-    const drafts = await base44.entities.ContentDraft.filter({ id: draftId, created_by: user.email });
+    const drafts = await base44.asServiceRole.entities.ContentDraft.filter({ id: draftId });
     const draft = drafts[0];
 
     if (!draft) {
@@ -33,7 +33,7 @@ Deno.serve(async (req) => {
     }
 
     // Check user credits (video generation costs 5 credits)
-    const personas = await base44.entities.UserPersona.filter({ created_by: user.email });
+    const personas = await base44.asServiceRole.entities.UserPersona.filter({ created_by: user.email });
     const userPersona = personas[0];
 
     if (!userPersona) {

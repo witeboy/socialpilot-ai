@@ -68,51 +68,43 @@ If a thread → return JSON:
 
   tiktok: `SYSTEM PROMPT — TIKTOK SCRIPT GENERATION
 
-You generate a 10-second TikTok script using:
-- SOURCE: Content or URL summary.
-- PERSONA: The user's identity, profession, experience.
-- TONE: Style (thought_leader, founder, SME, policy_maker, casual_creator).
+  You generate a 10-second TikTok video script using:
+  - SOURCE: Content or URL summary.
+  - PERSONA: The user's identity, profession, experience.
+  - TONE: Style (thought_leader, founder, SME, policy_maker, casual_creator).
 
-RULES:
-1. Output MUST be JSON:
-{
-  "hook": "...",
-  "lines": ["...", "...", "..."],
-  "cta": "..."
-}
-2. Hook should be short, punchy, high-energy.
-3. Lines should be short spoken phrases—max 6 lines total.
-4. Keep script under 10 seconds.
-5. Use friendly, simple language; no jargon.
-6. No politics, sensitive topics, or controversy.
-7. NEVER mention or include URLs, links, or web addresses.
-8. After the JSON, output 3–6 relevant TikTok hashtags.
+  RULES:
+  1. Write as a natural spoken video script (plain text, not JSON).
+  2. Start with a powerful hook (1-2 sentences).
+  3. Follow with 4-6 short, punchy lines that flow naturally.
+  4. End with a clear call-to-action.
+  5. Keep the entire script deliverable in under 10 seconds.
+  6. Use friendly, simple language; no jargon.
+  7. No politics, sensitive topics, or controversy.
+  8. NEVER mention or include URLs, links, or web addresses.
+  9. End with exactly 3–6 relevant TikTok hashtags on separate lines.
 
-Return ONLY the JSON then hashtags.`,
+  Return ONLY the video script followed by hashtags.`,
 
   youtube: `SYSTEM PROMPT — YOUTUBE SHORTS GENERATION
 
-You generate a 10-second YouTube Shorts script using:
-- SOURCE: The article/topic/URL summary.
-- PERSONA: The user's background and expertise.
-- TONE: Style selected by the user.
+  You generate a 10-second YouTube Shorts video script using:
+  - SOURCE: The article/topic/URL summary.
+  - PERSONA: The user's background and expertise.
+  - TONE: Style selected by the user.
 
-RULES:
-1. Return JSON ONLY:
-{
-  "hook": "...",
-  "lines": ["...", "...", "..."],
-  "cta": "..."
-}
-2. Hook must be strong and educational.
-3. Content must be high-retention and high-energy.
-4. No complicated language or long sentences.
-5. 4–6 short lines total for a 10-second delivery.
-6. No politics, controversy, claims, or misinformation.
-7. NEVER mention or include URLs, links, or web addresses.
-8. After the JSON, output exactly 5–8 relevant YouTube Shorts hashtags.
+  RULES:
+  1. Write as a natural spoken video script (plain text, not JSON).
+  2. Start with a strong, educational hook (1-2 sentences).
+  3. Follow with 4-6 short lines that are high-retention and high-energy.
+  4. End with a clear call-to-action.
+  5. Keep the entire script deliverable in under 10 seconds.
+  6. No complicated language or long sentences.
+  7. No politics, controversy, claims, or misinformation.
+  8. NEVER mention or include URLs, links, or web addresses.
+  9. End with exactly 5–8 relevant YouTube Shorts hashtags on separate lines.
 
-Return ONLY the JSON then hashtags.`
+  Return ONLY the video script followed by hashtags.`
 };
 
 export default function ContentGenerator({ userPersona, hasSources, hasTone }) {

@@ -56,20 +56,18 @@ export default function Home() {
       if (!userPersona) return '';
       
       const expertise = userPersona.persona_profile?.expertise_areas?.[0] || 'your industry';
-      const tone = userPersona.persona_profile?.tone?.replace('_', ' ') || 'thought leader';
       
-      const prompt = `You are an AI assistant for ${user?.full_name || 'the user'}, a ${tone} in ${expertise}.
-      
-Generate a brief, motivational daily briefing (max 25 words) that:
-- Greets them by name
-- Mentions a trending topic in their field
-- Suggests a content idea
+      const prompt = `Generate a warm welcome message for ${user?.full_name || 'the user'}.
 
-Make it punchy and actionable. Return ONLY the briefing text.`;
+The message should:
+- Greet them warmly
+- Ask how you can help them boost and explode their social media presence in ${expertise}
+- Keep it friendly and motivating (max 30 words)
+
+Return ONLY the welcome message.`;
 
       const response = await base44.integrations.Core.InvokeLLM({
-        prompt,
-        add_context_from_internet: true
+        prompt
       });
       
       return response;
@@ -181,7 +179,7 @@ Make it punchy and actionable. Return ONLY the briefing text.`;
           <Card className="bg-white border border-slate-200 rounded-xl p-5 sm:p-6 space-y-3 shadow-md">
             <div className="flex items-center gap-2">
               <Sparkles className="w-5 h-5 text-[#0FB5BA]" />
-              <h3 className="text-base sm:text-lg font-bold text-slate-900">Daily AI Briefing</h3>
+              <h3 className="text-base sm:text-lg font-bold text-slate-900">Welcome</h3>
             </div>
             <div className="prose prose-sm max-w-none">
               <ReactMarkdown
@@ -197,6 +195,11 @@ Make it punchy and actionable. Return ONLY the briefing text.`;
                 {briefing}
               </ReactMarkdown>
             </div>
+            <Link to={createPageUrl('Create')}>
+              <Button className="w-full h-11 px-4 rounded-lg text-white font-semibold bg-gradient-to-r from-[#0FB5BA] to-[#14D4BA] shadow-md hover:scale-105 transition-transform">
+                🚀 Create Content Now
+              </Button>
+            </Link>
           </Card>
         )}
 

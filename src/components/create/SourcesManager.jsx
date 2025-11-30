@@ -41,41 +41,36 @@ export default function SourcesManager({ onComplete }) {
         autoTitle = text.substring(0, 50) + (text.length > 50 ? '...' : '');
         scrapedContent = text;
       } else {
-        // Scrape content from URL or RSS
+        // Scrape content from URL or RSS using Base44's fetch_website
         sonnerToast.loading('Fetching content from source...');
         try {
-          const response = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`);
-          const data = await response.json();
+          const response = await base44.integrations.Core.FetchWebsite({
+            url: url,
+            formats: ['markdown']
+          });
+
+          scrapedContent = response.markdown || '';
           
-          if (!data.contents) {
-            throw new Error('Failed to fetch content');
+          // Limit to first 8000 characters
+          if (scrapedContent.length > 8000) {
+            scrapedContent = scrapedContent.substring(0, 8000) + '...';
           }
 
-          // Use a simple parser to extract text
-          const parser = new DOMParser();
-          const doc = parser.parseFromString(data.contents, 'text/html');
-          
-          // Remove script and style elements
-          const scripts = doc.querySelectorAll('script, style');
-          scripts.forEach(el => el.remove());
-          
-          // Get text content
-          scrapedContent = doc.body.textContent || doc.body.innerText || '';
-          scrapedContent = scrapedContent.replace(/\s+/g, ' ').trim();
-          
-          // Limit to first 5000 characters
-          if (scrapedContent.length > 5000) {
-            scrapedContent = scrapedContent.substring(0, 5000) + '...';
+          // Extract title from URL
+          try {
+            const urlObj = new URL(url);
+            autoTitle = urlObj.hostname + urlObj.pathname;
+          } catch {
+            autoTitle = url;
           }
 
-          // Extract title from page
-          const titleEl = doc.querySelector('title');
-          autoTitle = titleEl ? titleEl.textContent.trim() : url;
+          if (!scrapedContent || scrapedContent.trim().length === 0) {
+            throw new Error('No content extracted');
+          }
         } catch (error) {
           console.error('Scraping error:', error);
-          sonnerToast.error('Failed to fetch content, saving URL only');
-          autoTitle = url;
-          scrapedContent = ''; // Will store URL but no content preview
+          sonnerToast.error('Failed to fetch content from URL');
+          throw error;
         }
       }
 

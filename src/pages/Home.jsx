@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Sparkles, TrendingUp, Calendar, Target, Coins, Plus, Play, Layers, PlusSquare } from 'lucide-react';
@@ -13,6 +13,18 @@ export default function Home() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [user, setUser] = useState(null);
+  const [adLoaded, setAdLoaded] = useState(false);
+  
+  // Load AdMob SDK
+  useEffect(() => {
+    if (window.adsbygoogle) return;
+    
+    const script = document.createElement('script');
+    script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js';
+    script.async = true;
+    script.onload = () => setAdLoaded(true);
+    document.head.appendChild(script);
+  }, []);
 
   // Fetch user and persona
   const { data: userPersona, isLoading: personaLoading } = useQuery({
@@ -76,26 +88,39 @@ Make it punchy and actionable. Return ONLY the briefing text.`;
     staleTime: 1000 * 60 * 60 * 12
   });
 
-  // Watch Ad Mutation
-  const watchAdMutation = useMutation({
-    mutationFn: async () => {
-      if (!userPersona) throw new Error('Persona not found');
+  // Show AdMob Reward Ad
+  const showRewardAd = async () => {
+    if (!userPersona) {
+      toast.error('Error', { description: 'User persona not found' });
+      return;
+    }
+    
+    const today = new Date().toISOString().split('T')[0];
+    
+    if (userPersona.last_ad_reset_date !== today) {
+      await base44.entities.UserPersona.update(userPersona.id, {
+        daily_ad_credits: 0,
+        last_ad_reset_date: today
+      });
+    }
+    
+    if ((userPersona.daily_ad_credits || 0) >= 10) {
+      toast.error('Limit Reached', { description: 'Max 10 credits per day' });
+      return;
+    }
+    
+    try {
+      // Initialize AdMob Reward Ad
+      const rewardedAd = new window.google.ads.rewarded.RewardedAd();
       
-      const today = new Date().toISOString().split('T')[0];
+      await rewardedAd.load({
+        adUnitId: 'ca-app-pub-3940256099942544/5224354917' // AdMob test ad unit
+      });
       
-      if (userPersona.last_ad_reset_date !== today) {
-        await base44.entities.UserPersona.update(userPersona.id, {
-          daily_ad_credits: 0,
-          last_ad_reset_date: today
-        });
-      }
+      // Show the ad
+      await rewardedAd.show();
       
-      if ((userPersona.daily_ad_credits || 0) >= 10) {
-        throw new Error('Daily credit limit reached! Max 10 credits per day.');
-      }
-      
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
+      // User watched the ad successfully
       await base44.entities.UserPersona.update(userPersona.id, {
         daily_ad_credits: (userPersona.daily_ad_credits || 0) + 1
       });
@@ -103,19 +128,21 @@ Make it punchy and actionable. Return ONLY the briefing text.`;
       await base44.entities.CreditTransaction.create({
         transaction_type: 'reward_ad',
         amount: 1,
-        description: 'Earned from watching ad',
+        description: 'Earned from watching AdMob ad',
         payment_gateway: 'none',
         balance_after: (userPersona.purchased_credits || 0) + (userPersona.daily_ad_credits || 0) + 1
       });
-    },
-    onSuccess: () => {
+      
       toast.success('+1 Credit Earned!', { description: 'Ad credit added to your wallet' });
       queryClient.invalidateQueries(['userPersona']);
-    },
-    onError: (error) => {
-      toast.error('Failed', { description: error.message });
+    } catch (error) {
+      if (error.message.includes('ad failed to load')) {
+        toast.error('No Ad Available', { description: 'Try again in a moment' });
+      } else {
+        toast.error('Error', { description: 'Failed to show ad' });
+      }
     }
-  });
+  };
 
   const totalCredits = (userPersona?.purchased_credits || 0) + (userPersona?.daily_ad_credits || 0);
 
@@ -250,13 +277,13 @@ Make it punchy and actionable. Return ONLY the briefing text.`;
             </div>
           </div>
           <Button
-            onClick={() => watchAdMutation.mutate()}
-            disabled={watchAdMutation.isPending || (userPersona?.daily_ad_credits || 0) >= 10}
+            onClick={showRewardAd}
+            disabled={!adLoaded || (userPersona?.daily_ad_credits || 0) >= 10}
             className="w-full h-12 px-4 rounded-lg text-white font-semibold bg-gradient-to-r from-[#0FB5BA] to-[#14D4BA] shadow-md hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:bg-slate-200 disabled:text-slate-500 disabled:shadow-none"
           >
-            {watchAdMutation.isPending ? 'Playing Ad...' : 
+            {!adLoaded ? 'Loading Ad...' : 
              (userPersona?.daily_ad_credits || 0) >= 10 ? 'Daily Limit Reached (10 Credits)' : 
-             '▶ Watch 15s Ad (+1 Credit)'}
+             '▶ Watch Ad (+1 Credit)'}
           </Button>
           <p className="text-xs text-center text-slate-600 mt-2">
             💡 Daily credits expire at midnight

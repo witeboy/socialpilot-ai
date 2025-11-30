@@ -7,8 +7,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Plus, Trash2, Rss, Link2, FileText, Loader2, X } from 'lucide-react';
+import { Plus, Trash2, Rss, Link2, FileText, Loader2, X, Eye, ChevronDown, ChevronUp } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
+import { toast as sonnerToast } from 'sonner';
 
 export default function SourcesManager({ onComplete }) {
   const { toast } = useToast();
@@ -18,6 +19,7 @@ export default function SourcesManager({ onComplete }) {
   const [title, setTitle] = useState('');
   const [url, setUrl] = useState('');
   const [text, setText] = useState('');
+  const [expandedSourceId, setExpandedSourceId] = useState(null);
 
   const { data: sources = [] } = useQuery({
     queryKey: ['sources'],
@@ -32,31 +34,69 @@ export default function SourcesManager({ onComplete }) {
       if (sourceType !== 'text' && !url.trim()) throw new Error('URL required');
       if (sourceType === 'text' && !text.trim()) throw new Error('Text required');
 
-      // Auto-generate title
       let autoTitle = '';
+      let scrapedContent = '';
+
       if (sourceType === 'text') {
         autoTitle = text.substring(0, 50) + (text.length > 50 ? '...' : '');
+        scrapedContent = text;
       } else {
-        autoTitle = url;
+        // Scrape content from URL or RSS
+        sonnerToast.loading('Fetching content from source...');
+        try {
+          const response = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`);
+          const data = await response.json();
+          
+          if (!data.contents) {
+            throw new Error('Failed to fetch content');
+          }
+
+          // Use a simple parser to extract text
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(data.contents, 'text/html');
+          
+          // Remove script and style elements
+          const scripts = doc.querySelectorAll('script, style');
+          scripts.forEach(el => el.remove());
+          
+          // Get text content
+          scrapedContent = doc.body.textContent || doc.body.innerText || '';
+          scrapedContent = scrapedContent.replace(/\s+/g, ' ').trim();
+          
+          // Limit to first 5000 characters
+          if (scrapedContent.length > 5000) {
+            scrapedContent = scrapedContent.substring(0, 5000) + '...';
+          }
+
+          // Extract title from page
+          const titleEl = doc.querySelector('title');
+          autoTitle = titleEl ? titleEl.textContent.trim() : url;
+        } catch (error) {
+          console.error('Scraping error:', error);
+          sonnerToast.error('Failed to fetch content, saving URL only');
+          autoTitle = url;
+          scrapedContent = ''; // Will store URL but no content preview
+        }
       }
 
       return base44.entities.Source.create({
         source_type: sourceType,
         title: autoTitle,
-        ...(sourceType === 'text' ? { source_text: text } : { source_url: url }),
+        source_url: sourceType !== 'text' ? url : undefined,
+        source_text: scrapedContent || undefined,
         is_active: true,
         content_generated_count: 0
       });
     },
     onSuccess: () => {
-      toast({ title: '✅ Source Added', duration: 3000 });
+      sonnerToast.success('Source Added!', { description: 'Content preview is ready' });
       setUrl('');
       setText('');
       setShowAddForm(false);
       queryClient.invalidateQueries(['sources']);
     },
     onError: (error) => {
-      toast({ title: '❌ Failed', description: error.message, variant: 'destructive', duration: 3000 });
+      sonnerToast.error('Failed to add source', { description: error.message });
     }
   });
 
@@ -191,19 +231,43 @@ export default function SourcesManager({ onComplete }) {
                       <p className="text-xs text-slate-600 truncate mb-1">{source.source_url}</p>
                     )}
                     <p className="text-xs text-slate-500">
-                      ✅ {source.content_generated_count || 0} posts generated
+                     ✅ {source.content_generated_count || 0} posts generated
                     </p>
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => deleteSourceMutation.mutate(source.id)}
-                    className="text-red-500 hover:text-red-600 hover:bg-red-50 flex-shrink-0"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
-                </div>
-              </div>
+                    </div>
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                    {source.source_text && (
+                     <Button
+                       variant="ghost"
+                       size="icon"
+                       onClick={() => setExpandedSourceId(expandedSourceId === source.id ? null : source.id)}
+                       className="text-[#0FB5BA] hover:text-[#14D4BA] hover:bg-[#DDF7F8]"
+                     >
+                       {expandedSourceId === source.id ? (
+                         <ChevronUp className="w-4 h-4" />
+                       ) : (
+                         <Eye className="w-4 h-4" />
+                       )}
+                     </Button>
+                    )}
+                    <Button
+                     variant="ghost"
+                     size="icon"
+                     onClick={() => deleteSourceMutation.mutate(source.id)}
+                     className="text-red-500 hover:text-red-600 hover:bg-red-50"
+                    >
+                     <Trash2 className="w-4 h-4" />
+                    </Button>
+                    </div>
+                    </div>
+                    {expandedSourceId === source.id && source.source_text && (
+                    <div className="mt-3 pt-3 border-t border-slate-200">
+                    <Label className="text-slate-700 text-xs font-semibold mb-2 block">Content Preview</Label>
+                    <div className="bg-white rounded-lg p-3 border border-slate-200 max-h-48 overflow-y-auto">
+                     <p className="text-xs text-slate-700 whitespace-pre-wrap">{source.source_text}</p>
+                    </div>
+                    </div>
+                    )}
+                    </div>
             ))}
           </div>
         )}

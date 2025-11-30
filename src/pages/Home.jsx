@@ -85,21 +85,19 @@ Make it punchy and actionable. Return ONLY the briefing text.`;
       
       if (userPersona.last_ad_reset_date !== today) {
         await base44.entities.UserPersona.update(userPersona.id, {
-          ad_credits_earned_today: 0,
           daily_ad_credits: 0,
           last_ad_reset_date: today
         });
       }
       
-      if (userPersona.ad_credits_earned_today >= 10) {
-        throw new Error('Daily limit reached! Max 10 ads per day.');
+      if ((userPersona.daily_ad_credits || 0) >= 10) {
+        throw new Error('Daily credit limit reached! Max 10 credits per day.');
       }
       
       await new Promise(resolve => setTimeout(resolve, 2000));
       
       await base44.entities.UserPersona.update(userPersona.id, {
-        daily_ad_credits: (userPersona.daily_ad_credits || 0) + 1,
-        ad_credits_earned_today: (userPersona.ad_credits_earned_today || 0) + 1
+        daily_ad_credits: (userPersona.daily_ad_credits || 0) + 1
       });
       
       await base44.entities.CreditTransaction.create({
@@ -243,7 +241,7 @@ Make it punchy and actionable. Return ONLY the briefing text.`;
                 Watch to Earn
               </h3>
               <p className="text-xs text-slate-600 mt-1">
-                {userPersona?.ad_credits_earned_today || 0} / 10 ads watched today
+                {userPersona?.daily_ad_credits || 0} / 10 credits earned today
               </p>
             </div>
             <div className="text-right">
@@ -253,11 +251,11 @@ Make it punchy and actionable. Return ONLY the briefing text.`;
           </div>
           <Button
             onClick={() => watchAdMutation.mutate()}
-            disabled={watchAdMutation.isPending || (userPersona?.ad_credits_earned_today || 0) >= 10}
+            disabled={watchAdMutation.isPending || (userPersona?.daily_ad_credits || 0) >= 10}
             className="w-full h-12 px-4 rounded-lg text-white font-semibold bg-gradient-to-r from-[#0FB5BA] to-[#14D4BA] shadow-md hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:bg-slate-200 disabled:text-slate-500 disabled:shadow-none"
           >
             {watchAdMutation.isPending ? 'Playing Ad...' : 
-             (userPersona?.ad_credits_earned_today || 0) >= 10 ? 'Daily Limit Reached' : 
+             (userPersona?.daily_ad_credits || 0) >= 10 ? 'Daily Limit Reached (10 Credits)' : 
              '▶ Watch 15s Ad (+1 Credit)'}
           </Button>
           <p className="text-xs text-center text-slate-600 mt-2">

@@ -9,7 +9,10 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { draftId, aspectRatio } = await req.json();
+    const body = await req.json();
+    const { draftId, aspectRatio } = body;
+    
+    console.log('Video generation request:', { draftId, aspectRatio, user: user.email });
 
     if (!draftId || !aspectRatio) {
       return Response.json({ error: 'Missing draftId or aspectRatio' }, { status: 400 });
@@ -24,11 +27,15 @@ Deno.serve(async (req) => {
     const draft = drafts[0];
 
     if (!draft) {
+      console.error('Draft not found:', draftId);
       return Response.json({ error: 'Draft not found' }, { status: 404 });
     }
 
+    console.log('Draft found:', { platform: draft.platform, id: draft.id });
+
     // Check if draft is a video type
     if (!['youtube', 'tiktok'].includes(draft.platform)) {
+      console.error('Invalid platform for video:', draft.platform);
       return Response.json({ error: 'Draft must be a YouTube or TikTok video' }, { status: 400 });
     }
 
@@ -44,8 +51,11 @@ Deno.serve(async (req) => {
     const creditsNeeded = 5;
 
     if (totalCredits < creditsNeeded) {
+      console.error('Insufficient credits:', { totalCredits, creditsNeeded });
       return Response.json({ error: `Insufficient credits. Need ${creditsNeeded} credits.` }, { status: 400 });
     }
+    
+    console.log('Credits check passed:', { totalCredits, creditsNeeded });
 
     // Generate video prompt for AI
     const videoPrompt = `Create a ${aspectRatio === '16:9' ? 'horizontal' : 'vertical'} video (${aspectRatio}) based on this script:

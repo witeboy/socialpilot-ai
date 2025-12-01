@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Home, PlusSquare, Layers, Settings } from 'lucide-react';
 import { createPageUrl } from './utils';
@@ -8,6 +8,19 @@ import { Toaster } from '@/components/ui/sonner';
 
 export default function Layout({ children, currentPageName }) {
   const location = useLocation();
+
+  // Add Google AdSense script to head
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9689004813456541';
+    script.async = true;
+    script.crossOrigin = 'anonymous';
+    document.head.appendChild(script);
+
+    return () => {
+      document.head.removeChild(script);
+    };
+  }, []);
   
   const { data: userPersona } = useQuery({
     queryKey: ['userPersona'],

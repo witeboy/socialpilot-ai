@@ -16,6 +16,8 @@ export const languages = [
   { code: 'ru', label: 'Русский', flag: 'RU' }
 ];
 
+export const supportedLanguages = languages;
+
 export function LanguageProvider({ children }) {
   const [language, setLanguage] = useState(() => {
     const saved = localStorage.getItem('language');
@@ -42,7 +44,7 @@ export function LanguageProvider({ children }) {
   };
 
   return (
-    <LanguageContext.Provider value={{ language, setLanguage, t, languages }}>
+    <LanguageContext.Provider value={{ language, setLanguage, t, supportedLanguages: languages }}>
       {children}
     </LanguageContext.Provider>
   );

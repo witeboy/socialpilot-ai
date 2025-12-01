@@ -311,21 +311,21 @@ export default function Feed() {
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-400"></div>
               </div>
             ) : pendingDrafts.length === 0 || currentIndex >= pendingDrafts.length ? (
-              <Card className="bg-white border border-slate-200 rounded-lg p-4 text-center shadow-sm">
-                <Clock className="w-8 h-8 mx-auto mb-1.5 text-slate-300" />
-                <h3 className="text-sm font-bold text-slate-900 mb-0.5">No Pending Posts</h3>
-                <p className="text-[10px] text-slate-600">All caught up! Create new content to get started.</p>
+              <Card className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-4 text-center shadow-sm">
+                <Clock className="w-8 h-8 mx-auto mb-1.5 text-slate-300 dark:text-slate-600" />
+                <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-0.5">{t('feed.noPending')}</h3>
+                <p className="text-[10px] text-slate-600 dark:text-slate-400">{t('feed.allCaught')}</p>
               </Card>
             ) : (
               <>
                 {needsManualApproval && (
-                  <div className="bg-amber-50 border border-amber-200 rounded-lg p-1.5 flex items-center gap-1">
-                    <span className="text-[9px] text-amber-700 font-medium">
-                      ⚠️ First 3 approvals: {userPersona?.approved_posts_count || 0}/3
+                  <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-1.5 flex items-center gap-1">
+                    <span className="text-[9px] text-amber-700 dark:text-amber-300 font-medium">
+                      ⚠️ {t('feed.firstApprovals')}: {userPersona?.approved_posts_count || 0}/3
                     </span>
                   </div>
                 )}
-                <p className="text-center text-[10px] text-slate-600 mb-1">Swipe right to approve, left to reject</p>
+                <p className="text-center text-[10px] text-slate-600 dark:text-slate-400 mb-1">{t('feed.swipeInstruction')}</p>
                 <div className="relative" style={{ minHeight: '500px' }}>
                   <AnimatePresence>
                     {pendingDrafts.slice(currentIndex, currentIndex + 2).map((draft, idx) => (
@@ -339,8 +339,8 @@ export default function Feed() {
                   </AnimatePresence>
                 </div>
                 <div className="text-center mt-1.5">
-                  <div className="inline-block bg-white shadow-sm px-2.5 py-0.5 rounded-full border border-slate-200">
-                    <p className="text-slate-700 text-[10px] font-semibold">
+                  <div className="inline-block bg-white dark:bg-slate-900 shadow-sm px-2.5 py-0.5 rounded-full border border-slate-200 dark:border-slate-700">
+                    <p className="text-slate-700 dark:text-slate-300 text-[10px] font-semibold">
                       {currentIndex + 1} of {pendingDrafts.length}
                     </p>
                   </div>
@@ -352,10 +352,10 @@ export default function Feed() {
           {/* Approved Tab */}
           <TabsContent value="approved" className="space-y-1.5 mt-2">
             {approvedDrafts.length === 0 ? (
-              <Card className="bg-white border border-slate-200 rounded-lg p-4 text-center shadow-sm">
-                <CheckCircle className="w-8 h-8 mx-auto mb-1.5 text-slate-300" />
-                <h3 className="text-sm font-bold text-slate-900 mb-0.5">No Approved Posts</h3>
-                <p className="text-[10px] text-slate-600">Approve posts from the queue to see them here.</p>
+              <Card className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-4 text-center shadow-sm">
+                <CheckCircle className="w-8 h-8 mx-auto mb-1.5 text-slate-300 dark:text-slate-600" />
+                <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-0.5">{t('feed.noApproved')}</h3>
+                <p className="text-[10px] text-slate-600 dark:text-slate-400">{t('feed.approveFromQueue')}</p>
               </Card>
             ) : (
               approvedDrafts.map((draft) => (
@@ -367,10 +367,10 @@ export default function Feed() {
           {/* Scheduled Tab */}
           <TabsContent value="scheduled" className="space-y-1.5 mt-2">
             {scheduledPosts.length === 0 ? (
-              <Card className="bg-white border border-slate-200 rounded-lg p-4 text-center shadow-sm">
-                <Calendar className="w-8 h-8 mx-auto mb-1.5 text-slate-300" />
-                <h3 className="text-sm font-bold text-slate-900 mb-0.5">No Scheduled Posts</h3>
-                <p className="text-[10px] text-slate-600">Posts will appear here when scheduled.</p>
+              <Card className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-4 text-center shadow-sm">
+                <Calendar className="w-8 h-8 mx-auto mb-1.5 text-slate-300 dark:text-slate-600" />
+                <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-0.5">{t('feed.noScheduled')}</h3>
+                <p className="text-[10px] text-slate-600 dark:text-slate-400">{t('feed.postsAppear')}</p>
               </Card>
             ) : (
               scheduledPosts.map((post) => (
@@ -387,10 +387,10 @@ export default function Feed() {
           {/* Posted Tab */}
           <TabsContent value="posted" className="space-y-1.5 mt-2">
             {postedContent.length === 0 ? (
-              <Card className="bg-white border border-slate-200 rounded-lg p-4 text-center shadow-sm">
-                <Send className="w-8 h-8 mx-auto mb-1.5 text-slate-300" />
-                <h3 className="text-sm font-bold text-slate-900 mb-0.5">No Posted Content</h3>
-                <p className="text-[10px] text-slate-600">Published posts will appear here.</p>
+              <Card className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-4 text-center shadow-sm">
+                <Send className="w-8 h-8 mx-auto mb-1.5 text-slate-300 dark:text-slate-600" />
+                <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-0.5">{t('feed.noPosted')}</h3>
+                <p className="text-[10px] text-slate-600 dark:text-slate-400">{t('feed.publishedAppear')}</p>
               </Card>
             ) : (
               postedContent.map((post) => (

@@ -27,14 +27,21 @@ export default function SocialConnections() {
 
   const connectMutation = useMutation({
     mutationFn: async (platform) => {
-      toast.info('OAuth Coming Soon', { description: `${platform} connection available in production` });
-      return base44.entities.SocialAccount.create({
-        platform: platform,
-        is_connected: false
-      });
+      if (platform === 'linkedin') {
+        const result = await base44.functions.invoke('initiateLinkedInOAuth');
+        window.location.href = result.data.authUrl;
+        return null;
+      } else if (platform === 'twitter') {
+        const result = await base44.functions.invoke('initiateTwitterOAuth');
+        window.location.href = result.data.authUrl;
+        return null;
+      } else {
+        toast.info('Coming Soon', { description: `${platform} connection available soon` });
+        return null;
+      }
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries(['socialAccounts']);
+    onError: (error) => {
+      toast.error('Connection Failed', { description: error.message });
     }
   });
 

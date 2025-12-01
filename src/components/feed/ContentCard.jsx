@@ -57,48 +57,48 @@ export default function ContentCard({ content, type }) {
         )}
 
         {/* Content Details */}
-        <div className="p-4 space-y-3">
+        <div className="p-2.5 space-y-2">
           {/* Platform & Status Header */}
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <PlatformIcon className={`w-5 h-5 ${platformColor}`} />
-              <span className="text-sm font-semibold text-slate-900 capitalize">
+            <div className="flex items-center gap-1.5">
+              <PlatformIcon className={`w-4 h-4 ${platformColor}`} />
+              <span className="text-xs font-semibold text-slate-900 capitalize">
                 {content.platform}
               </span>
             </div>
-            <div className="flex items-center gap-1.5">
-              <StatusIcon className={`w-4 h-4 ${statusInfo.color}`} />
-              <span className={`text-xs font-medium ${statusInfo.color}`}>
+            <div className="flex items-center gap-1">
+              <StatusIcon className={`w-3.5 h-3.5 ${statusInfo.color}`} />
+              <span className={`text-[10px] font-medium ${statusInfo.color}`}>
                 {statusInfo.label}
               </span>
             </div>
           </div>
 
           {/* Text Content Preview */}
-          <p className="text-sm text-slate-700 line-clamp-3">
+          <p className="text-xs text-slate-700 line-clamp-3">
             {content.text_content}
           </p>
 
           {/* Video Links */}
           {isVideoContent && (hasVideo16_9 || hasVideo9_16) && (
-            <div className="pt-2 border-t border-slate-100">
-              <p className="text-xs text-slate-600 mb-2 font-semibold">📹 Generated Videos:</p>
-              <div className="flex gap-2">
+            <div className="pt-1.5 border-t border-slate-100">
+              <p className="text-[10px] text-slate-600 mb-1.5 font-semibold">📹 Generated Videos:</p>
+              <div className="flex gap-1.5">
                 {hasVideo16_9 && (
                   <button
                     onClick={() => setPlayingVideo(hasVideo16_9)}
-                    className="flex-1 h-9 rounded-lg bg-gradient-to-r from-[#0FB5BA] to-[#14D4BA] text-white hover:scale-105 text-xs font-semibold flex items-center justify-center transition-transform shadow-md"
+                    className="flex-1 h-7 rounded-lg bg-gradient-to-r from-[#0FB5BA] to-[#14D4BA] text-white hover:scale-105 text-[10px] font-semibold flex items-center justify-center transition-transform shadow-md"
                   >
-                    <Video className="w-3.5 h-3.5 mr-1" />
+                    <Video className="w-3 h-3 mr-0.5" />
                     View 16:9
                   </button>
                 )}
                 {hasVideo9_16 && (
                   <button
                     onClick={() => setPlayingVideo(hasVideo9_16)}
-                    className="flex-1 h-9 rounded-lg bg-gradient-to-r from-[#0FB5BA] to-[#14D4BA] text-white hover:scale-105 text-xs font-semibold flex items-center justify-center transition-transform shadow-md"
+                    className="flex-1 h-7 rounded-lg bg-gradient-to-r from-[#0FB5BA] to-[#14D4BA] text-white hover:scale-105 text-[10px] font-semibold flex items-center justify-center transition-transform shadow-md"
                   >
-                    <Video className="w-3.5 h-3.5 mr-1" />
+                    <Video className="w-3 h-3 mr-0.5" />
                     View 9:16
                   </button>
                 )}
@@ -107,20 +107,20 @@ export default function ContentCard({ content, type }) {
           )}
 
           {/* Metadata */}
-          <div className="flex items-center justify-between pt-2 border-t border-slate-100">
-            <div className="flex items-center gap-2">
+          <div className="flex items-center justify-between pt-1.5 border-t border-slate-100">
+            <div className="flex items-center gap-1.5">
               {content.virality_score && (
-                <Badge className="bg-purple-100 text-purple-700 text-xs">
-                  🔥 {content.virality_score}% viral
+                <Badge className="bg-purple-100 text-purple-700 text-[9px] px-1.5 py-0">
+                  🔥 {content.virality_score}%
                 </Badge>
               )}
               {content.content_type === 'video_script' && (
-                <Badge className="bg-blue-100 text-blue-700 text-xs">
+                <Badge className="bg-blue-100 text-blue-700 text-[9px] px-1.5 py-0">
                   🎥 Video
                 </Badge>
               )}
             </div>
-            <span className="text-xs text-slate-500">
+            <span className="text-[9px] text-slate-500">
               {type === 'posted' && content.posted_at
                 ? format(new Date(content.posted_at), 'MMM d, h:mm a')
                 : type === 'scheduled' && content.scheduled_for

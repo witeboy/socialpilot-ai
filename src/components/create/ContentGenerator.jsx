@@ -113,6 +113,7 @@ export default function ContentGenerator({ userPersona, hasSources, hasTone }) {
   const [generatedContent, setGeneratedContent] = useState(null);
   const [selectedPreviewPlatform, setSelectedPreviewPlatform] = useState(null);
   const [generatedDraftIds, setGeneratedDraftIds] = useState({});
+  const [editedContent, setEditedContent] = useState({});
 
   const { data: sources = [] } = useQuery({
     queryKey: ['sources'],
@@ -301,6 +302,7 @@ Generate the content following ALL the rules above.`;
     setSelectedPreviewPlatform(null);
     setSelectedPlatforms(['linkedin']);
     setGeneratedDraftIds({});
+    setEditedContent({});
   };
   
   const handleGenerateVideo = () => {
@@ -310,10 +312,119 @@ Generate the content following ALL the rules above.`;
     });
   };
 
+  // AI Editing Mutations
+  const editContentMutation = useMutation({
+    mutationFn: async ({ action, currentText }) => {
+      const totalCredits = (userPersona?.purchased_credits || 0) + (userPersona?.daily_ad_credits || 0);
+      if (totalCredits < 1) throw new Error('Need 1 credit to edit content');
+
+      const prompts = {
+        formal: `Rewrite the following content in a more formal, professional tone while keeping the same message and length:\n\n${currentText}`,
+        casual: `Rewrite the following content in a more casual, conversational tone while keeping the same message and length:\n\n${currentText}`,
+        persuasive: `Rewrite the following content to be more persuasive and compelling while keeping the same length:\n\n${currentText}`,
+        shorten: `Shorten the following content by about 30-40% while keeping the core message and impact:\n\n${currentText}`,
+        lengthen: `Expand the following content by about 30-40% with more details, examples, or insights:\n\n${currentText}`,
+        improve: `Improve the grammar, clarity, and flow of the following content while keeping the same tone and message:\n\n${currentText}`
+      };
+
+      const editedText = await base44.integrations.Core.InvokeLLM({
+        prompt: prompts[action]
+      });
+
+      // Deduct 1 credit
+      let newDailyCredits = userPersona.daily_ad_credits || 0;
+      let newPurchasedCredits = userPersona.purchased_credits || 0;
+
+      if (newDailyCredits >= 1) {
+        newDailyCredits -= 1;
+      } else {
+        newPurchasedCredits -= 1;
+      }
+
+      await base44.entities.UserPersona.update(userPersona.id, {
+        daily_ad_credits: newDailyCredits,
+        purchased_credits: newPurchasedCredits
+      });
+
+      await base44.entities.CreditTransaction.create({
+        transaction_type: 'usage',
+        amount: -1,
+        description: `AI content editing: ${action}`,
+        payment_gateway: 'none',
+        balance_after: newDailyCredits + newPurchasedCredits
+      });
+
+      return { editedText, action };
+    },
+    onSuccess: (data) => {
+      const actionLabels = {
+        formal: 'More Formal',
+        casual: 'More Casual',
+        persuasive: 'More Persuasive',
+        shorten: 'Shortened',
+        lengthen: 'Lengthened',
+        improve: 'Improved'
+      };
+      toast.success(`${actionLabels[data.action]}!`, { description: 'Content updated', duration: 2000 });
+      
+      setEditedContent(prev => ({
+        ...prev,
+        [selectedPreviewPlatform]: data.editedText
+      }));
+      
+      queryClient.invalidateQueries(['userPersona']);
+    },
+    onError: (error) => {
+      toast.error('Edit Failed', { description: error.message, duration: 3000 });
+    }
+  });
+
+  const saveEditedContentMutation = useMutation({
+    mutationFn: async () => {
+      const currentDraftId = generatedDraftIds[selectedPreviewPlatform];
+      const newText = editedContent[selectedPreviewPlatform];
+      
+      await base44.entities.ContentDraft.update(currentDraftId, {
+        text_content: newText
+      });
+      
+      return newText;
+    },
+    onSuccess: (newText) => {
+      toast.success('Saved!', { description: 'Updated content saved to draft', duration: 2000 });
+      
+      // Update the generated content state
+      setGeneratedContent(prev => ({
+        ...prev,
+        platformContent: {
+          ...prev.platformContent,
+          [selectedPreviewPlatform]: {
+            ...prev.platformContent[selectedPreviewPlatform],
+            text: newText
+          }
+        }
+      }));
+      
+      // Clear edited content for this platform
+      setEditedContent(prev => {
+        const updated = { ...prev };
+        delete updated[selectedPreviewPlatform];
+        return updated;
+      });
+      
+      queryClient.invalidateQueries(['pendingDrafts']);
+    },
+    onError: (error) => {
+      toast.error('Save Failed', { description: error.message, duration: 3000 });
+    }
+  });
+
   if (generatedContent) {
     const previewData = generatedContent.platformContent[selectedPreviewPlatform];
     const isVideoPlatform = selectedPreviewPlatform === 'youtube' || selectedPreviewPlatform === 'tiktok';
     const currentDraftId = generatedDraftIds[selectedPreviewPlatform];
+    const displayText = editedContent[selectedPreviewPlatform] || previewData.text;
+    const hasEdits = !!editedContent[selectedPreviewPlatform];
     
     return (
       <Card className="bg-white border border-slate-200 rounded-xl shadow-md p-4 sm:p-6 space-y-4">
@@ -378,15 +489,105 @@ Generate the content following ALL the rules above.`;
 
         {/* Content Preview */}
         <div>
-          <Label className="text-slate-700 mb-2 block text-xs sm:text-sm font-semibold">
-            {isVideoPlatform ? 'Video Script' : 'Post Content'}
-          </Label>
+          <div className="flex items-center justify-between mb-2">
+            <Label className="text-slate-700 text-xs sm:text-sm font-semibold">
+              {isVideoPlatform ? 'Video Script' : 'Post Content'}
+            </Label>
+            {hasEdits && (
+              <Button
+                onClick={() => saveEditedContentMutation.mutate()}
+                disabled={saveEditedContentMutation.isPending}
+                size="sm"
+                className="h-7 px-3 bg-green-600 hover:bg-green-700 text-white text-xs"
+              >
+                {saveEditedContentMutation.isPending ? 'Saving...' : 'Save Changes'}
+              </Button>
+            )}
+          </div>
           <Textarea
-            value={previewData.text}
-            readOnly
+            value={displayText}
+            onChange={(e) => setEditedContent(prev => ({ ...prev, [selectedPreviewPlatform]: e.target.value }))}
             className="w-full rounded-xl bg-slate-50 text-slate-900 p-3 border border-slate-200 text-xs sm:text-sm focus:outline-none focus:ring-4 focus:ring-teal-100"
             rows={8}
           />
+          {hasEdits && (
+            <p className="text-xs text-amber-600 mt-1 font-medium">✏️ Edited - Click "Save Changes" to keep edits</p>
+          )}
+        </div>
+
+        {/* AI Editing Tools */}
+        <div className="space-y-3">
+          <Label className="text-slate-700 text-xs sm:text-sm font-semibold">AI Editing Tools (1 credit each)</Label>
+          
+          <div>
+            <p className="text-xs text-slate-600 mb-2 font-medium">Adjust Tone:</p>
+            <div className="grid grid-cols-3 gap-2">
+              <Button
+                onClick={() => editContentMutation.mutate({ action: 'formal', currentText: displayText })}
+                disabled={editContentMutation.isPending}
+                size="sm"
+                variant="outline"
+                className="h-9 text-xs"
+              >
+                {editContentMutation.isPending ? <Loader2 className="w-3 h-3 animate-spin" /> : '🎩 Formal'}
+              </Button>
+              <Button
+                onClick={() => editContentMutation.mutate({ action: 'casual', currentText: displayText })}
+                disabled={editContentMutation.isPending}
+                size="sm"
+                variant="outline"
+                className="h-9 text-xs"
+              >
+                {editContentMutation.isPending ? <Loader2 className="w-3 h-3 animate-spin" /> : '😊 Casual'}
+              </Button>
+              <Button
+                onClick={() => editContentMutation.mutate({ action: 'persuasive', currentText: displayText })}
+                disabled={editContentMutation.isPending}
+                size="sm"
+                variant="outline"
+                className="h-9 text-xs"
+              >
+                {editContentMutation.isPending ? <Loader2 className="w-3 h-3 animate-spin" /> : '💪 Persuasive'}
+              </Button>
+            </div>
+          </div>
+
+          <div>
+            <p className="text-xs text-slate-600 mb-2 font-medium">Adjust Length:</p>
+            <div className="grid grid-cols-2 gap-2">
+              <Button
+                onClick={() => editContentMutation.mutate({ action: 'shorten', currentText: displayText })}
+                disabled={editContentMutation.isPending}
+                size="sm"
+                variant="outline"
+                className="h-9 text-xs"
+              >
+                {editContentMutation.isPending ? <Loader2 className="w-3 h-3 animate-spin" /> : '📉 Shorten'}
+              </Button>
+              <Button
+                onClick={() => editContentMutation.mutate({ action: 'lengthen', currentText: displayText })}
+                disabled={editContentMutation.isPending}
+                size="sm"
+                variant="outline"
+                className="h-9 text-xs"
+              >
+                {editContentMutation.isPending ? <Loader2 className="w-3 h-3 animate-spin" /> : '📈 Lengthen'}
+              </Button>
+            </div>
+          </div>
+
+          <div>
+            <p className="text-xs text-slate-600 mb-2 font-medium">Improve Quality:</p>
+            <Button
+              onClick={() => editContentMutation.mutate({ action: 'improve', currentText: displayText })}
+              disabled={editContentMutation.isPending}
+              size="sm"
+              variant="outline"
+              className="w-full h-9 text-xs"
+            >
+              {editContentMutation.isPending ? <Loader2 className="w-3 h-3 animate-spin" /> : '✨ Improve Grammar & Clarity'}
+            </Button>
+          </div>
         </div>
 
         {isVideoPlatform && (

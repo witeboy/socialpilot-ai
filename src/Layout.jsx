@@ -9,16 +9,24 @@ import { Toaster } from '@/components/ui/sonner';
 export default function Layout({ children, currentPageName }) {
   const location = useLocation();
 
-  // Add Google AdSense script to head
+  // Add Google AdSense script and meta tag to head
   useEffect(() => {
+    // Add AdSense script
     const script = document.createElement('script');
     script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9689004813456541';
     script.async = true;
     script.crossOrigin = 'anonymous';
     document.head.appendChild(script);
 
+    // Add AdSense meta tag
+    const meta = document.createElement('meta');
+    meta.name = 'google-adsense-account';
+    meta.content = 'ca-pub-9689004813456541';
+    document.head.appendChild(meta);
+
     return () => {
       document.head.removeChild(script);
+      document.head.removeChild(meta);
     };
   }, []);
   

@@ -17,14 +17,20 @@ export default function Home() {
   const [adCountdown, setAdCountdown] = useState(15);
 
   // Fetch user and persona
-  const { data: userPersona, isLoading: personaLoading } = useQuery({
+  const { data: userPersona, isLoading: personaLoading, error } = useQuery({
     queryKey: ['userPersona'],
     queryFn: async () => {
+      const isAuth = await base44.auth.isAuthenticated();
+      if (!isAuth) {
+        base44.auth.redirectToLogin();
+        return null;
+      }
       const currentUser = await base44.auth.me();
       setUser(currentUser);
       const personas = await base44.entities.UserPersona.filter({ created_by: currentUser.email });
       return personas[0] || null;
-    }
+    },
+    retry: false
   });
 
   // Fetch scheduled posts

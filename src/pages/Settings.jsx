@@ -11,10 +11,16 @@ export default function Settings() {
   const { data: userPersona, isLoading } = useQuery({
     queryKey: ['userPersona'],
     queryFn: async () => {
+      const isAuth = await base44.auth.isAuthenticated();
+      if (!isAuth) {
+        base44.auth.redirectToLogin();
+        return null;
+      }
       const user = await base44.auth.me();
       const personas = await base44.entities.UserPersona.filter({ created_by: user.email });
       return personas[0] || null;
-    }
+    },
+    retry: false
   });
 
   if (isLoading) {

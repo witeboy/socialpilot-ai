@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
@@ -8,25 +8,35 @@ import CreditsPayments from '../components/settings/CreditsPayments';
 import AccountSettings from '../components/settings/AccountSettings';
 
 export default function Settings() {
-  const { data: userPersona, isLoading } = useQuery({
-    queryKey: ['userPersona'],
-    queryFn: async () => {
+  const [isChecking, setIsChecking] = useState(true);
+
+  React.useEffect(() => {
+    const checkAuth = async () => {
       const isAuth = await base44.auth.isAuthenticated();
       if (!isAuth) {
         base44.auth.redirectToLogin();
-        return null;
+        return;
       }
+      setIsChecking(false);
+    };
+    checkAuth();
+  }, []);
+
+  const { data: userPersona, isLoading } = useQuery({
+    queryKey: ['userPersona'],
+    queryFn: async () => {
       const user = await base44.auth.me();
       const personas = await base44.entities.UserPersona.filter({ created_by: user.email });
       return personas[0] || null;
     },
+    enabled: !isChecking,
     retry: false
   });
 
   if (isChecking || isLoading) {
     return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-400"></div>
+      <div className="flex items-center justify-center h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#0FB5BA]"></div>
       </div>
     );
   }

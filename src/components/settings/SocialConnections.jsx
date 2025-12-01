@@ -58,14 +58,14 @@ export default function SocialConnections() {
   };
 
   return (
-    <Card className="bg-white border border-slate-200 rounded-xl shadow-md p-5 sm:p-7 space-y-6">
+    <Card className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-md p-5 sm:p-7 space-y-6">
       <div className="flex items-center gap-3">
-        <div className="p-3 bg-[#DDF7F8] rounded-lg">
+        <div className="p-3 bg-[#DDF7F8] dark:bg-[#0FB5BA]/20 rounded-lg">
           <Share2 className="w-6 h-6 text-[#0FB5BA]" />
         </div>
         <div>
-          <h3 className="text-lg font-bold text-slate-900">Social Accounts</h3>
-          <p className="text-sm text-slate-600">Connect your social media platforms</p>
+          <h3 className="text-lg font-bold text-slate-900 dark:text-white">Social Accounts</h3>
+          <p className="text-sm text-slate-600 dark:text-slate-400">Connect your social media platforms</p>
         </div>
       </div>
 
@@ -78,20 +78,20 @@ export default function SocialConnections() {
           return (
             <div
               key={platform.id}
-              className="flex flex-wrap items-center justify-between gap-3 p-4 bg-slate-50 rounded-xl border border-slate-200 hover:border-[#0FB5BA] transition-all"
+              className="flex flex-wrap items-center justify-between gap-3 p-4 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-[#0FB5BA] transition-all"
             >
               <div className="flex items-center gap-3 min-w-0 flex-1">
-                <div className={`w-12 h-12 ${platform.bgClass} rounded-xl flex items-center justify-center flex-shrink-0`}>
+                <div className={`w-12 h-12 ${platform.bgClass} dark:bg-opacity-20 rounded-xl flex items-center justify-center flex-shrink-0`}>
                   <Icon className={`w-6 h-6 ${platform.color}`} />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="font-bold text-slate-900">{platform.name}</p>
+                  <p className="font-bold text-slate-900 dark:text-white">{platform.name}</p>
                   {isConnected ? (
-                    <p className="text-xs text-green-600 truncate">
+                    <p className="text-xs text-green-600 dark:text-green-400 truncate">
                       ✓ Connected {connection.account_username ? `as @${connection.account_username}` : ''}
                     </p>
                   ) : (
-                    <p className="text-xs text-slate-500">Not connected</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">Not connected</p>
                   )}
                 </div>
               </div>
@@ -99,7 +99,7 @@ export default function SocialConnections() {
                 <Button
                   onClick={() => disconnectMutation.mutate(connection.id)}
                   disabled={disconnectMutation.isPending}
-                  className="h-11 px-4 rounded-lg bg-white border border-red-200 text-red-600 hover:bg-red-50 text-xs flex-shrink-0 font-semibold"
+                  className="h-11 px-4 rounded-lg bg-white dark:bg-slate-800 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 text-xs flex-shrink-0 font-semibold"
                 >
                   Disconnect
                 </Button>

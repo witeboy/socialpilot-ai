@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Bell, Sun, Moon, Globe } from 'lucide-react';
-import { useTheme } from '../../contexts/ThemeContext';
-import { useLanguage, languages } from '../../contexts/LanguageContext';
+import { useTheme } from '../contexts/ThemeContext';
+import { useLanguage, languages } from '../contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Badge } from '@/components/ui/badge';

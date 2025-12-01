@@ -5,9 +5,9 @@ import { createPageUrl } from './utils';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { Toaster } from '@/components/ui/sonner';
-import { ThemeProvider } from './components/contexts/ThemeContext';
-import { LanguageProvider, useLanguage } from './components/contexts/LanguageContext';
-import TopBar from './components/layout/TopBar';
+import { ThemeProvider } from '@/components/contexts/ThemeContext';
+import { LanguageProvider, useLanguage } from '@/components/contexts/LanguageContext';
+import TopBar from '@/components/layout/TopBar';
 
 function LayoutContent({ children, currentPageName }) {
   const location = useLocation();

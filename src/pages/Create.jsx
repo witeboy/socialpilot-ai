@@ -9,9 +9,11 @@ import { createPageUrl } from '../utils';
 import ContentGenerator from '../components/create/ContentGenerator';
 import SourcesManager from '../components/create/SourcesManager';
 import PersonaAdjust from '../components/create/PersonaAdjust';
+import { useLanguage } from '@/components/contexts/LanguageContext';
 
 export default function Create() {
   const queryClient = useQueryClient();
+  const { t } = useLanguage();
   const urlParams = new URLSearchParams(window.location.search);
   const tabParam = urlParams.get('tab');
   const [activeTab, setActiveTab] = useState(tabParam || 'sources');
@@ -71,23 +73,23 @@ export default function Create() {
 
   if (isAutoMode) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-[#0F0F1A] to-[#121B2E] p-4 pb-24">
+      <div className="min-h-screen bg-gradient-to-br from-[#0F0F1A] to-[#121B2E] dark:from-[#0F0F1A] dark:to-[#121B2E] p-4 pb-24">
         <div className="max-w-2xl mx-auto space-y-4">
           <div className="text-center pt-20">
             <div className="bg-gradient-to-br from-indigo-500/20 to-purple-500/20 border border-indigo-500/30 rounded-2xl p-8 space-y-4">
               <div className="w-16 h-16 mx-auto bg-indigo-500/20 rounded-full flex items-center justify-center">
                 <PlusSquare className="w-8 h-8 text-indigo-400" />
               </div>
-              <h2 className="text-xl font-bold text-white">Automatic Mode Active</h2>
+              <h2 className="text-xl font-bold text-white">{t('create.autoMode')}</h2>
               <p className="text-slate-300 text-sm">
-                Manual content creation is disabled. Your content is being generated automatically based on your schedule.
+                {t('create.autoDisabled')}
               </p>
               <p className="text-indigo-300 text-sm">
-                Simply approve the first 3 posts in the Feed, and the system will handle everything else automatically.
+                {t('create.approveFirst3')}
               </p>
               <Link to={createPageUrl('Settings')}>
                 <button className="mt-4 px-6 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-sm">
-                  Change to Semi-Auto Mode
+                  {t('create.changeSemiAuto')}
                 </button>
               </Link>
             </div>
@@ -98,36 +100,36 @@ export default function Create() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 p-4 pb-24">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 p-4 pb-24">
       <div className="max-w-2xl mx-auto space-y-4">
         {/* Header */}
         <div className="text-center pt-4 pb-2">
-          <h1 className="text-xl sm:text-2xl font-bold text-slate-900 mb-1">Create Content</h1>
-          <p className="text-xs sm:text-sm text-slate-600">AI-Powered Content Lab</p>
+          <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mb-1">{t('create.title')}</h1>
+          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">{t('create.subtitle')}</p>
         </div>
 
       {/* Tabs - Segmented Control Style */}
       <Tabs value={activeTab} onValueChange={(val) => { setActiveTab(val); setManualMode(true); }} className="w-full">
-        <TabsList className="grid w-full grid-cols-3 bg-slate-100 border border-slate-200 rounded-full p-1 text-xs sm:text-sm">
+        <TabsList className="grid w-full grid-cols-3 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full p-1 text-xs sm:text-sm">
           <TabsTrigger 
             value="sources" 
-            className="data-[state=active]:bg-[#0FB5BA] data-[state=active]:shadow-md data-[state=active]:text-white text-slate-700 rounded-full h-11 font-semibold transition-all"
+            className="data-[state=active]:bg-[#0FB5BA] data-[state=active]:shadow-md data-[state=active]:text-white text-slate-700 dark:text-slate-300 rounded-full h-11 font-semibold transition-all"
           >
-            Sources
+            {t('create.sources')}
           </TabsTrigger>
           <TabsTrigger 
             value="tone" 
             disabled={!hasSources} 
-            className="data-[state=active]:bg-[#0FB5BA] data-[state=active]:shadow-md data-[state=active]:text-white text-slate-700 rounded-full h-11 font-semibold disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+            className="data-[state=active]:bg-[#0FB5BA] data-[state=active]:shadow-md data-[state=active]:text-white text-slate-700 dark:text-slate-300 rounded-full h-11 font-semibold disabled:opacity-30 disabled:cursor-not-allowed transition-all"
           >
-            Tone
+            {t('create.tone')}
           </TabsTrigger>
           <TabsTrigger 
             value="generate" 
             disabled={!hasTone} 
-            className="data-[state=active]:bg-[#0FB5BA] data-[state=active]:shadow-md data-[state=active]:text-white text-slate-700 rounded-full h-11 font-semibold disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+            className="data-[state=active]:bg-[#0FB5BA] data-[state=active]:shadow-md data-[state=active]:text-white text-slate-700 dark:text-slate-300 rounded-full h-11 font-semibold disabled:opacity-30 disabled:cursor-not-allowed transition-all"
           >
-            Generate
+            {t('create.generate')}
           </TabsTrigger>
         </TabsList>
 
@@ -138,7 +140,7 @@ export default function Create() {
               onClick={() => { setActiveTab('tone'); setManualMode(false); }}
               className="w-full h-12 px-4 rounded-lg text-white font-semibold bg-gradient-to-r from-[#0FB5BA] to-[#14D4BA] shadow-md hover:scale-105 transition-transform"
             >
-              Next: Set Tone →
+              {t('create.nextSetTone')}
             </Button>
           )}
         </TabsContent>
@@ -150,7 +152,7 @@ export default function Create() {
               onClick={() => { setActiveTab('generate'); setManualMode(false); }}
               className="w-full h-12 px-4 rounded-lg text-white font-semibold bg-gradient-to-r from-[#0FB5BA] to-[#14D4BA] shadow-md hover:scale-105 transition-transform mt-4"
             >
-              Next: Generate Content →
+              {t('create.nextGenerate')}
             </Button>
           )}
         </TabsContent>

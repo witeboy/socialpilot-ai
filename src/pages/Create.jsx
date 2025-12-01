@@ -20,18 +20,30 @@ export default function Create() {
   const { data: userPersona } = useQuery({
     queryKey: ['userPersona'],
     queryFn: async () => {
+      const isAuth = await base44.auth.isAuthenticated();
+      if (!isAuth) {
+        base44.auth.redirectToLogin();
+        return null;
+      }
       const user = await base44.auth.me();
       const personas = await base44.entities.UserPersona.filter({ created_by: user.email });
       return personas[0] || null;
-    }
+    },
+    retry: false
   });
 
   const { data: sources = [] } = useQuery({
     queryKey: ['sources'],
     queryFn: async () => {
+      const isAuth = await base44.auth.isAuthenticated();
+      if (!isAuth) {
+        base44.auth.redirectToLogin();
+        return [];
+      }
       const user = await base44.auth.me();
       return base44.entities.Source.filter({ created_by: user.email });
-    }
+    },
+    retry: false
   });
 
   const hasSources = sources.length > 0;

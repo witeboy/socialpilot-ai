@@ -166,10 +166,19 @@ Return ONLY the welcome message.`;
     );
   }
 
-  // Onboarding redirect
+  // Redirect new users to onboarding
+  React.useEffect(() => {
+    if (!personaLoading && !userPersona) {
+      navigate(createPageUrl('Onboarding'), { replace: true });
+    }
+  }, [personaLoading, userPersona, navigate]);
+
   if (!userPersona) {
-    navigate(createPageUrl('Onboarding'));
-    return null;
+    return (
+      <div className="flex items-center justify-center h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#0FB5BA]"></div>
+      </div>
+    );
   }
 
   return (

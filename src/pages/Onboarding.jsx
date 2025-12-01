@@ -112,21 +112,21 @@ Generate JSON with:
   });
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-950 to-black flex items-center justify-center p-4">
-      <Card className="w-full max-w-2xl bg-white/5 border border-white/10 backdrop-blur-xl rounded-2xl shadow-xl p-8">
-        <div className="text-center mb-8">
-          <Sparkles className="w-12 h-12 mx-auto mb-4 text-indigo-400" />
-          <h1 className="text-3xl font-bold text-white mb-2">Welcome to SocialPilot</h1>
-          <p className="text-indigo-300">Set up your AI content engine</p>
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center p-3">
+      <Card className="w-full max-w-2xl bg-white border border-slate-200 rounded-xl shadow-md p-4 sm:p-6">
+        <div className="text-center mb-4">
+          <Sparkles className="w-8 h-8 mx-auto mb-2 text-[#0FB5BA]" />
+          <h1 className="text-xl sm:text-2xl font-bold text-slate-900 mb-1">Welcome to SocialPilot</h1>
+          <p className="text-xs sm:text-sm text-slate-600">Set up your AI content engine</p>
         </div>
 
         {/* Progress */}
-        <div className="flex items-center justify-center gap-2 mb-8">
+        <div className="flex items-center justify-center gap-1.5 mb-6">
           {[1, 2, 3, 4].map((s) => (
             <div
               key={s}
-              className={`h-2 rounded-full transition-all ${
-                s <= step ? 'w-12 bg-gradient-to-r from-green-500 to-indigo-500' : 'w-8 bg-white/20'
+              className={`h-1.5 rounded-full transition-all ${
+                s <= step ? 'w-10 bg-[#0FB5BA]' : 'w-6 bg-slate-200'
               }`}
             />
           ))}
@@ -134,11 +134,11 @@ Generate JSON with:
 
         {/* Step 1: Country */}
         {step === 1 && (
-          <div className="space-y-6">
+          <div className="space-y-4">
             <div>
-              <Label className="text-white text-lg mb-3 block">Select Your Country</Label>
+              <Label className="text-slate-900 text-sm sm:text-base mb-2 block font-semibold">Select Your Country</Label>
               <Select value={country} onValueChange={setCountry}>
-                <SelectTrigger className="bg-white/10 border-white/10 text-white h-12 rounded-xl">
+                <SelectTrigger className="bg-white border-slate-200 text-slate-900 h-10 sm:h-11 rounded-lg text-sm">
                   <SelectValue placeholder="Choose country..." />
                 </SelectTrigger>
                 <SelectContent>
@@ -151,7 +151,7 @@ Generate JSON with:
             <Button
               onClick={() => setStep(2)}
               disabled={!country}
-              className="w-full h-12 bg-gradient-to-r from-indigo-600 to-indigo-400 rounded-xl"
+              className="w-full h-10 sm:h-11 bg-gradient-to-r from-[#0FB5BA] to-[#14D4BA] rounded-lg text-white text-sm font-semibold hover:scale-105 transition-transform"
             >
               Continue
             </Button>
@@ -160,10 +160,10 @@ Generate JSON with:
 
         {/* Step 2: Resumes */}
         {step === 2 && (
-          <div className="space-y-6">
+          <div className="space-y-4">
             <div>
-              <Label className="text-white text-lg mb-3 block">Upload Resumes (Max 10)</Label>
-              <p className="text-indigo-300 text-sm mb-4">Upload multiple resumes to build a comprehensive persona</p>
+              <Label className="text-slate-900 text-sm sm:text-base mb-2 block font-semibold">Upload Resumes (Max 10)</Label>
+              <p className="text-slate-600 text-xs sm:text-sm mb-3">Upload multiple resumes to build a comprehensive persona</p>
               
               <input
                 type="file"
@@ -176,33 +176,33 @@ Generate JSON with:
               
               <label
                 htmlFor="resume-upload"
-                className="flex items-center justify-center gap-2 w-full h-32 border-2 border-dashed border-white/20 rounded-xl hover:border-indigo-500 cursor-pointer bg-white/5"
+                className="flex items-center justify-center gap-2 w-full h-24 sm:h-28 border-2 border-dashed border-slate-300 rounded-lg hover:border-[#0FB5BA] cursor-pointer bg-slate-50"
               >
-                <Upload className="w-6 h-6 text-indigo-400" />
-                <span className="text-white">Click to upload resumes</span>
+                <Upload className="w-5 h-5 text-[#0FB5BA]" />
+                <span className="text-slate-700 text-sm">Click to upload resumes</span>
               </label>
 
-              <div className="mt-4 space-y-2">
+              <div className="mt-3 space-y-1.5">
                 {resumes.map((resume, idx) => (
-                  <div key={idx} className="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/10">
+                  <div key={idx} className="flex items-center justify-between p-2 sm:p-2.5 bg-slate-50 rounded-lg border border-slate-200">
                     <div className="flex items-center gap-2">
-                      <FileText className="w-4 h-4 text-indigo-400" />
-                      <span className="text-white text-sm">{resume.filename}</span>
+                      <FileText className="w-3.5 h-3.5 text-[#0FB5BA]" />
+                      <span className="text-slate-900 text-xs sm:text-sm truncate">{resume.filename}</span>
                     </div>
-                    <button onClick={() => removeResume(idx)} className="text-red-400 hover:text-red-300">
-                      <X className="w-4 h-4" />
+                    <button onClick={() => removeResume(idx)} className="text-red-500 hover:text-red-600">
+                      <X className="w-3.5 h-3.5" />
                     </button>
                   </div>
                 ))}
               </div>
             </div>
             
-            <div className="flex gap-3">
-              <Button onClick={() => setStep(1)} variant="outline" className="flex-1">Back</Button>
+            <div className="flex gap-2">
+              <Button onClick={() => setStep(1)} variant="outline" className="flex-1 h-10 text-sm">Back</Button>
               <Button
                 onClick={() => setStep(3)}
                 disabled={resumes.length === 0}
-                className="flex-1 bg-gradient-to-r from-indigo-600 to-indigo-400"
+                className="flex-1 h-10 bg-gradient-to-r from-[#0FB5BA] to-[#14D4BA] text-white text-sm font-semibold hover:scale-105 transition-transform"
               >
                 Continue
               </Button>
@@ -212,74 +212,74 @@ Generate JSON with:
 
         {/* Step 3: Tone */}
         {step === 3 && (
-          <div className="space-y-6">
+          <div className="space-y-4">
             <div>
-              <Label className="text-white text-lg mb-3 block">Choose Your Tone</Label>
-              <div className="space-y-3">
+              <Label className="text-slate-900 text-sm sm:text-base mb-2 block font-semibold">Choose Your Tone</Label>
+              <div className="space-y-2">
                 {tones.map((t) => (
                   <div
                     key={t.value}
                     onClick={() => setTone(t.value)}
-                    className={`p-4 rounded-xl border-2 cursor-pointer transition-all ${
-                      tone === t.value ? 'border-indigo-500 bg-indigo-500/10' : 'border-white/10 bg-white/5 hover:border-white/20'
+                    className={`p-2.5 sm:p-3 rounded-lg border-2 cursor-pointer transition-all ${
+                      tone === t.value ? 'border-[#0FB5BA] bg-[#DDF7F8]' : 'border-slate-200 bg-white hover:border-slate-300'
                     }`}
                   >
-                    <p className="text-white font-semibold">{t.label}</p>
-                    <p className="text-xs text-indigo-300 mt-1">{t.desc}</p>
+                    <p className="text-slate-900 font-semibold text-sm">{t.label}</p>
+                    <p className="text-xs text-slate-600 mt-0.5">{t.desc}</p>
                   </div>
                 ))}
               </div>
             </div>
-            <div className="flex gap-3">
-              <Button onClick={() => setStep(2)} variant="outline" className="flex-1">Back</Button>
-              <Button onClick={() => setStep(4)} className="flex-1 bg-gradient-to-r from-indigo-600 to-indigo-400">Continue</Button>
+            <div className="flex gap-2">
+              <Button onClick={() => setStep(2)} variant="outline" className="flex-1 h-10 text-sm">Back</Button>
+              <Button onClick={() => setStep(4)} className="flex-1 h-10 bg-gradient-to-r from-[#0FB5BA] to-[#14D4BA] text-white text-sm font-semibold hover:scale-105 transition-transform">Continue</Button>
             </div>
           </div>
         )}
 
         {/* Step 4: Automation */}
         {step === 4 && (
-          <div className="space-y-6">
+          <div className="space-y-4">
             <div>
-              <Label className="text-white text-lg mb-3 block">Automation Mode</Label>
-              <div className="space-y-3">
+              <Label className="text-slate-900 text-sm sm:text-base mb-2 block font-semibold">Automation Mode</Label>
+              <div className="space-y-2">
                 <div
                   onClick={() => setAutomationMode('semi_auto')}
-                  className={`p-4 rounded-xl border-2 cursor-pointer ${
-                    automationMode === 'semi_auto' ? 'border-indigo-500 bg-indigo-500/10' : 'border-white/10 bg-white/5'
+                  className={`p-2.5 sm:p-3 rounded-lg border-2 cursor-pointer transition-all ${
+                    automationMode === 'semi_auto' ? 'border-[#0FB5BA] bg-[#DDF7F8]' : 'border-slate-200 bg-white hover:border-slate-300'
                   }`}
                 >
-                  <p className="text-white font-semibold">⏸️ Semi-Auto (Recommended)</p>
-                  <p className="text-xs text-indigo-300 mt-1">Review before posting</p>
+                  <p className="text-slate-900 font-semibold text-sm">⏸️ Semi-Auto (Recommended)</p>
+                  <p className="text-xs text-slate-600 mt-0.5">Review before posting</p>
                 </div>
 
                 <div
                   onClick={() => setAutomationMode('auto')}
-                  className={`p-4 rounded-xl border-2 cursor-pointer ${
-                    automationMode === 'auto' ? 'border-green-500 bg-green-500/10' : 'border-white/10 bg-white/5'
+                  className={`p-2.5 sm:p-3 rounded-lg border-2 cursor-pointer transition-all ${
+                    automationMode === 'auto' ? 'border-[#0FB5BA] bg-[#DDF7F8]' : 'border-slate-200 bg-white hover:border-slate-300'
                   }`}
                 >
-                  <p className="text-white font-semibold">⚡ Fully Automatic</p>
-                  <p className="text-xs text-indigo-300 mt-1">Posts automatically after 3 approvals</p>
+                  <p className="text-slate-900 font-semibold text-sm">⚡ Fully Automatic</p>
+                  <p className="text-xs text-slate-600 mt-0.5">Posts automatically after 3 approvals</p>
                 </div>
               </div>
             </div>
 
-            <div className="flex gap-3">
-              <Button onClick={() => setStep(3)} variant="outline" className="flex-1">Back</Button>
+            <div className="flex gap-2">
+              <Button onClick={() => setStep(3)} variant="outline" className="flex-1 h-10 text-sm">Back</Button>
               <Button
                 onClick={() => createPersonaMutation.mutate()}
                 disabled={createPersonaMutation.isPending}
-                className="flex-1 bg-gradient-to-r from-indigo-600 to-indigo-400"
+                className="flex-1 h-10 bg-gradient-to-r from-[#0FB5BA] to-[#14D4BA] text-white text-sm font-semibold hover:scale-105 transition-transform"
               >
                 {createPersonaMutation.isPending ? (
                   <>
-                    <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                    <Loader2 className="w-4 h-4 mr-1.5 animate-spin" />
                     Creating...
                   </>
                 ) : (
                   <>
-                    <Sparkles className="w-5 h-5 mr-2" />
+                    <Sparkles className="w-4 h-4 mr-1.5" />
                     Create Profile
                   </>
                 )}

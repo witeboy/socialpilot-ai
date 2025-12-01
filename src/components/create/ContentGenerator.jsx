@@ -303,24 +303,12 @@ Generate the content following ALL the rules above.`;
     setGeneratedDraftIds({});
   };
   
-  // Generate Video Mutation
-  const generateVideoMutation = useMutation({
-    mutationFn: async ({ draftId, aspectRatio }) => {
-      const totalCredits = (userPersona?.purchased_credits || 0) + (userPersona?.daily_ad_credits || 0);
-      if (totalCredits < 5) throw new Error('Need 5 credits to generate video');
-      
-      const response = await base44.functions.invoke('generateVideo', { draftId, aspectRatio });
-      return response.data;
-    },
-    onSuccess: (data) => {
-      toast.success('Video Generated!', { description: 'Video is ready to view', duration: 3000 });
-      queryClient.invalidateQueries(['userPersona']);
-      queryClient.invalidateQueries(['drafts']);
-    },
-    onError: (error) => {
-      toast.error('Failed to generate video', { description: error.message, duration: 3000 });
-    }
-  });
+  const handleGenerateVideo = () => {
+    toast.info('Coming Soon! 🎬', { 
+      description: 'Video generation feature is under development', 
+      duration: 3000 
+    });
+  };
 
   if (generatedContent) {
     const previewData = generatedContent.platformContent[selectedPreviewPlatform];
@@ -406,35 +394,19 @@ Generate the content following ALL the rules above.`;
             <Label className="text-slate-700 mb-2 block text-xs sm:text-sm font-semibold">Generate Video</Label>
             <div className="grid grid-cols-2 gap-2">
               <Button
-                onClick={() => generateVideoMutation.mutate({ draftId: currentDraftId, aspectRatio: '16:9' })}
-                disabled={generateVideoMutation.isPending}
-                className="h-11 px-4 rounded-lg text-white font-semibold bg-gradient-to-r from-[#0FB5BA] to-[#14D4BA] shadow-md hover:scale-105 transition-transform disabled:opacity-50"
+                onClick={handleGenerateVideo}
+                className="h-11 px-4 rounded-lg text-white font-semibold bg-gradient-to-r from-[#0FB5BA] to-[#14D4BA] shadow-md hover:scale-105 transition-transform"
               >
-                {generateVideoMutation.isPending ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Generating...
-                  </>
-                ) : (
-                  '16:9 Video (5 Credits)'
-                )}
+                🎬 16:9 Video
               </Button>
               <Button
-                onClick={() => generateVideoMutation.mutate({ draftId: currentDraftId, aspectRatio: '9:16' })}
-                disabled={generateVideoMutation.isPending}
-                className="h-11 px-4 rounded-lg text-white font-semibold bg-gradient-to-r from-[#0FB5BA] to-[#14D4BA] shadow-md hover:scale-105 transition-transform disabled:opacity-50"
+                onClick={handleGenerateVideo}
+                className="h-11 px-4 rounded-lg text-white font-semibold bg-gradient-to-r from-[#0FB5BA] to-[#14D4BA] shadow-md hover:scale-105 transition-transform"
               >
-                {generateVideoMutation.isPending ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Generating...
-                  </>
-                ) : (
-                  '9:16 Video (5 Credits)'
-                )}
+                🎬 9:16 Video
               </Button>
             </div>
-            <p className="text-xs text-slate-600 text-center">Choose aspect ratio for your video</p>
+            <p className="text-xs text-slate-600 text-center">Video generation coming soon!</p>
           </div>
         )}
 

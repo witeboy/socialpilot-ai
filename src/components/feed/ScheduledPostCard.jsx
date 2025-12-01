@@ -23,9 +23,9 @@ export default function ScheduledPostCard({ post, onPostNow, isPosting }) {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
     >
-      <Card className="bg-white border border-slate-200 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+      <Card className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow">
         {post.media_url && (
-          <div className="aspect-video bg-slate-100 overflow-hidden">
+          <div className="aspect-video bg-slate-100 dark:bg-slate-800 overflow-hidden">
             <img
               src={post.media_url}
               alt="Content media"
@@ -38,7 +38,7 @@ export default function ScheduledPostCard({ post, onPostNow, isPosting }) {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1">
               <PlatformIcon className={`w-3.5 h-3.5 ${platformColor}`} />
-              <span className="text-[10px] font-semibold text-slate-900 capitalize">
+              <span className="text-[10px] font-semibold text-slate-900 dark:text-white capitalize">
                 {post.platform}
               </span>
             </div>
@@ -53,11 +53,11 @@ export default function ScheduledPostCard({ post, onPostNow, isPosting }) {
             </Button>
           </div>
 
-          <p className="text-[10px] text-slate-700 line-clamp-3">
+          <p className="text-[10px] text-slate-700 dark:text-slate-300 line-clamp-3">
             {post.text_content}
           </p>
 
-          <div className="flex items-center justify-between pt-1 border-t border-slate-100">
+          <div className="flex items-center justify-between pt-1 border-t border-slate-100 dark:border-slate-800">
             <div className="flex items-center gap-1">
               {post.virality_score && (
                 <Badge className="bg-purple-100 text-purple-700 text-[8px] px-1 py-0">
@@ -65,7 +65,7 @@ export default function ScheduledPostCard({ post, onPostNow, isPosting }) {
                 </Badge>
               )}
             </div>
-            <div className="flex items-center gap-0.5 text-slate-500">
+            <div className="flex items-center gap-0.5 text-slate-500 dark:text-slate-400">
               <Calendar className="w-2.5 h-2.5" />
               <span className="text-[9px]">
                 {format(new Date(post.scheduled_for), 'MMM d, h:mm a')}

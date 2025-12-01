@@ -419,11 +419,11 @@ Generate the content following ALL the rules above.`;
     const hasEdits = !!editedContent[selectedPreviewPlatform];
     
     return (
-      <Card className="bg-white border border-slate-200 rounded-xl shadow-md p-4 sm:p-6 space-y-4">
+      <Card className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-md p-4 sm:p-6 space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-base sm:text-lg font-bold text-slate-900">Content Preview</h3>
-            <p className="text-xs text-slate-600 mt-0.5">Review your generated content</p>
+            <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">Content Preview</h3>
+            <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">Review your generated content</p>
           </div>
           <Button onClick={resetGenerator} size="sm" variant="outline" className="text-xs">
             Generate New
@@ -432,7 +432,7 @@ Generate the content following ALL the rules above.`;
 
         {/* Platform Selector */}
         <div>
-          <Label className="text-slate-700 mb-2 block text-xs sm:text-sm font-semibold">Select Platform to Preview</Label>
+          <Label className="text-slate-700 dark:text-slate-300 mb-2 block text-xs sm:text-sm font-semibold">Select Platform to Preview</Label>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
             {selectedPlatforms.map((platformId) => {
               const platform = platforms.find(p => p.id === platformId);
@@ -444,12 +444,12 @@ Generate the content following ALL the rules above.`;
                   onClick={() => setSelectedPreviewPlatform(platformId)}
                   className={`p-3 rounded-xl border-2 transition-all ${
                     isActive
-                      ? 'border-[#0FB5BA] bg-[#DDF7F8]'
-                      : 'border-slate-200 bg-white hover:border-slate-300'
+                      ? 'border-[#0FB5BA] bg-[#DDF7F8] dark:bg-[#0FB5BA]/20'
+                      : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-slate-300 dark:hover:border-slate-600'
                   }`}
                 >
                   <Icon className={`w-5 h-5 mx-auto mb-1 ${isActive ? 'text-[#0FB5BA]' : platform.color}`} />
-                  <p className={`text-xs font-medium ${isActive ? 'text-slate-900' : 'text-slate-600'}`}>
+                  <p className={`text-xs font-medium ${isActive ? 'text-slate-900 dark:text-white' : 'text-slate-600 dark:text-slate-400'}`}>
                     {platform.name}
                   </p>
                 </button>
@@ -460,29 +460,25 @@ Generate the content following ALL the rules above.`;
 
         {/* Topic */}
         <div>
-          <Label className="text-slate-700 mb-2 block text-xs sm:text-sm font-semibold">Generated Topic</Label>
-          <div className="bg-slate-50 rounded-xl p-3 border border-slate-200">
-            <p className="text-slate-900 text-sm">{generatedContent.topic}</p>
+          <Label className="text-slate-700 dark:text-slate-300 mb-2 block text-xs sm:text-sm font-semibold">Generated Topic</Label>
+          <div className="bg-slate-50 dark:bg-slate-800 rounded-xl p-3 border border-slate-200 dark:border-slate-700">
+            <p className="text-slate-900 dark:text-white text-sm">{generatedContent.topic}</p>
           </div>
         </div>
 
         {/* Media Preview */}
         <div>
-          <Label className="text-slate-700 mb-2 block text-xs sm:text-sm font-semibold">Generated Media</Label>
-          <div className="bg-slate-50 rounded-xl p-3 border border-slate-200 space-y-2">
-            <img 
-              src={previewData.mediaUrl} 
-              alt="Generated media" 
-              className="w-full rounded-lg"
-            />
-            <p className="text-xs text-slate-600 mt-2">Prompt: {previewData.mediaPrompt}</p>
+          <Label className="text-slate-700 dark:text-slate-300 mb-2 block text-xs sm:text-sm font-semibold">Generated Media</Label>
+          <div className="bg-slate-50 dark:bg-slate-800 rounded-xl p-3 border border-slate-200 dark:border-slate-700 space-y-2">
+...
+            <p className="text-xs text-slate-600 dark:text-slate-400 mt-2">Prompt: {previewData.mediaPrompt}</p>
           </div>
         </div>
 
         {/* Content Preview */}
         <div>
           <div className="flex items-center justify-between mb-2">
-            <Label className="text-slate-700 text-xs sm:text-sm font-semibold">
+            <Label className="text-slate-700 dark:text-slate-300 text-xs sm:text-sm font-semibold">
               {isVideoPlatform ? 'Video Script' : 'Post Content'}
             </Label>
             {hasEdits && (
@@ -499,7 +495,7 @@ Generate the content following ALL the rules above.`;
           <Textarea
             value={displayText}
             onChange={(e) => setEditedContent(prev => ({ ...prev, [selectedPreviewPlatform]: e.target.value }))}
-            className="w-full rounded-xl bg-slate-50 text-slate-900 p-3 border border-slate-200 text-xs sm:text-sm focus:outline-none focus:ring-4 focus:ring-teal-100"
+            className="w-full rounded-xl bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white p-3 border border-slate-200 dark:border-slate-700 text-xs sm:text-sm focus:outline-none focus:ring-4 focus:ring-teal-100 dark:focus:ring-teal-900"
             rows={8}
           />
           {hasEdits && (
@@ -509,10 +505,10 @@ Generate the content following ALL the rules above.`;
 
         {/* AI Editing Tools */}
         <div className="space-y-3">
-          <Label className="text-slate-700 text-xs sm:text-sm font-semibold">AI Editing Tools (1 credit each)</Label>
+          <Label className="text-slate-700 dark:text-slate-300 text-xs sm:text-sm font-semibold">AI Editing Tools (1 credit each)</Label>
           
           <div>
-            <p className="text-xs text-slate-600 mb-2 font-medium">Adjust Tone:</p>
+            <p className="text-xs text-slate-600 dark:text-slate-400 mb-2 font-medium">Adjust Tone:</p>
             <div className="grid grid-cols-3 gap-2">
               <Button
                 onClick={() => editContentMutation.mutate({ action: 'formal', currentText: displayText })}
@@ -545,7 +541,7 @@ Generate the content following ALL the rules above.`;
           </div>
 
           <div>
-            <p className="text-xs text-slate-600 mb-2 font-medium">Adjust Length:</p>
+            <p className="text-xs text-slate-600 dark:text-slate-400 mb-2 font-medium">Adjust Length:</p>
             <div className="grid grid-cols-2 gap-2">
               <Button
                 onClick={() => editContentMutation.mutate({ action: 'shorten', currentText: displayText })}
@@ -569,7 +565,7 @@ Generate the content following ALL the rules above.`;
           </div>
 
           <div>
-            <p className="text-xs text-slate-600 mb-2 font-medium">Improve Quality:</p>
+            <p className="text-xs text-slate-600 dark:text-slate-400 mb-2 font-medium">Improve Quality:</p>
             <Button
               onClick={() => editContentMutation.mutate({ action: 'improve', currentText: displayText })}
               disabled={editContentMutation.isPending}
@@ -584,7 +580,7 @@ Generate the content following ALL the rules above.`;
 
         {isVideoPlatform && (
           <div className="space-y-2">
-            <Label className="text-slate-700 mb-2 block text-xs sm:text-sm font-semibold">Generate Video</Label>
+            <Label className="text-slate-700 dark:text-slate-300 mb-2 block text-xs sm:text-sm font-semibold">Generate Video</Label>
             <div className="grid grid-cols-2 gap-2">
               <Button
                 onClick={handleGenerateVideo}
@@ -599,24 +595,24 @@ Generate the content following ALL the rules above.`;
                 🎬 9:16 Video
               </Button>
             </div>
-            <p className="text-xs text-slate-600 text-center">Video generation coming soon!</p>
+            <p className="text-xs text-slate-600 dark:text-slate-400 text-center">Video generation coming soon!</p>
           </div>
         )}
 
-        <div className="bg-green-50 border border-green-200 rounded-xl p-3 flex items-center gap-2">
-          <Check className="w-5 h-5 text-green-600" />
-          <p className="text-sm text-green-700 font-medium">Content saved to Feed for review!</p>
+        <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl p-3 flex items-center gap-2">
+          <Check className="w-5 h-5 text-green-600 dark:text-green-400" />
+          <p className="text-sm text-green-700 dark:text-green-300 font-medium">Content saved to Feed for review!</p>
         </div>
       </Card>
     );
   }
 
   return (
-    <Card className="bg-white border border-slate-200 rounded-xl shadow-md p-4 sm:p-6 space-y-4">
+    <Card className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-md p-4 sm:p-6 space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-base sm:text-lg font-bold text-slate-900">Content Generator</h3>
-          <p className="text-xs text-slate-600 mt-0.5">AI generates everything automatically</p>
+          <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">Content Generator</h3>
+          <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">AI generates everything automatically</p>
         </div>
         <div className="flex items-center gap-2">
           <Coins className="w-4 h-4 text-yellow-400" />
@@ -627,7 +623,7 @@ Generate the content following ALL the rules above.`;
       </div>
 
       <div>
-        <Label className="text-slate-700 mb-2 block text-xs sm:text-sm font-semibold">Select Platforms</Label>
+        <Label className="text-slate-700 dark:text-slate-300 mb-2 block text-xs sm:text-sm font-semibold">Select Platforms</Label>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
           {platforms.map((platform) => {
             const Icon = platform.icon;
@@ -638,12 +634,12 @@ Generate the content following ALL the rules above.`;
                 onClick={() => togglePlatform(platform.id)}
                 className={`p-3 rounded-xl border-2 transition-all ${
                   isSelected
-                    ? 'border-[#0FB5BA] bg-[#DDF7F8]'
-                    : 'border-slate-200 bg-white hover:border-slate-300'
+                    ? 'border-[#0FB5BA] bg-[#DDF7F8] dark:bg-[#0FB5BA]/20'
+                    : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-slate-300 dark:hover:border-slate-600'
                 }`}
               >
                 <Icon className={`w-5 h-5 mx-auto mb-1 ${isSelected ? 'text-[#0FB5BA]' : platform.color}`} />
-                <p className={`text-xs font-medium ${isSelected ? 'text-slate-900' : 'text-slate-600'}`}>
+                <p className={`text-xs font-medium ${isSelected ? 'text-slate-900 dark:text-white' : 'text-slate-600 dark:text-slate-400'}`}>
                   {platform.name}
                 </p>
               </button>
@@ -657,9 +653,9 @@ Generate the content following ALL the rules above.`;
         )}
       </div>
 
-      <div className="bg-[#DDF7F8] border border-[#0FB5BA]/30 rounded-xl p-4 space-y-2">
-        <p className="text-sm text-slate-900 font-semibold">🤖 AI will automatically:</p>
-        <ul className="text-xs text-slate-700 space-y-1 ml-4">
+      <div className="bg-[#DDF7F8] dark:bg-[#0FB5BA]/10 border border-[#0FB5BA]/30 rounded-xl p-4 space-y-2">
+        <p className="text-sm text-slate-900 dark:text-white font-semibold">🤖 AI will automatically:</p>
+        <ul className="text-xs text-slate-700 dark:text-slate-300 space-y-1 ml-4">
           <li>• Generate a topic from your sources</li>
           <li>• Create platform-optimized content</li>
           <li>• Generate a media prompt & image</li>

@@ -91,16 +91,16 @@ export default function SourcesManager({ onComplete }) {
   });
 
   return (
-    <Card className="bg-white border border-slate-200 rounded-xl shadow-md p-5 sm:p-7 space-y-4">
+    <Card className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-md p-5 sm:p-7 space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-base sm:text-lg font-bold text-slate-900">Content Sources</h3>
-          <p className="text-xs text-slate-600 mt-0.5">Add permanent sources for content generation</p>
+          <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">Content Sources</h3>
+          <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">Add permanent sources for content generation</p>
         </div>
         {!showAddForm && (
           <Button
             onClick={() => setShowAddForm(true)}
-            className="h-11 px-4 rounded-lg bg-slate-50 border border-slate-200 text-slate-700 hover:bg-[#DDF7F8] hover:border-[#0FB5BA] text-xs sm:text-sm font-semibold transition-all"
+            className="h-11 px-4 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-[#DDF7F8] dark:hover:bg-[#0FB5BA]/20 hover:border-[#0FB5BA] text-xs sm:text-sm font-semibold transition-all"
           >
             <Plus className="w-4 h-4 mr-1" />
             Add
@@ -109,23 +109,23 @@ export default function SourcesManager({ onComplete }) {
       </div>
 
       {showAddForm && (
-        <Card className="bg-slate-50 border border-slate-200 p-4 space-y-3 rounded-xl">
+        <Card className="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-4 space-y-3 rounded-xl">
           <div className="flex items-center justify-between mb-2">
-            <Label className="text-slate-900 text-sm font-semibold">Add New Source</Label>
+            <Label className="text-slate-900 dark:text-white text-sm font-semibold">Add New Source</Label>
             <Button
               variant="ghost"
               size="sm"
               onClick={() => setShowAddForm(false)}
-              className="text-slate-600 hover:text-slate-900 hover:bg-slate-200"
+              className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-700"
             >
               <X className="w-4 h-4" />
             </Button>
           </div>
 
           <div>
-            <Label className="text-slate-700 mb-2 block text-xs sm:text-sm font-semibold">Source Type</Label>
+            <Label className="text-slate-700 dark:text-slate-300 mb-2 block text-xs sm:text-sm font-semibold">Source Type</Label>
             <Select value={sourceType} onValueChange={setSourceType}>
-              <SelectTrigger className="h-11 rounded-lg bg-white border border-slate-200 px-4 text-xs sm:text-sm focus:outline-none focus:ring-4 focus:ring-teal-100">
+              <SelectTrigger className="h-11 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 px-4 text-xs sm:text-sm focus:outline-none focus:ring-4 focus:ring-teal-100 dark:focus:ring-teal-900">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -138,24 +138,24 @@ export default function SourcesManager({ onComplete }) {
 
           {sourceType !== 'text' && (
             <div>
-              <Label className="text-slate-700 mb-2 block text-xs sm:text-sm font-semibold">URL</Label>
+              <Label className="text-slate-700 dark:text-slate-300 mb-2 block text-xs sm:text-sm font-semibold">URL</Label>
               <Input
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
                 placeholder="https://example.com/feed"
-                className="h-11 rounded-lg bg-white border border-slate-200 px-4 text-xs sm:text-sm focus:outline-none focus:ring-4 focus:ring-teal-100"
+                className="h-11 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 px-4 text-xs sm:text-sm focus:outline-none focus:ring-4 focus:ring-teal-100 dark:focus:ring-teal-900"
               />
             </div>
           )}
 
           {sourceType === 'text' && (
             <div>
-              <Label className="text-slate-700 mb-2 block text-xs sm:text-sm font-semibold">Content</Label>
+              <Label className="text-slate-700 dark:text-slate-300 mb-2 block text-xs sm:text-sm font-semibold">Content</Label>
               <Textarea
                 value={text}
                 onChange={(e) => setText(e.target.value)}
                 placeholder="Paste your content here..."
-                className="rounded-lg bg-white border border-slate-200 px-4 py-3 text-xs sm:text-sm focus:outline-none focus:ring-4 focus:ring-teal-100"
+                className="rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 px-4 py-3 text-xs sm:text-sm focus:outline-none focus:ring-4 focus:ring-teal-100 dark:focus:ring-teal-900"
                 rows={4}
               />
             </div>
@@ -183,23 +183,23 @@ export default function SourcesManager({ onComplete }) {
 
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <h4 className="text-xs sm:text-sm font-semibold text-slate-900">Active Sources ({sources.length})</h4>
+          <h4 className="text-xs sm:text-sm font-semibold text-slate-900 dark:text-white">Active Sources ({sources.length})</h4>
           {sources.length > 0 && (
-            <span className="text-xs text-slate-600">Used for all content generation</span>
+            <span className="text-xs text-slate-600 dark:text-slate-400">Used for all content generation</span>
           )}
         </div>
         {sources.length === 0 ? (
           <div className="text-center py-8">
-            <FileText className="w-12 h-12 text-slate-300 mx-auto mb-2" />
-            <p className="text-slate-600 text-sm">No sources added yet</p>
-            <p className="text-slate-500 text-xs mt-1">Add RSS feeds, URLs, or text sources</p>
+            <FileText className="w-12 h-12 text-slate-300 dark:text-slate-600 mx-auto mb-2" />
+            <p className="text-slate-600 dark:text-slate-400 text-sm">No sources added yet</p>
+            <p className="text-slate-500 dark:text-slate-500 text-xs mt-1">Add RSS feeds, URLs, or text sources</p>
           </div>
         ) : (
           <div className="space-y-2">
             {sources.map((source) => (
               <div
                 key={source.id}
-                className="p-3 sm:p-4 bg-slate-50 rounded-xl border border-slate-200 hover:border-[#0FB5BA] hover:shadow-sm transition-all"
+                className="p-3 sm:p-4 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-[#0FB5BA] hover:shadow-sm transition-all"
               >
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex-1 min-w-0">
@@ -207,12 +207,12 @@ export default function SourcesManager({ onComplete }) {
                       {source.source_type === 'rss' && <Rss className="w-4 h-4 text-orange-500 flex-shrink-0" />}
                       {source.source_type === 'url' && <Link2 className="w-4 h-4 text-blue-500 flex-shrink-0" />}
                       {source.source_type === 'text' && <FileText className="w-4 h-4 text-green-500 flex-shrink-0" />}
-                      <p className="text-slate-900 font-medium text-sm sm:text-base truncate">{source.title}</p>
+                      <p className="text-slate-900 dark:text-white font-medium text-sm sm:text-base truncate">{source.title}</p>
                     </div>
                     {source.source_url && (
-                      <p className="text-xs text-slate-600 truncate mb-1">{source.source_url}</p>
+                      <p className="text-xs text-slate-600 dark:text-slate-400 truncate mb-1">{source.source_url}</p>
                     )}
-                    <p className="text-xs text-slate-500">
+                    <p className="text-xs text-slate-500 dark:text-slate-500">
                      ✅ {source.content_generated_count || 0} posts generated
                     </p>
                     </div>
@@ -242,10 +242,10 @@ export default function SourcesManager({ onComplete }) {
                     </div>
                     </div>
                     {expandedSourceId === source.id && source.source_text && (
-                    <div className="mt-3 pt-3 border-t border-slate-200">
-                    <Label className="text-slate-700 text-xs font-semibold mb-2 block">Content Preview</Label>
-                    <div className="bg-white rounded-lg p-3 border border-slate-200 max-h-48 overflow-y-auto">
-                     <p className="text-xs text-slate-700 whitespace-pre-wrap">{source.source_text}</p>
+                    <div className="mt-3 pt-3 border-t border-slate-200 dark:border-slate-700">
+                    <Label className="text-slate-700 dark:text-slate-300 text-xs font-semibold mb-2 block">Content Preview</Label>
+                    <div className="bg-white dark:bg-slate-900 rounded-lg p-3 border border-slate-200 dark:border-slate-700 max-h-48 overflow-y-auto">
+                     <p className="text-xs text-slate-700 dark:text-slate-300 whitespace-pre-wrap">{source.source_text}</p>
                     </div>
                     </div>
                     )}

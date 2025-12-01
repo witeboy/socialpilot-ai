@@ -61,22 +61,32 @@ export default function Feed() {
       let platformPostId = null;
       let postedAt = null;
 
+      // Auto-post to connected platforms
       if (socialAccounts.length > 0) {
         try {
-          const result = await base44.functions.invoke('autopost', {
-            platform: draft.platform,
-            text_content: draft.text_content,
-            media_url: draft.media_url,
-            account_id: socialAccounts[0].id
-          });
+          let result;
           
-          if (result.data.success) {
+          if (draft.platform === 'linkedin') {
+            result = await base44.functions.invoke('postToLinkedIn', {
+              text: draft.text_content,
+              imageUrl: draft.media_url,
+              draftId: draft.id
+            });
+          } else if (draft.platform === 'twitter') {
+            result = await base44.functions.invoke('postToTwitter', {
+              text: draft.text_content,
+              imageUrl: draft.media_url,
+              draftId: draft.id
+            });
+          }
+          
+          if (result?.data?.success) {
             postStatus = 'posted';
-            platformPostId = result.data.post_id;
+            platformPostId = result.data.platform_post_id;
             postedAt = new Date().toISOString();
           }
         } catch (error) {
-          console.error('Autopost failed, scheduling instead:', error);
+          console.error('Auto-post failed, scheduling instead:', error);
         }
       }
 
@@ -107,13 +117,19 @@ export default function Feed() {
         });
       }
 
-      return { posted: postStatus === 'posted' };
+      return { posted: postStatus === 'posted', platform: draft.platform };
     },
     onSuccess: (data) => {
       if (data?.posted) {
-        toast.success('Posted Live!', { description: 'Content published to your platform', duration: 3000 });
+        toast.success('🎉 Posted Live!', { 
+          description: `Your content is now live on ${data.platform}`, 
+          duration: 4000 
+        });
       } else {
-        toast.success('Approved!', { description: 'Content scheduled for posting', duration: 3000 });
+        toast.success('✅ Approved!', { 
+          description: 'Content scheduled for posting', 
+          duration: 3000 
+        });
       }
       queryClient.invalidateQueries(['pendingDrafts']);
       queryClient.invalidateQueries(['approvedDrafts']);
@@ -121,6 +137,12 @@ export default function Feed() {
       queryClient.invalidateQueries(['postedContent']);
       queryClient.invalidateQueries(['userPersona']);
       setCurrentIndex((prev) => prev + 1);
+    },
+    onError: (error) => {
+      toast.error('Approval Failed', { 
+        description: error.message, 
+        duration: 4000 
+      });
     }
   });
 

@@ -5,9 +5,13 @@ import { createPageUrl } from './utils';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { Toaster } from '@/components/ui/sonner';
+import { ThemeProvider } from './contexts/ThemeContext';
+import { LanguageProvider, useLanguage } from './contexts/LanguageContext';
+import TopBar from './components/layout/TopBar';
 
-export default function Layout({ children, currentPageName }) {
+function LayoutContent({ children, currentPageName }) {
   const location = useLocation();
+  const { t } = useLanguage();
 
   // Add Google AdSense script and meta tag to head
   useEffect(() => {
@@ -42,10 +46,10 @@ export default function Layout({ children, currentPageName }) {
   const isAutoMode = userPersona?.automation_mode === 'auto';
   
   const tabs = [
-    { name: 'Home', icon: Home, path: createPageUrl('Home'), disabled: false },
-    { name: 'Create', icon: PlusSquare, path: createPageUrl('Create'), disabled: isAutoMode },
-    { name: 'Feed', icon: Layers, path: createPageUrl('Feed'), disabled: false },
-    { name: 'Settings', icon: Settings, path: createPageUrl('Settings'), disabled: false }
+    { name: 'Home', icon: Home, path: createPageUrl('Home'), disabled: false, label: t('nav.home') },
+    { name: 'Create', icon: PlusSquare, path: createPageUrl('Create'), disabled: isAutoMode, label: t('nav.create') },
+    { name: 'Feed', icon: Layers, path: createPageUrl('Feed'), disabled: false, label: t('nav.feed') },
+    { name: 'Settings', icon: Settings, path: createPageUrl('Settings'), disabled: false, label: t('nav.settings') }
   ];
 
   const isActive = (tabName) => {
@@ -53,15 +57,16 @@ export default function Layout({ children, currentPageName }) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 pb-[68px]">
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 dark:from-slate-950 dark:via-black dark:to-slate-950 pb-[68px] pt-14">
       <Toaster richColors closeButton position="top-center" />
+      <TopBar />
       {/* Page Content */}
       <main className="min-h-screen">
         {children}
       </main>
 
       {/* Bottom Tab Navigation - 68px height */}
-      <nav className="fixed bottom-0 left-0 right-0 h-[68px] bg-white/95 backdrop-blur-xl border-t border-slate-200 z-50 shadow-lg">
+      <nav className="fixed bottom-0 left-0 right-0 h-[68px] bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-t border-slate-200 dark:border-slate-700 z-50 shadow-lg">
         <div className="flex items-center justify-around h-full max-w-2xl mx-auto px-2">
           {tabs.map((tab) => {
             const Icon = tab.icon;
@@ -74,9 +79,9 @@ export default function Layout({ children, currentPageName }) {
                   key={tab.name}
                   className="flex flex-col items-center justify-center flex-1 h-full opacity-30 cursor-not-allowed"
                 >
-                  <Icon className="w-6 h-6 text-slate-400" strokeWidth={2} />
-                  <span className="text-[10px] mt-1.5 font-medium text-slate-400">
-                    {tab.name}
+                  <Icon className="w-6 h-6 text-slate-400 dark:text-slate-600" strokeWidth={2} />
+                  <span className="text-[10px] mt-1.5 font-medium text-slate-400 dark:text-slate-600">
+                    {tab.label}
                   </span>
                 </div>
               );
@@ -91,7 +96,7 @@ export default function Layout({ children, currentPageName }) {
                 <div className="relative">
                   <Icon 
                     className={`w-6 h-6 transition-colors ${
-                      active ? 'text-[#0FB5BA]' : 'text-slate-500 group-hover:text-slate-700'
+                      active ? 'text-[#0FB5BA]' : 'text-slate-500 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-300'
                     }`}
                     strokeWidth={active ? 2.5 : 2} 
                   />
@@ -100,9 +105,9 @@ export default function Layout({ children, currentPageName }) {
                   )}
                 </div>
                 <span className={`text-[10px] mt-1.5 font-semibold transition-colors ${
-                  active ? 'text-[#0FB5BA]' : 'text-slate-500 group-hover:text-slate-700'
+                  active ? 'text-[#0FB5BA]' : 'text-slate-500 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-300'
                 }`}>
-                  {tab.name}
+                  {tab.label}
                 </span>
               </Link>
             );
@@ -110,5 +115,15 @@ export default function Layout({ children, currentPageName }) {
         </div>
       </nav>
     </div>
+  );
+}
+
+export default function Layout({ children, currentPageName }) {
+  return (
+    <ThemeProvider>
+      <LanguageProvider>
+        <LayoutContent children={children} currentPageName={currentPageName} />
+      </LanguageProvider>
+    </ThemeProvider>
   );
 }

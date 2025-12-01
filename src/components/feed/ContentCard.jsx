@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Linkedin, Twitter, Youtube, Video, Calendar, CheckCircle, Send } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { format } from 'date-fns';
+import VideoPlayerModal from './VideoPlayerModal';
 
 const platformIcons = {
   linkedin: { icon: Linkedin, color: 'text-blue-600' },
@@ -13,6 +14,7 @@ const platformIcons = {
 };
 
 export default function ContentCard({ content, type }) {
+  const [playingVideo, setPlayingVideo] = useState(null);
   const PlatformIcon = platformIcons[content.platform]?.icon || Linkedin;
   const platformColor = platformIcons[content.platform]?.color || 'text-blue-600';
   
@@ -83,26 +85,22 @@ export default function ContentCard({ content, type }) {
               <p className="text-xs text-slate-600 mb-2 font-semibold">📹 Generated Videos:</p>
               <div className="flex gap-2">
                 {hasVideo16_9 && (
-                  <a
-                    href={hasVideo16_9}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <button
+                    onClick={() => setPlayingVideo(hasVideo16_9)}
                     className="flex-1 h-9 rounded-lg bg-gradient-to-r from-[#0FB5BA] to-[#14D4BA] text-white hover:scale-105 text-xs font-semibold flex items-center justify-center transition-transform shadow-md"
                   >
                     <Video className="w-3.5 h-3.5 mr-1" />
                     View 16:9
-                  </a>
+                  </button>
                 )}
                 {hasVideo9_16 && (
-                  <a
-                    href={hasVideo9_16}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <button
+                    onClick={() => setPlayingVideo(hasVideo9_16)}
                     className="flex-1 h-9 rounded-lg bg-gradient-to-r from-[#0FB5BA] to-[#14D4BA] text-white hover:scale-105 text-xs font-semibold flex items-center justify-center transition-transform shadow-md"
                   >
                     <Video className="w-3.5 h-3.5 mr-1" />
                     View 9:16
-                  </a>
+                  </button>
                 )}
               </div>
             </div>
@@ -134,6 +132,13 @@ export default function ContentCard({ content, type }) {
           </div>
         </div>
       </Card>
+      
+      {playingVideo && (
+        <VideoPlayerModal 
+          videoUrl={playingVideo} 
+          onClose={() => setPlayingVideo(null)} 
+        />
+      )}
     </motion.div>
   );
 }

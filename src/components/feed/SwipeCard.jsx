@@ -4,6 +4,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Linkedin, Twitter, Youtube, Music, ThumbsUp, ThumbsDown, Flame, ChevronDown, ChevronUp, Video } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
+import VideoPlayerModal from './VideoPlayerModal';
 
 
 const platformConfig = {
@@ -15,6 +16,7 @@ const platformConfig = {
 
 export default function SwipeCard({ draft, onSwipe, isTop }) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [playingVideo, setPlayingVideo] = useState(null);
   const x = useMotionValue(0);
   const rotate = useTransform(x, [-200, 200], [-15, 15]);
   const opacity = useTransform(x, [-200, -100, 0, 100, 200], [0.5, 1, 1, 1, 0.5]);
@@ -176,26 +178,22 @@ export default function SwipeCard({ draft, onSwipe, isTop }) {
               <p className="text-xs text-slate-600 mb-2 text-center font-semibold">📹 Generated Videos</p>
               <div className="grid grid-cols-2 gap-2">
                 {hasVideo16_9 && (
-                  <a
-                    href={hasVideo16_9}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <button
+                    onClick={() => setPlayingVideo(hasVideo16_9)}
                     className="h-10 rounded-lg bg-gradient-to-r from-[#0FB5BA] to-[#14D4BA] text-white hover:scale-105 text-xs font-semibold flex items-center justify-center transition-transform shadow-md"
                   >
                     <Video className="w-4 h-4 mr-1" />
                     View 16:9
-                  </a>
+                  </button>
                 )}
                 {hasVideo9_16 && (
-                  <a
-                    href={hasVideo9_16}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <button
+                    onClick={() => setPlayingVideo(hasVideo9_16)}
                     className="h-10 rounded-lg bg-gradient-to-r from-[#0FB5BA] to-[#14D4BA] text-white hover:scale-105 text-xs font-semibold flex items-center justify-center transition-transform shadow-md"
                   >
                     <Video className="w-4 h-4 mr-1" />
                     View 9:16
-                  </a>
+                  </button>
                 )}
               </div>
             </div>
@@ -260,6 +258,13 @@ export default function SwipeCard({ draft, onSwipe, isTop }) {
           <ThumbsUp className="w-20 h-20 sm:w-24 sm:h-24 text-[#4ADE80]" strokeWidth={2.5} />
         </motion.div>
       </Card>
+      
+      {playingVideo && (
+        <VideoPlayerModal 
+          videoUrl={playingVideo} 
+          onClose={() => setPlayingVideo(null)} 
+        />
+      )}
     </motion.div>
   );
 }

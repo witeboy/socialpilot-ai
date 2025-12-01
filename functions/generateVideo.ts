@@ -57,47 +57,32 @@ Deno.serve(async (req) => {
     
     console.log('Credits check passed:', { totalCredits, creditsNeeded });
 
-    // Generate video prompt for AI
-    const videoPrompt = `Create a ${aspectRatio === '16:9' ? 'horizontal' : 'vertical'} video (${aspectRatio}) based on this script:
+    // Generate video using Base44 AI video generation
+    console.log('Generating video with AI...');
+    
+    const videoPrompt = `Create a ${aspectRatio === '16:9' ? 'horizontal' : 'vertical'} short-form video (${aspectRatio} aspect ratio) for ${draft.platform}.
 
+Script/Content:
 ${draft.text_content}
 
-The video should:
-- Feature the background image: ${draft.media_url}
-- Display text overlays matching the script timing
-- Include smooth transitions between text segments
-- Be 10 seconds long
-- Have professional typography and animations
-- Use ${draft.platform === 'tiktok' ? 'trendy TikTok-style' : 'clean YouTube Shorts-style'} aesthetics
+Requirements:
+- Duration: 10-15 seconds maximum
+- Style: ${draft.platform === 'tiktok' ? 'Trendy, fast-paced TikTok aesthetic with bold text overlays' : 'Clean, professional YouTube Shorts style'}
+- Background: Use the provided image (${draft.media_url}) as the main visual or backdrop
+- Text: Display the script as animated text overlays with smooth transitions
+- Typography: Bold, readable fonts with high contrast
+- Pacing: Match the energy and tone of the script
+- No watermarks or branding
 
-Return a video generation configuration.`;
+Create an engaging, scroll-stopping short video that captures attention immediately.`;
 
-    // In a real implementation, this would call a video generation API (like Runway, Synthesia, or similar)
-    // For now, we'll simulate the video generation
-    const videoConfig = await base44.integrations.Core.InvokeLLM({
+    const videoResult = await base44.integrations.Core.GenerateVideo({
       prompt: videoPrompt,
-      response_json_schema: {
-        type: "object",
-        properties: {
-          scenes: {
-            type: "array",
-            items: {
-              type: "object",
-              properties: {
-                text: { type: "string" },
-                duration: { type: "number" },
-                animation: { type: "string" }
-              }
-            }
-          },
-          background_treatment: { type: "string" },
-          text_style: { type: "string" }
-        }
-      }
+      aspect_ratio: aspectRatio,
+      duration: 12
     });
-
-    // Generate a placeholder video URL (in production, this would be the actual video generation)
-    const videoUrl = `https://placeholder-video.com/generated/${draftId}_${aspectRatio}.mp4`;
+    
+    const videoUrl = videoResult.url;
 
     // Update draft with video URL
     const videoField = aspectRatio === '16:9' ? 'video_url_16_9' : 'video_url_9_16';
@@ -105,7 +90,6 @@ Return a video generation configuration.`;
       [videoField]: videoUrl,
       generation_metadata: {
         ...draft.generation_metadata,
-        video_config: videoConfig,
         video_generated_at: new Date().toISOString()
       }
     });
@@ -136,10 +120,11 @@ Return a video generation configuration.`;
       balance_after: newDailyCredits + newPurchasedCredits
     });
 
+    console.log('Video generated successfully:', videoUrl);
+
     return Response.json({
       success: true,
       videoUrl,
-      videoConfig,
       creditsUsed: creditsNeeded
     });
 

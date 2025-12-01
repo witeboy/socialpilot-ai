@@ -63,7 +63,7 @@ export default function SwipeCard({ draft, onSwipe, isTop }) {
       className="px-4 sm:px-6 md:px-8"
     >
       <Card 
-        className="h-full bg-white border border-slate-200 overflow-hidden relative flex flex-col shadow-xl"
+        className="h-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 overflow-hidden relative flex flex-col shadow-xl"
         style={{
           borderRadius: '16px',
           padding: '16px'
@@ -71,14 +71,14 @@ export default function SwipeCard({ draft, onSwipe, isTop }) {
       >
         {/* Platform Badge - Top Left */}
         <div 
-          className="absolute top-4 left-4 w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center"
+          className="absolute top-4 left-4 w-8 h-8 bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center justify-center"
         >
           <Icon style={{ color: config.color, width: '18px', height: '18px' }} />
         </div>
 
         {/* Virality Badge - Top Right */}
         <div 
-          className="absolute top-4 right-4 flex items-center gap-1.5 bg-[#DDF7F8] text-[#0FB5BA] rounded-full px-3 py-1.5 text-xs font-semibold border border-[#0FB5BA]/30"
+          className="absolute top-4 right-4 flex items-center gap-1.5 bg-[#DDF7F8] dark:bg-[#0FB5BA]/20 text-[#0FB5BA] rounded-full px-3 py-1.5 text-xs font-semibold border border-[#0FB5BA]/30"
         >
           <Flame className="w-3.5 h-3.5 text-orange-500" />
           <span>{draft.virality_score}/100</span>
@@ -87,7 +87,7 @@ export default function SwipeCard({ draft, onSwipe, isTop }) {
         {/* Content Area - Scrollable with Read More */}
         <div className="flex-1 overflow-auto mt-12 space-y-3 sm:space-y-4 no-scrollbar">
         {/* Post Text Block with Markdown */}
-        <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
+        <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700">
             <div className={`prose prose-slate prose-sm max-w-none ${!isExpanded ? 'line-clamp-6' : ''}`}>
               <ReactMarkdown
                 components={{
@@ -102,14 +102,14 @@ export default function SwipeCard({ draft, onSwipe, isTop }) {
                   p: ({ node, ...props }) => (
                     <p 
                       {...props} 
-                      className="text-slate-700 text-sm sm:text-base leading-relaxed mb-2 last:mb-0" 
+                      className="text-slate-700 dark:text-slate-300 text-sm sm:text-base leading-relaxed mb-2 last:mb-0" 
                     />
                   ),
                   strong: ({ node, ...props }) => (
-                    <strong {...props} className="text-slate-900 font-semibold" />
+                    <strong {...props} className="text-slate-900 dark:text-white font-semibold" />
                   ),
                   em: ({ node, ...props }) => (
-                    <em {...props} className="text-slate-600 italic" />
+                    <em {...props} className="text-slate-600 dark:text-slate-400 italic" />
                   )
                 }}
               >
@@ -137,7 +137,7 @@ export default function SwipeCard({ draft, onSwipe, isTop }) {
           {/* Media Preview with Aspect Ratio */}
           {draft.media_url && (
             <div 
-              className="w-full overflow-hidden relative rounded-xl border border-slate-200 bg-slate-50"
+              className="w-full overflow-hidden relative rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800"
               style={{ aspectRatio: '16/9' }}
             >
               <img 
@@ -160,7 +160,7 @@ export default function SwipeCard({ draft, onSwipe, isTop }) {
 
         {/* Bottom Action Buttons - Sticky with Gradient */}
         <div 
-          className="sticky bottom-0 pt-6 mt-4 border-t border-slate-200 bg-white"
+          className="sticky bottom-0 pt-6 mt-4 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900"
           onPointerDown={(e) => e.stopPropagation()}
           style={{
             marginLeft: '-16px',
@@ -175,7 +175,7 @@ export default function SwipeCard({ draft, onSwipe, isTop }) {
         >
           {isVideoContent && (hasVideo16_9 || hasVideo9_16) && (
             <div className="mb-3">
-              <p className="text-xs text-slate-600 mb-2 text-center font-semibold">📹 Generated Videos</p>
+              <p className="text-xs text-slate-600 dark:text-slate-400 mb-2 text-center font-semibold">📹 Generated Videos</p>
               <div className="grid grid-cols-2 gap-2">
                 {hasVideo16_9 && (
                   <button
@@ -202,7 +202,7 @@ export default function SwipeCard({ draft, onSwipe, isTop }) {
             <button
               onClick={handleReject}
               disabled={!isTop}
-              className="h-12 sm:h-14 rounded-lg bg-white border-2 border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300 text-sm sm:text-base font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+              className="h-12 sm:h-14 rounded-lg bg-white dark:bg-slate-800 border-2 border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 hover:border-red-300 dark:hover:border-red-700 text-sm sm:text-base font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
             >
               <ThumbsDown className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
               Reject

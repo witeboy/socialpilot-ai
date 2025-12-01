@@ -16,33 +16,38 @@ export default function Create() {
   const tabParam = urlParams.get('tab');
   const [activeTab, setActiveTab] = useState(tabParam || 'sources');
   const [manualMode, setManualMode] = useState(!!tabParam);
+  const [isChecking, setIsChecking] = React.useState(true);
+
+  React.useEffect(() => {
+    const checkAuth = async () => {
+      const isAuth = await base44.auth.isAuthenticated();
+      if (!isAuth) {
+        base44.auth.redirectToLogin();
+        return;
+      }
+      setIsChecking(false);
+    };
+    checkAuth();
+  }, []);
 
   const { data: userPersona } = useQuery({
     queryKey: ['userPersona'],
     queryFn: async () => {
-      const isAuth = await base44.auth.isAuthenticated();
-      if (!isAuth) {
-        base44.auth.redirectToLogin();
-        return null;
-      }
       const user = await base44.auth.me();
       const personas = await base44.entities.UserPersona.filter({ created_by: user.email });
       return personas[0] || null;
     },
+    enabled: !isChecking,
     retry: false
   });
 
   const { data: sources = [] } = useQuery({
     queryKey: ['sources'],
     queryFn: async () => {
-      const isAuth = await base44.auth.isAuthenticated();
-      if (!isAuth) {
-        base44.auth.redirectToLogin();
-        return [];
-      }
       const user = await base44.auth.me();
       return base44.entities.Source.filter({ created_by: user.email });
     },
+    enabled: !isChecking,
     retry: false
   });
 

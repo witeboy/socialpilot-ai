@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Sparkles, TrendingUp, Calendar, Target, Coins, Plus, Play, Layers, PlusSquare } from 'lucide-react';
@@ -16,20 +16,31 @@ export default function Home() {
   const [showAdModal, setShowAdModal] = useState(false);
   const [adCountdown, setAdCountdown] = useState(15);
 
-  // Fetch user and persona
-  const { data: userPersona, isLoading: personaLoading, error } = useQuery({
-    queryKey: ['userPersona'],
-    queryFn: async () => {
+  // Check authentication first
+  const [isChecking, setIsChecking] = React.useState(true);
+
+  React.useEffect(() => {
+    const checkAuth = async () => {
       const isAuth = await base44.auth.isAuthenticated();
       if (!isAuth) {
         base44.auth.redirectToLogin();
-        return null;
+        return;
       }
+      setIsChecking(false);
+    };
+    checkAuth();
+  }, []);
+
+  // Fetch user and persona
+  const { data: userPersona, isLoading: personaLoading } = useQuery({
+    queryKey: ['userPersona'],
+    queryFn: async () => {
       const currentUser = await base44.auth.me();
       setUser(currentUser);
       const personas = await base44.entities.UserPersona.filter({ created_by: currentUser.email });
       return personas[0] || null;
     },
+    enabled: !isChecking,
     retry: false
   });
 
@@ -145,10 +156,10 @@ Return ONLY the welcome message.`;
 
   const totalCredits = (userPersona?.purchased_credits || 0) + (userPersona?.daily_ad_credits || 0);
 
-  if (personaLoading) {
+  if (isChecking || personaLoading) {
     return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-400"></div>
+      <div className="flex items-center justify-center h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#0FB5BA]"></div>
       </div>
     );
   }

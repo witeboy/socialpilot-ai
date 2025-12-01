@@ -34,11 +34,11 @@ export default function ScheduledPostCard({ post, onPostNow, isPosting }) {
           </div>
         )}
 
-        <div className="p-3 space-y-2">
+        <div className="p-2.5 space-y-1.5">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-1.5">
-              <PlatformIcon className={`w-4 h-4 ${platformColor}`} />
-              <span className="text-xs font-semibold text-slate-900 capitalize">
+            <div className="flex items-center gap-1">
+              <PlatformIcon className={`w-3.5 h-3.5 ${platformColor}`} />
+              <span className="text-[10px] font-semibold text-slate-900 capitalize">
                 {post.platform}
               </span>
             </div>
@@ -46,28 +46,28 @@ export default function ScheduledPostCard({ post, onPostNow, isPosting }) {
               onClick={() => onPostNow(post)}
               disabled={isPosting}
               size="sm"
-              className="h-7 px-3 bg-[#0FB5BA] hover:bg-[#0DA5AA] text-white text-xs"
+              className="h-6 px-2 bg-[#0FB5BA] hover:bg-[#0DA5AA] text-white text-[9px]"
             >
-              <Send className="w-3 h-3 mr-1" />
+              <Send className="w-2.5 h-2.5 mr-0.5" />
               {isPosting ? 'Posting...' : 'Post Now'}
             </Button>
           </div>
 
-          <p className="text-xs text-slate-700 line-clamp-3">
+          <p className="text-[10px] text-slate-700 line-clamp-3">
             {post.text_content}
           </p>
 
           <div className="flex items-center justify-between pt-1 border-t border-slate-100">
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-1">
               {post.virality_score && (
-                <Badge className="bg-purple-100 text-purple-700 text-[10px] px-1.5 py-0.5">
+                <Badge className="bg-purple-100 text-purple-700 text-[8px] px-1 py-0">
                   🔥 {post.virality_score}%
                 </Badge>
               )}
             </div>
-            <div className="flex items-center gap-1 text-slate-500">
-              <Calendar className="w-3 h-3" />
-              <span className="text-[10px]">
+            <div className="flex items-center gap-0.5 text-slate-500">
+              <Calendar className="w-2.5 h-2.5" />
+              <span className="text-[9px]">
                 {format(new Date(post.scheduled_for), 'MMM d, h:mm a')}
               </span>
             </div>

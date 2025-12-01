@@ -2,11 +2,9 @@ import { useState } from 'react';
 import { motion, useMotionValue, useTransform } from 'framer-motion';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Linkedin, Twitter, Youtube, Music, ThumbsUp, ThumbsDown, Flame, ChevronDown, ChevronUp, Video, Loader2 } from 'lucide-react';
+import { Linkedin, Twitter, Youtube, Music, ThumbsUp, ThumbsDown, Flame, ChevronDown, ChevronUp, Video } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
-import { base44 } from '@/api/base44Client';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { toast } from 'sonner';
+
 
 const platformConfig = {
   linkedin: { icon: Linkedin, color: '#0A66C2' },
@@ -17,7 +15,6 @@ const platformConfig = {
 
 export default function SwipeCard({ draft, onSwipe, isTop }) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const queryClient = useQueryClient();
   const x = useMotionValue(0);
   const rotate = useTransform(x, [-200, 200], [-15, 15]);
   const opacity = useTransform(x, [-200, -100, 0, 100, 200], [0.5, 1, 1, 1, 0.5]);
@@ -26,23 +23,8 @@ export default function SwipeCard({ draft, onSwipe, isTop }) {
   const Icon = config.icon;
 
   const isVideoContent = ['youtube', 'tiktok'].includes(draft.platform);
-
-  const generateVideoMutation = useMutation({
-    mutationFn: async (aspectRatio) => {
-      const response = await base44.functions.invoke('generateVideo', {
-        draftId: draft.id,
-        aspectRatio
-      });
-      return response.data;
-    },
-    onSuccess: () => {
-      toast.success('Video generated successfully!');
-      queryClient.invalidateQueries(['drafts']);
-    },
-    onError: (error) => {
-      toast.error('Failed to generate video', { description: error.message });
-    }
-  });
+  const hasVideo16_9 = draft.video_url_16_9;
+  const hasVideo9_16 = draft.video_url_9_16;
 
   const handleDragEnd = (event, info) => {
     if (Math.abs(info.offset.x) > 150) {
@@ -189,34 +171,32 @@ export default function SwipeCard({ draft, onSwipe, isTop }) {
             touchAction: 'auto'
           }}
         >
-          {isVideoContent && (
+          {isVideoContent && (hasVideo16_9 || hasVideo9_16) && (
             <div className="mb-3">
-              <p className="text-xs text-slate-600 mb-2 text-center">Generate Video (5 Credits)</p>
+              <p className="text-xs text-slate-600 mb-2 text-center font-semibold">📹 Generated Videos</p>
               <div className="grid grid-cols-2 gap-2">
-                <button
-                  onClick={() => generateVideoMutation.mutate('16:9')}
-                  disabled={generateVideoMutation.isPending || !isTop}
-                  className="h-10 rounded-lg bg-white border-2 border-[#0FB5BA] text-[#0FB5BA] hover:bg-[#DDF7F8] text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
-                >
-                  {generateVideoMutation.isPending && generateVideoMutation.variables === '16:9' ? (
-                    <Loader2 className="w-4 h-4 mr-1 animate-spin" />
-                  ) : (
+                {hasVideo16_9 && (
+                  <a
+                    href={hasVideo16_9}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="h-10 rounded-lg bg-gradient-to-r from-[#0FB5BA] to-[#14D4BA] text-white hover:scale-105 text-xs font-semibold flex items-center justify-center transition-transform shadow-md"
+                  >
                     <Video className="w-4 h-4 mr-1" />
-                  )}
-                  16:9
-                </button>
-                <button
-                  onClick={() => generateVideoMutation.mutate('9:16')}
-                  disabled={generateVideoMutation.isPending || !isTop}
-                  className="h-10 rounded-lg bg-white border-2 border-[#0FB5BA] text-[#0FB5BA] hover:bg-[#DDF7F8] text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
-                >
-                  {generateVideoMutation.isPending && generateVideoMutation.variables === '9:16' ? (
-                    <Loader2 className="w-4 h-4 mr-1 animate-spin" />
-                  ) : (
+                    View 16:9
+                  </a>
+                )}
+                {hasVideo9_16 && (
+                  <a
+                    href={hasVideo9_16}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="h-10 rounded-lg bg-gradient-to-r from-[#0FB5BA] to-[#14D4BA] text-white hover:scale-105 text-xs font-semibold flex items-center justify-center transition-transform shadow-md"
+                  >
                     <Video className="w-4 h-4 mr-1" />
-                  )}
-                  9:16
-                </button>
+                    View 9:16
+                  </a>
+                )}
               </div>
             </div>
           )}

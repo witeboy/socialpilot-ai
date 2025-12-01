@@ -15,6 +15,10 @@ const platformIcons = {
 export default function ContentCard({ content, type }) {
   const PlatformIcon = platformIcons[content.platform]?.icon || Linkedin;
   const platformColor = platformIcons[content.platform]?.color || 'text-blue-600';
+  
+  const isVideoContent = ['youtube', 'tiktok'].includes(content.platform);
+  const hasVideo16_9 = content.video_url_16_9;
+  const hasVideo9_16 = content.video_url_9_16;
 
   const getStatusInfo = () => {
     switch (type) {
@@ -72,6 +76,37 @@ export default function ContentCard({ content, type }) {
           <p className="text-sm text-slate-700 line-clamp-3">
             {content.text_content}
           </p>
+
+          {/* Video Links */}
+          {isVideoContent && (hasVideo16_9 || hasVideo9_16) && (
+            <div className="pt-2 border-t border-slate-100">
+              <p className="text-xs text-slate-600 mb-2 font-semibold">📹 Generated Videos:</p>
+              <div className="flex gap-2">
+                {hasVideo16_9 && (
+                  <a
+                    href={hasVideo16_9}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 h-9 rounded-lg bg-gradient-to-r from-[#0FB5BA] to-[#14D4BA] text-white hover:scale-105 text-xs font-semibold flex items-center justify-center transition-transform shadow-md"
+                  >
+                    <Video className="w-3.5 h-3.5 mr-1" />
+                    View 16:9
+                  </a>
+                )}
+                {hasVideo9_16 && (
+                  <a
+                    href={hasVideo9_16}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 h-9 rounded-lg bg-gradient-to-r from-[#0FB5BA] to-[#14D4BA] text-white hover:scale-105 text-xs font-semibold flex items-center justify-center transition-transform shadow-md"
+                  >
+                    <Video className="w-3.5 h-3.5 mr-1" />
+                    View 9:16
+                  </a>
+                )}
+              </div>
+            </div>
+          )}
 
           {/* Metadata */}
           <div className="flex items-center justify-between pt-2 border-t border-slate-100">

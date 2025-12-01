@@ -8,10 +8,12 @@ import { Link, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '../utils';
 import { toast } from 'sonner';
 import ReactMarkdown from 'react-markdown';
+import { useLanguage } from '@/components/contexts/LanguageContext';
 
 export default function Home() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { t } = useLanguage();
   const [user, setUser] = useState(null);
   const [showAdModal, setShowAdModal] = useState(false);
   const [adCountdown, setAdCountdown] = useState(15);
@@ -171,32 +173,32 @@ Return ONLY the welcome message.`;
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 p-4 pb-24">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 p-4 pb-24">
       <div className="max-w-2xl mx-auto space-y-5">
         {/* Header with Credits Widget */}
         <div className="flex items-center justify-between pt-4 px-2">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">Dashboard</h1>
-            <p className="text-xs sm:text-sm text-slate-600">Your Control Hub</p>
+            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">{t('home.title')}</h1>
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">{t('home.subtitle')}</p>
           </div>
           <div 
             onClick={() => navigate(createPageUrl('Settings'))}
-            className="flex items-center gap-3 bg-white border border-slate-200 rounded-xl px-4 py-3 cursor-pointer hover:bg-[#DDF7F8] hover:border-[#0FB5BA] transition-all shadow-md"
+            className="flex items-center gap-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 cursor-pointer hover:bg-[#DDF7F8] dark:hover:bg-slate-800 hover:border-[#0FB5BA] transition-all shadow-md"
           >
             <Coins className="w-5 h-5 text-[#0FB5BA]" />
             <div className="text-right">
-              <p className="text-xl sm:text-2xl font-bold text-slate-900">{totalCredits}</p>
-              <p className="text-xs text-slate-600">Credits</p>
+              <p className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">{totalCredits}</p>
+              <p className="text-xs text-slate-600 dark:text-slate-400">{t('home.credits')}</p>
             </div>
           </div>
         </div>
 
         {/* AI Daily Briefing with Markdown */}
         {briefing && (
-          <Card className="bg-white border border-slate-200 rounded-xl p-5 sm:p-6 space-y-3 shadow-md">
+          <Card className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 sm:p-6 space-y-3 shadow-md">
             <div className="flex items-center gap-2">
               <Sparkles className="w-5 h-5 text-[#0FB5BA]" />
-              <h3 className="text-base sm:text-lg font-bold text-slate-900">Welcome</h3>
+              <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">{t('home.welcome')}</h3>
             </div>
             <div className="prose prose-sm max-w-none">
               <ReactMarkdown
@@ -205,7 +207,7 @@ Return ONLY the welcome message.`;
                     <a {...props} className="text-[#0FB5BA] hover:text-[#14D4BA] underline" target="_blank" rel="noopener noreferrer" />
                   ),
                   p: ({ node, ...props }) => (
-                    <p {...props} className="text-slate-700 text-sm leading-relaxed mb-2" />
+                    <p {...props} className="text-slate-700 dark:text-slate-300 text-sm leading-relaxed mb-2" />
                   )
                 }}
               >
@@ -214,7 +216,7 @@ Return ONLY the welcome message.`;
             </div>
             <Link to={createPageUrl('Create')}>
               <Button className="w-full h-11 px-4 rounded-lg text-white font-semibold bg-gradient-to-r from-[#0FB5BA] to-[#14D4BA] shadow-md hover:scale-105 transition-transform">
-                🚀 Create Content Now
+                {t('home.createNow')}
               </Button>
             </Link>
           </Card>
@@ -222,52 +224,52 @@ Return ONLY the welcome message.`;
 
         {/* Quick Stats - Enhanced with Icons */}
         <div className="grid grid-cols-2 gap-3 sm:gap-4">
-          <Card className="bg-white border border-slate-200 rounded-xl p-5 space-y-2 hover:border-[#0FB5BA] transition-all shadow-md">
+          <Card className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 space-y-2 hover:border-[#0FB5BA] transition-all shadow-md">
             <div className="flex items-center gap-2">
-              <div className="w-9 h-9 bg-[#DDF7F8] rounded-lg flex items-center justify-center">
+              <div className="w-9 h-9 bg-[#DDF7F8] dark:bg-slate-800 rounded-lg flex items-center justify-center">
                 <Calendar className="w-5 h-5 text-[#0FB5BA]" />
               </div>
-              <span className="text-xs font-semibold text-slate-700">Scheduled</span>
+              <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">{t('home.scheduled')}</span>
             </div>
-            <p className="text-2xl sm:text-3xl font-bold text-slate-900">{scheduledPosts.length}</p>
-            <p className="text-xs text-slate-600">Posts in queue</p>
+            <p className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">{scheduledPosts.length}</p>
+            <p className="text-xs text-slate-600 dark:text-slate-400">{t('home.postsInQueue')}</p>
           </Card>
-          <Card className="bg-white border border-slate-200 rounded-xl p-5 space-y-2 hover:border-[#0FB5BA] transition-all shadow-md">
+          <Card className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 space-y-2 hover:border-[#0FB5BA] transition-all shadow-md">
             <div className="flex items-center gap-2">
-              <div className="w-9 h-9 bg-green-50 rounded-lg flex items-center justify-center">
-                <TrendingUp className="w-5 h-5 text-green-600" />
+              <div className="w-9 h-9 bg-green-50 dark:bg-green-900/20 rounded-lg flex items-center justify-center">
+                <TrendingUp className="w-5 h-5 text-green-600 dark:text-green-400" />
               </div>
-              <span className="text-xs font-semibold text-slate-700">Approved</span>
+              <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">{t('home.approved')}</span>
             </div>
-            <p className="text-2xl sm:text-3xl font-bold text-slate-900">{userPersona?.approved_posts_count || 0}</p>
-            <p className="text-xs text-slate-600">Total this month</p>
+            <p className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">{userPersona?.approved_posts_count || 0}</p>
+            <p className="text-xs text-slate-600 dark:text-slate-400">{t('home.totalThisMonth')}</p>
           </Card>
         </div>
 
         {/* Quick Actions - Glass Cards with Icons */}
         <div className="space-y-3">
           <Link to={createPageUrl('Create')}>
-            <Card className="bg-white border border-slate-200 rounded-xl p-5 hover:border-[#0FB5BA] hover:shadow-lg transition-all group shadow-md">
+            <Card className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 hover:border-[#0FB5BA] hover:shadow-lg transition-all group shadow-md">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-gradient-to-r from-[#0FB5BA] to-[#14D4BA] rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform shadow-md">
                   <PlusSquare className="w-6 h-6 text-white" />
                 </div>
                 <div className="flex-1">
-                  <p className="font-bold text-slate-900 text-base">Create Content</p>
-                  <p className="text-xs text-slate-600 mt-0.5">Generate new posts with AI</p>
+                  <p className="font-bold text-slate-900 dark:text-white text-base">{t('home.createContent')}</p>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">{t('home.generateNew')}</p>
                 </div>
               </div>
             </Card>
           </Link>
           <Link to={createPageUrl('Create') + '?tab=sources'}>
-            <Card className="bg-white border border-slate-200 rounded-xl p-5 hover:border-[#0FB5BA] hover:shadow-lg transition-all group shadow-md">
+            <Card className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 hover:border-[#0FB5BA] hover:shadow-lg transition-all group shadow-md">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-gradient-to-r from-[#0FB5BA] to-[#14D4BA] rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform shadow-md">
                   <Layers className="w-6 h-6 text-white" />
                 </div>
                 <div className="flex-1">
-                  <p className="font-bold text-slate-900 text-base">Manage Sources</p>
-                  <p className="text-xs text-slate-600 mt-0.5">Configure content sources</p>
+                  <p className="font-bold text-slate-900 dark:text-white text-base">{t('home.manageSources')}</p>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">{t('home.configureSources')}</p>
                 </div>
               </div>
             </Card>
@@ -275,31 +277,31 @@ Return ONLY the welcome message.`;
         </div>
 
         {/* Watch to Earn Section */}
-        <Card className="bg-white border border-slate-200 rounded-xl shadow-md p-5">
+        <Card className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-md p-5">
           <div className="flex items-center justify-between mb-3">
             <div>
-              <h3 className="text-slate-900 font-bold text-base sm:text-lg flex items-center gap-2">
-                <Play className="w-5 h-5 text-green-600" />
-                Watch to Earn
+              <h3 className="text-slate-900 dark:text-white font-bold text-base sm:text-lg flex items-center gap-2">
+                <Play className="w-5 h-5 text-green-600 dark:text-green-400" />
+                {t('home.watchToEarn')}
               </h3>
-              <p className="text-xs text-slate-600 mt-1">
-                {userPersona?.daily_ad_credits || 0} / 10 credits earned today
+              <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
+                {userPersona?.daily_ad_credits || 0} / 10 {t('home.creditsEarned')}
               </p>
             </div>
             <div className="text-right">
-              <p className="text-xs sm:text-sm text-slate-600">Daily Credits</p>
-              <p className="text-xl sm:text-2xl font-bold text-green-600">{userPersona?.daily_ad_credits || 0}</p>
+              <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">{t('home.dailyCredits')}</p>
+              <p className="text-xl sm:text-2xl font-bold text-green-600 dark:text-green-400">{userPersona?.daily_ad_credits || 0}</p>
             </div>
           </div>
           <Button
             onClick={handleWatchAd}
             disabled={(userPersona?.daily_ad_credits || 0) >= 10}
-            className="w-full h-12 px-4 rounded-lg text-white font-semibold bg-gradient-to-r from-[#0FB5BA] to-[#14D4BA] shadow-md hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:bg-slate-200 disabled:text-slate-500 disabled:shadow-none"
+            className="w-full h-12 px-4 rounded-lg text-white font-semibold bg-gradient-to-r from-[#0FB5BA] to-[#14D4BA] shadow-md hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:bg-slate-200 dark:disabled:bg-slate-800 disabled:text-slate-500 dark:disabled:text-slate-600 disabled:shadow-none"
           >
-            {(userPersona?.daily_ad_credits || 0) >= 10 ? 'Daily Limit Reached (10 Credits)' : '▶ Watch Ad (+1 Credit)'}
+            {(userPersona?.daily_ad_credits || 0) >= 10 ? t('home.dailyLimit') : t('home.watchAd')}
           </Button>
-          <p className="text-xs text-center text-slate-600 mt-2">
-            💡 Daily credits expire at midnight
+          <p className="text-xs text-center text-slate-600 dark:text-slate-400 mt-2">
+            {t('home.dailyExpire')}
           </p>
         </Card>
         

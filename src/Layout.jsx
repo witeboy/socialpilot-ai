@@ -53,7 +53,7 @@ export default function Layout({ children, currentPageName }) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 pb-20">
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 pb-[68px]">
       <Toaster richColors closeButton position="top-center" />
       {/* Page Content */}
       <main className="min-h-screen">

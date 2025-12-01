@@ -218,7 +218,7 @@ export default function Feed() {
   const needsManualApproval = (userPersona?.approved_posts_count || 0) < 3;
 
   return (
-    <div className="min-h-screen bg-slate-50 p-1.5 pb-20">
+    <div className="min-h-screen bg-slate-50 p-1.5 pb-[68px]">
       <div className="max-w-2xl mx-auto space-y-1.5">
         {/* Header */}
         <div className="text-center pt-1 pb-0.5">

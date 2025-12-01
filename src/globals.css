@@ -14,6 +14,16 @@ css
   scrollbar-width: none;
 }
 
+/* Hide all scrollbars globally */
+* {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+*::-webkit-scrollbar {
+  display: none;
+}
+
 /* Line clamp utility */
 .line-clamp-4 {
   display: -webkit-box;

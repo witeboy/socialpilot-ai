@@ -1,3 +1,4 @@
+css
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -9,8 +10,8 @@
 
 /* Hide scrollbar for IE, Edge and Firefox */
 .no-scrollbar {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 /* Line clamp utility */
@@ -33,10 +34,16 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Optimized spacing for better content density */
+body {
+  font-size: 14px;
+  line-height: 1.4;
+}
+
 /* Better touch targets */
 @media (pointer: coarse) {
   button, a {
-    min-height: 44px;
-    min-width: 44px;
+    min-height: 40px;
+    min-width: 40px;
   }
 }

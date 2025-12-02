@@ -8,8 +8,12 @@ import { toast } from 'sonner';
 export default function OAuthCallback() {
   const navigate = useNavigate();
   const [status, setStatus] = useState('processing');
+  const [hasRun, setHasRun] = useState(false);
 
   useEffect(() => {
+    if (hasRun) return;
+    setHasRun(true);
+    
     const handleCallback = async () => {
       try {
         const urlParams = new URLSearchParams(window.location.search);

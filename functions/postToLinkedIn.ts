@@ -72,12 +72,13 @@ Deno.serve(async (req) => {
       }];
     }
 
-    // Post to LinkedIn
-    const postResponse = await fetch('https://api.linkedin.com/v2/ugcPosts', {
+    // Post to LinkedIn using new REST API
+    const postResponse = await fetch('https://api.linkedin.com/rest/posts', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${accessToken}`,
         'Content-Type': 'application/json',
+        'LinkedIn-Version': '202401',
         'X-Restli-Protocol-Version': '2.0.0'
       },
       body: JSON.stringify(postPayload)

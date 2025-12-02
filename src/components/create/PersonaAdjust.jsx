@@ -33,14 +33,14 @@ export default function PersonaAdjust({ userPersona, onComplete }) {
 
 
   return (
-    <Card className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-md p-5 sm:p-7 space-y-6">
+    <Card className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-sm p-4 space-y-4">
       <div className="flex items-center gap-3">
-        <div className="p-3 bg-[#DDF7F8] dark:bg-[#0FB5BA]/20 rounded-lg">
-          <User className="w-6 h-6 text-[#0FB5BA]" />
+        <div className="p-2.5 bg-[#DDF7F8] dark:bg-[#0FB5BA]/20 rounded-lg flex-shrink-0">
+          <User className="w-5 h-5 text-[#0FB5BA]" />
         </div>
-        <div>
-          <h3 className="text-lg font-bold text-slate-900 dark:text-white">Persona Settings</h3>
-          <p className="text-sm text-slate-600 dark:text-slate-400">Adjust your AI content persona</p>
+        <div className="flex-1 min-w-0">
+          <h3 className="text-base font-bold text-slate-900 dark:text-white truncate">Persona Settings</h3>
+          <p className="text-xs text-slate-600 dark:text-slate-400 truncate">Adjust your AI persona</p>
         </div>
       </div>
 
@@ -60,7 +60,7 @@ export default function PersonaAdjust({ userPersona, onComplete }) {
         <Button
           onClick={() => updateToneMutation.mutate()}
           disabled={updateToneMutation.isPending}
-          className="w-full h-12 px-4 mt-3 rounded-lg text-white font-semibold bg-gradient-to-r from-[#0FB5BA] to-[#14D4BA] shadow-md hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+          className="w-full h-11 px-4 mt-3 rounded-lg text-white text-sm font-semibold bg-gradient-to-r from-[#0FB5BA] to-[#14D4BA] shadow-sm hover:shadow-md hover:scale-[1.02] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
         >
           {updateToneMutation.isPending ? 'Saving...' : 'Save & Continue'}
         </Button>

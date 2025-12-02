@@ -91,16 +91,16 @@ export default function SourcesManager({ onComplete }) {
   });
 
   return (
-    <Card className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-md p-5 sm:p-7 space-y-4">
+    <Card className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-sm p-4 space-y-4">
       <div className="flex items-center justify-between">
-        <div>
-          <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">Content Sources</h3>
-          <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">Add permanent sources for content generation</p>
+        <div className="flex-1 min-w-0 pr-3">
+          <h3 className="text-base font-bold text-slate-900 dark:text-white truncate">Content Sources</h3>
+          <p className="text-xs text-slate-600 dark:text-slate-400 truncate">Add permanent sources</p>
         </div>
         {!showAddForm && (
           <Button
             onClick={() => setShowAddForm(true)}
-            className="h-11 px-4 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-[#DDF7F8] dark:hover:bg-[#0FB5BA]/20 hover:border-[#0FB5BA] text-xs sm:text-sm font-semibold transition-all"
+            className="h-9 px-3 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-[#DDF7F8] dark:hover:bg-[#0FB5BA]/20 hover:border-[#0FB5BA] text-xs font-semibold transition-all flex-shrink-0"
           >
             <Plus className="w-4 h-4 mr-1" />
             Add

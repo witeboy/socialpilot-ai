@@ -608,11 +608,11 @@ Generate the content following ALL the rules above.`;
   }
 
   return (
-    <Card className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-md p-4 sm:p-6 space-y-4">
+    <Card className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-sm p-4 space-y-4">
       <div className="flex items-center justify-between">
-        <div>
-          <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">Content Generator</h3>
-          <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">AI generates everything automatically</p>
+        <div className="flex-1 min-w-0 pr-3">
+          <h3 className="text-base font-bold text-slate-900 dark:text-white truncate">Content Generator</h3>
+          <p className="text-xs text-slate-600 dark:text-slate-400 truncate">AI generates everything</p>
         </div>
         <div className="flex items-center gap-2">
           <Coins className="w-4 h-4 text-yellow-400" />
@@ -666,7 +666,7 @@ Generate the content following ALL the rules above.`;
       <Button
         onClick={() => generateMutation.mutate()}
         disabled={generateMutation.isPending || selectedPlatforms.length === 0 || !hasSources || !hasTone}
-        className="w-full h-12 sm:h-14 px-4 rounded-lg text-white font-semibold bg-gradient-to-r from-[#0FB5BA] to-[#14D4BA] shadow-md hover:scale-105 transition-transform text-xs sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+        className="w-full h-11 px-4 rounded-lg text-white text-sm font-semibold bg-gradient-to-r from-[#0FB5BA] to-[#14D4BA] shadow-sm hover:shadow-md hover:scale-[1.02] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
       >
         {generateMutation.isPending ? (
           <>

@@ -235,77 +235,77 @@ export default function Feed() {
   const needsManualApproval = (userPersona?.approved_posts_count || 0) < 3;
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 p-1.5 pb-[68px]">
-      <div className="max-w-2xl mx-auto space-y-1.5">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 px-4 py-5 pb-24">
+      <div className="max-w-2xl mx-auto space-y-3">
         {/* Header */}
-        <div className="text-center pt-1 pb-0.5">
-          <h1 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">{t('feed.title')}</h1>
-          <p className="text-[9px] sm:text-[10px] text-slate-600 dark:text-slate-400 mt-0">{t('feed.subtitle')}</p>
+        <div className="text-center">
+          <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">{t('feed.title')}</h1>
+          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">{t('feed.subtitle')}</p>
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-4 gap-1">
+        <div className="grid grid-cols-4 gap-2">
           <Card 
             onClick={() => setActiveTab('queue')}
-            className={`bg-white dark:bg-slate-900 border rounded-lg p-1.5 text-center shadow-sm cursor-pointer transition-all hover:shadow-md ${
+            className={`bg-white dark:bg-slate-900 border rounded-xl p-3 text-center shadow-sm cursor-pointer transition-all hover:shadow-md ${
               activeTab === 'queue' ? 'border-[#0FB5BA] bg-[#DDF7F8] dark:bg-slate-800' : 'border-slate-200 dark:border-slate-700'
             }`}
           >
-            <Clock className="w-3.5 h-3.5 mx-auto mb-0.5 text-amber-500" />
-            <p className="text-sm font-bold text-slate-900 dark:text-white">{pendingDrafts.length}</p>
-            <p className="text-[8px] text-slate-600 dark:text-slate-400">{t('feed.inQueue')}</p>
+            <Clock className="w-4 h-4 mx-auto mb-1 text-amber-500" />
+            <p className="text-base font-bold text-slate-900 dark:text-white">{pendingDrafts.length}</p>
+            <p className="text-[10px] text-slate-600 dark:text-slate-400 truncate">{t('feed.inQueue')}</p>
           </Card>
           <Card 
             onClick={() => setActiveTab('approved')}
-            className={`bg-white dark:bg-slate-900 border rounded-lg p-1.5 text-center shadow-sm cursor-pointer transition-all hover:shadow-md ${
+            className={`bg-white dark:bg-slate-900 border rounded-xl p-3 text-center shadow-sm cursor-pointer transition-all hover:shadow-md ${
               activeTab === 'approved' ? 'border-[#0FB5BA] bg-[#DDF7F8] dark:bg-slate-800' : 'border-slate-200 dark:border-slate-700'
             }`}
           >
-            <CheckCircle className="w-3.5 h-3.5 mx-auto mb-0.5 text-green-500" />
-            <p className="text-sm font-bold text-slate-900 dark:text-white">{approvedDrafts.length}</p>
-            <p className="text-[8px] text-slate-600 dark:text-slate-400">{t('feed.approved')}</p>
+            <CheckCircle className="w-4 h-4 mx-auto mb-1 text-green-500" />
+            <p className="text-base font-bold text-slate-900 dark:text-white">{approvedDrafts.length}</p>
+            <p className="text-[10px] text-slate-600 dark:text-slate-400 truncate">{t('feed.approved')}</p>
           </Card>
           <Card 
             onClick={() => setActiveTab('scheduled')}
-            className={`bg-white dark:bg-slate-900 border rounded-lg p-1.5 text-center shadow-sm cursor-pointer transition-all hover:shadow-md ${
+            className={`bg-white dark:bg-slate-900 border rounded-xl p-3 text-center shadow-sm cursor-pointer transition-all hover:shadow-md ${
               activeTab === 'scheduled' ? 'border-[#0FB5BA] bg-[#DDF7F8] dark:bg-slate-800' : 'border-slate-200 dark:border-slate-700'
             }`}
           >
-            <Calendar className="w-3.5 h-3.5 mx-auto mb-0.5 text-blue-500" />
-            <p className="text-sm font-bold text-slate-900 dark:text-white">{scheduledPosts.length}</p>
-            <p className="text-[8px] text-slate-600 dark:text-slate-400">{t('feed.scheduled')}</p>
+            <Calendar className="w-4 h-4 mx-auto mb-1 text-blue-500" />
+            <p className="text-base font-bold text-slate-900 dark:text-white">{scheduledPosts.length}</p>
+            <p className="text-[10px] text-slate-600 dark:text-slate-400 truncate">{t('feed.scheduled')}</p>
           </Card>
           <Card 
             onClick={() => setActiveTab('posted')}
-            className={`bg-white dark:bg-slate-900 border rounded-lg p-1.5 text-center shadow-sm cursor-pointer transition-all hover:shadow-md ${
+            className={`bg-white dark:bg-slate-900 border rounded-xl p-3 text-center shadow-sm cursor-pointer transition-all hover:shadow-md ${
               activeTab === 'posted' ? 'border-[#0FB5BA] bg-[#DDF7F8] dark:bg-slate-800' : 'border-slate-200 dark:border-slate-700'
             }`}
           >
-            <Send className="w-3.5 h-3.5 mx-auto mb-0.5 text-[#0FB5BA]" />
-            <p className="text-sm font-bold text-slate-900 dark:text-white">{postedContent.length}</p>
-            <p className="text-[8px] text-slate-600 dark:text-slate-400">{t('feed.posted')}</p>
+            <Send className="w-4 h-4 mx-auto mb-1 text-[#0FB5BA]" />
+            <p className="text-base font-bold text-slate-900 dark:text-white">{postedContent.length}</p>
+            <p className="text-[10px] text-slate-600 dark:text-slate-400 truncate">{t('feed.posted')}</p>
           </Card>
         </div>
 
         {/* Tabs for Content Sections */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-4 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full p-0.5 text-[9px]">
-            <TabsTrigger value="queue" className="data-[state=active]:bg-[#0FB5BA] data-[state=active]:text-white text-slate-700 dark:text-slate-300 rounded-full h-7 font-semibold">
+          <TabsList className="grid w-full grid-cols-4 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full p-1 gap-1">
+            <TabsTrigger value="queue" className="data-[state=active]:bg-[#0FB5BA] data-[state=active]:text-white text-slate-700 dark:text-slate-300 rounded-full h-9 text-[11px] font-semibold">
               {t('feed.queue')}
             </TabsTrigger>
-            <TabsTrigger value="approved" className="data-[state=active]:bg-[#0FB5BA] data-[state=active]:text-white text-slate-700 dark:text-slate-300 rounded-full h-7 font-semibold">
+            <TabsTrigger value="approved" className="data-[state=active]:bg-[#0FB5BA] data-[state=active]:text-white text-slate-700 dark:text-slate-300 rounded-full h-9 text-[11px] font-semibold">
               {t('feed.approved')}
             </TabsTrigger>
-            <TabsTrigger value="scheduled" className="data-[state=active]:bg-[#0FB5BA] data-[state=active]:text-white text-slate-700 dark:text-slate-300 rounded-full h-7 font-semibold">
+            <TabsTrigger value="scheduled" className="data-[state=active]:bg-[#0FB5BA] data-[state=active]:text-white text-slate-700 dark:text-slate-300 rounded-full h-9 text-[11px] font-semibold">
               {t('feed.scheduled')}
             </TabsTrigger>
-            <TabsTrigger value="posted" className="data-[state=active]:bg-[#0FB5BA] data-[state=active]:text-white text-slate-700 dark:text-slate-300 rounded-full h-7 font-semibold">
+            <TabsTrigger value="posted" className="data-[state=active]:bg-[#0FB5BA] data-[state=active]:text-white text-slate-700 dark:text-slate-300 rounded-full h-9 text-[11px] font-semibold">
               {t('feed.posted')}
             </TabsTrigger>
           </TabsList>
 
           {/* Queue Tab - Swipeable Cards */}
-          <TabsContent value="queue" className="space-y-2 mt-2">
+          <TabsContent value="queue" className="space-y-3 mt-4">
             {loadingPending ? (
               <div className="flex items-center justify-center h-64">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-400"></div>
@@ -350,7 +350,7 @@ export default function Feed() {
           </TabsContent>
 
           {/* Approved Tab */}
-          <TabsContent value="approved" className="space-y-1.5 mt-2">
+          <TabsContent value="approved" className="space-y-3 mt-4">
             {approvedDrafts.length === 0 ? (
               <Card className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-4 text-center shadow-sm">
                 <CheckCircle className="w-8 h-8 mx-auto mb-1.5 text-slate-300 dark:text-slate-600" />
@@ -365,7 +365,7 @@ export default function Feed() {
           </TabsContent>
 
           {/* Scheduled Tab */}
-          <TabsContent value="scheduled" className="space-y-1.5 mt-2">
+          <TabsContent value="scheduled" className="space-y-3 mt-4">
             {scheduledPosts.length === 0 ? (
               <Card className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-4 text-center shadow-sm">
                 <Calendar className="w-8 h-8 mx-auto mb-1.5 text-slate-300 dark:text-slate-600" />
@@ -385,7 +385,7 @@ export default function Feed() {
           </TabsContent>
 
           {/* Posted Tab */}
-          <TabsContent value="posted" className="space-y-1.5 mt-2">
+          <TabsContent value="posted" className="space-y-3 mt-4">
             {postedContent.length === 0 ? (
               <Card className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-4 text-center shadow-sm">
                 <Send className="w-8 h-8 mx-auto mb-1.5 text-slate-300 dark:text-slate-600" />

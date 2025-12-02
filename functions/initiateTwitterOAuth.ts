@@ -16,8 +16,8 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Twitter OAuth not configured' }, { status: 500 });
     }
 
-    const state = `twitter_${user.email}_${Date.now()}`;
-    const codeChallenge = 'challenge';
+    const codeVerifier = crypto.randomUUID();
+    const state = `twitter_${user.email}_${Date.now()}_${codeVerifier}`;
     const scope = 'tweet.read tweet.write users.read offline.access';
 
     const authUrl = `https://twitter.com/i/oauth2/authorize?` +
@@ -25,8 +25,8 @@ Deno.serve(async (req) => {
       `client_id=${clientId}&` +
       `redirect_uri=${encodeURIComponent(redirectUri)}&` +
       `scope=${encodeURIComponent(scope)}&` +
-      `state=${state}&` +
-      `code_challenge=${codeChallenge}&` +
+      `state=${encodeURIComponent(state)}&` +
+      `code_challenge=${codeVerifier}&` +
       `code_challenge_method=plain`;
 
     return Response.json({ authUrl, state });

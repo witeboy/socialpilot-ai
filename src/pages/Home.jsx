@@ -160,6 +160,13 @@ Return ONLY the welcome message.`;
 
   const totalCredits = (userPersona?.purchased_credits || 0) + (userPersona?.daily_ad_credits || 0);
 
+  // Redirect new users to onboarding - MUST be before any early returns
+  React.useEffect(() => {
+    if (!personaLoading && !userPersona) {
+      navigate(createPageUrl('Onboarding'), { replace: true });
+    }
+  }, [personaLoading, userPersona, navigate]);
+
   if (isChecking || personaLoading) {
     return (
       <div className="flex items-center justify-center h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
@@ -167,13 +174,6 @@ Return ONLY the welcome message.`;
       </div>
     );
   }
-
-  // Redirect new users to onboarding
-  React.useEffect(() => {
-    if (!personaLoading && !userPersona) {
-      navigate(createPageUrl('Onboarding'), { replace: true });
-    }
-  }, [personaLoading, userPersona, navigate]);
 
   if (!userPersona) {
     return (

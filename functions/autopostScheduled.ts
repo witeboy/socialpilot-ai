@@ -10,7 +10,7 @@ Deno.serve(async (req) => {
       post_status: 'scheduled'
     });
 
-    const duePs = scheduledPosts.filter(post => post.scheduled_for <= now);
+    const duePosts = scheduledPosts.filter(post => post.scheduled_for <= now);
     
     if (duePosts.length === 0) {
       return Response.json({ 

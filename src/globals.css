@@ -59,14 +59,84 @@ html {
 
 /* Optimized spacing for better content density */
 body {
-  font-size: 14px;
-  line-height: 1.4;
+  font-size: 15px;
+  line-height: 1.6;
 }
 
 /* Better touch targets */
-@media (pointer: coarse) {
-  button, a {
-    min-height: 40px;
-    min-width: 40px;
+button, a {
+  min-height: 44px;
+  touch-action: manipulation;
+}
+
+/* Consistent button sizing */
+.btn-sm {
+  min-height: 36px;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+}
+
+.btn-md {
+  min-height: 44px;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.9375rem;
+}
+
+.btn-lg {
+  min-height: 52px;
+  padding: 1rem 2rem;
+  font-size: 1rem;
+}
+
+/* Consistent card spacing */
+.card-compact {
+  padding: 1rem;
+}
+
+.card-normal {
+  padding: 1.25rem;
+}
+
+/* Typography scale */
+h1 {
+  font-size: 1.75rem;
+  line-height: 1.2;
+  font-weight: 700;
+}
+
+h2 {
+  font-size: 1.5rem;
+  line-height: 1.3;
+  font-weight: 700;
+}
+
+h3 {
+  font-size: 1.25rem;
+  line-height: 1.4;
+  font-weight: 600;
+}
+
+p {
+  font-size: 0.9375rem;
+  line-height: 1.6;
+}
+
+.text-xs {
+  font-size: 0.75rem;
+  line-height: 1.4;
+}
+
+.text-sm {
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+@media (min-width: 640px) {
+  h1 {
+    font-size: 2rem;
+  }
+  
+  h2 {
+    font-size: 1.75rem;
   }
 }

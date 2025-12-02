@@ -57,7 +57,7 @@ function LayoutContent({ children, currentPageName }) {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-gradient-to-br dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 pb-[68px] pt-14">
+    <div className="min-h-screen bg-slate-50 dark:bg-gradient-to-br dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 pb-20 pt-14">
       <Toaster richColors closeButton position="top-center" />
       <TopBar />
       {/* Page Content */}
@@ -65,9 +65,9 @@ function LayoutContent({ children, currentPageName }) {
         {children}
       </main>
 
-      {/* Bottom Tab Navigation - 68px height */}
-      <nav className="fixed bottom-0 left-0 right-0 h-[68px] bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-t border-slate-200 dark:border-slate-800 z-50 shadow-lg">
-        <div className="flex items-center justify-around h-full max-w-2xl mx-auto px-2">
+      {/* Bottom Tab Navigation - 64px height */}
+      <nav className="fixed bottom-0 left-0 right-0 h-16 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-t border-slate-200 dark:border-slate-800 z-50 shadow-lg">
+        <div className="flex items-center justify-around h-full max-w-2xl mx-auto px-4">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             const active = isActive(tab.name);
@@ -79,8 +79,8 @@ function LayoutContent({ children, currentPageName }) {
                   key={tab.name}
                   className="flex flex-col items-center justify-center flex-1 h-full opacity-30 cursor-not-allowed"
                 >
-                  <Icon className="w-6 h-6 text-slate-400 dark:text-slate-500" strokeWidth={2} />
-                  <span className="text-[10px] mt-1.5 font-medium text-slate-400 dark:text-slate-500">
+                  <Icon className="w-5 h-5 text-slate-400 dark:text-slate-500" strokeWidth={2} />
+                  <span className="text-[11px] mt-1 font-medium text-slate-400 dark:text-slate-500">
                     {tab.label}
                   </span>
                 </div>
@@ -95,16 +95,16 @@ function LayoutContent({ children, currentPageName }) {
               >
                 <div className="relative">
                   <Icon 
-                    className={`w-6 h-6 transition-colors ${
+                    className={`w-5 h-5 transition-colors ${
                       active ? 'text-[#0FB5BA]' : 'text-slate-500 dark:text-slate-300 group-hover:text-slate-700 dark:group-hover:text-slate-200'
                     }`}
                     strokeWidth={active ? 2.5 : 2} 
                   />
                   {active && (
-                    <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-[#0FB5BA] rounded-full" />
+                    <div className="absolute -bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 bg-[#0FB5BA] rounded-full" />
                   )}
                 </div>
-                <span className={`text-[10px] mt-1.5 font-semibold transition-colors ${
+                <span className={`text-[11px] mt-1 font-semibold transition-colors ${
                   active ? 'text-[#0FB5BA]' : 'text-slate-500 dark:text-slate-300 group-hover:text-slate-700 dark:group-hover:text-slate-200'
                 }`}>
                   {tab.label}

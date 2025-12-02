@@ -184,32 +184,32 @@ Return ONLY the welcome message.`;
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 p-4 pb-24">
-      <div className="max-w-2xl mx-auto space-y-5">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 px-4 py-5 pb-24">
+      <div className="max-w-2xl mx-auto space-y-4">
         {/* Header with Credits Widget */}
-        <div className="flex items-center justify-between pt-4 px-2">
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">{t('home.title')}</h1>
-            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">{t('home.subtitle')}</p>
+        <div className="flex items-center justify-between">
+          <div className="flex-1 min-w-0 pr-3">
+            <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white truncate">{t('home.title')}</h1>
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 truncate">{t('home.subtitle')}</p>
           </div>
           <div 
             onClick={() => navigate(createPageUrl('Settings'))}
-            className="flex items-center gap-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 cursor-pointer hover:bg-[#DDF7F8] dark:hover:bg-slate-800 hover:border-[#0FB5BA] transition-all shadow-md"
+            className="flex-shrink-0 flex items-center gap-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2.5 cursor-pointer hover:bg-[#DDF7F8] dark:hover:bg-slate-800 hover:border-[#0FB5BA] transition-all shadow-sm"
           >
-            <Coins className="w-5 h-5 text-[#0FB5BA]" />
+            <Coins className="w-4 h-4 text-[#0FB5BA] flex-shrink-0" />
             <div className="text-right">
-              <p className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">{totalCredits}</p>
-              <p className="text-xs text-slate-600 dark:text-slate-400">{t('home.credits')}</p>
+              <p className="text-lg font-bold text-slate-900 dark:text-white leading-none">{totalCredits}</p>
+              <p className="text-[10px] text-slate-600 dark:text-slate-400 mt-0.5">{t('home.credits')}</p>
             </div>
           </div>
         </div>
 
         {/* AI Daily Briefing with Markdown */}
         {briefing && (
-          <Card className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 sm:p-6 space-y-3 shadow-md">
+          <Card className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 space-y-3 shadow-sm">
             <div className="flex items-center gap-2">
-              <Sparkles className="w-5 h-5 text-[#0FB5BA]" />
-              <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">{t('home.welcome')}</h3>
+              <Sparkles className="w-4 h-4 text-[#0FB5BA] flex-shrink-0" />
+              <h3 className="text-base font-bold text-slate-900 dark:text-white">{t('home.welcome')}</h3>
             </div>
             <div className="prose prose-sm max-w-none">
               <ReactMarkdown
@@ -218,15 +218,15 @@ Return ONLY the welcome message.`;
                     <a {...props} className="text-[#0FB5BA] hover:text-[#14D4BA] underline" target="_blank" rel="noopener noreferrer" />
                   ),
                   p: ({ node, ...props }) => (
-                    <p {...props} className="text-slate-700 dark:text-slate-300 text-sm leading-relaxed mb-2" />
+                    <p {...props} className="text-slate-700 dark:text-slate-300 text-sm leading-relaxed mb-1.5" />
                   )
                 }}
               >
                 {briefing}
               </ReactMarkdown>
             </div>
-            <Link to={createPageUrl('Create')}>
-              <Button className="w-full h-11 px-4 rounded-lg text-white font-semibold bg-gradient-to-r from-[#0FB5BA] to-[#14D4BA] shadow-md hover:scale-105 transition-transform">
+            <Link to={createPageUrl('Create')} className="block">
+              <Button className="w-full h-11 px-4 rounded-lg text-white text-sm font-semibold bg-gradient-to-r from-[#0FB5BA] to-[#14D4BA] shadow-sm hover:shadow-md hover:scale-[1.02] transition-all">
                 {t('home.createNow')}
               </Button>
             </Link>
@@ -234,53 +234,53 @@ Return ONLY the welcome message.`;
         )}
 
         {/* Quick Stats - Enhanced with Icons */}
-        <div className="grid grid-cols-2 gap-3 sm:gap-4">
-          <Card className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 space-y-2 hover:border-[#0FB5BA] transition-all shadow-md">
+        <div className="grid grid-cols-2 gap-3">
+          <Card className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 space-y-2 hover:border-[#0FB5BA] transition-all shadow-sm">
             <div className="flex items-center gap-2">
-              <div className="w-9 h-9 bg-[#DDF7F8] dark:bg-slate-800 rounded-lg flex items-center justify-center">
-                <Calendar className="w-5 h-5 text-[#0FB5BA]" />
+              <div className="w-8 h-8 bg-[#DDF7F8] dark:bg-slate-800 rounded-lg flex items-center justify-center flex-shrink-0">
+                <Calendar className="w-4 h-4 text-[#0FB5BA]" />
               </div>
-              <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">{t('home.scheduled')}</span>
+              <span className="text-xs font-semibold text-slate-700 dark:text-slate-300 truncate">{t('home.scheduled')}</span>
             </div>
-            <p className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">{scheduledPosts.length}</p>
-            <p className="text-xs text-slate-600 dark:text-slate-400">{t('home.postsInQueue')}</p>
+            <p className="text-2xl font-bold text-slate-900 dark:text-white">{scheduledPosts.length}</p>
+            <p className="text-xs text-slate-600 dark:text-slate-400 truncate">{t('home.postsInQueue')}</p>
           </Card>
-          <Card className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 space-y-2 hover:border-[#0FB5BA] transition-all shadow-md">
+          <Card className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 space-y-2 hover:border-[#0FB5BA] transition-all shadow-sm">
             <div className="flex items-center gap-2">
-              <div className="w-9 h-9 bg-green-50 dark:bg-green-900/20 rounded-lg flex items-center justify-center">
-                <TrendingUp className="w-5 h-5 text-green-600 dark:text-green-400" />
+              <div className="w-8 h-8 bg-green-50 dark:bg-green-900/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                <TrendingUp className="w-4 h-4 text-green-600 dark:text-green-400" />
               </div>
-              <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">{t('home.approved')}</span>
+              <span className="text-xs font-semibold text-slate-700 dark:text-slate-300 truncate">{t('home.approved')}</span>
             </div>
-            <p className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">{userPersona?.approved_posts_count || 0}</p>
-            <p className="text-xs text-slate-600 dark:text-slate-400">{t('home.totalThisMonth')}</p>
+            <p className="text-2xl font-bold text-slate-900 dark:text-white">{userPersona?.approved_posts_count || 0}</p>
+            <p className="text-xs text-slate-600 dark:text-slate-400 truncate">{t('home.totalThisMonth')}</p>
           </Card>
         </div>
 
         {/* Quick Actions - Glass Cards with Icons */}
-        <div className="space-y-3">
+        <div className="space-y-2.5">
           <Link to={createPageUrl('Create')}>
-            <Card className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 hover:border-[#0FB5BA] hover:shadow-lg transition-all group shadow-md">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-gradient-to-r from-[#0FB5BA] to-[#14D4BA] rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform shadow-md">
-                  <PlusSquare className="w-6 h-6 text-white" />
+            <Card className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 hover:border-[#0FB5BA] hover:shadow-md transition-all group shadow-sm">
+              <div className="flex items-center gap-3">
+                <div className="w-11 h-11 bg-gradient-to-r from-[#0FB5BA] to-[#14D4BA] rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform shadow-sm flex-shrink-0">
+                  <PlusSquare className="w-5 h-5 text-white" />
                 </div>
-                <div className="flex-1">
-                  <p className="font-bold text-slate-900 dark:text-white text-base">{t('home.createContent')}</p>
-                  <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">{t('home.generateNew')}</p>
+                <div className="flex-1 min-w-0">
+                  <p className="font-bold text-slate-900 dark:text-white text-sm truncate">{t('home.createContent')}</p>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 truncate">{t('home.generateNew')}</p>
                 </div>
               </div>
             </Card>
           </Link>
           <Link to={createPageUrl('Create') + '?tab=sources'}>
-            <Card className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 hover:border-[#0FB5BA] hover:shadow-lg transition-all group shadow-md">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-gradient-to-r from-[#0FB5BA] to-[#14D4BA] rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform shadow-md">
-                  <Layers className="w-6 h-6 text-white" />
+            <Card className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 hover:border-[#0FB5BA] hover:shadow-md transition-all group shadow-sm">
+              <div className="flex items-center gap-3">
+                <div className="w-11 h-11 bg-gradient-to-r from-[#0FB5BA] to-[#14D4BA] rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform shadow-sm flex-shrink-0">
+                  <Layers className="w-5 h-5 text-white" />
                 </div>
-                <div className="flex-1">
-                  <p className="font-bold text-slate-900 dark:text-white text-base">{t('home.manageSources')}</p>
-                  <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">{t('home.configureSources')}</p>
+                <div className="flex-1 min-w-0">
+                  <p className="font-bold text-slate-900 dark:text-white text-sm truncate">{t('home.manageSources')}</p>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 truncate">{t('home.configureSources')}</p>
                 </div>
               </div>
             </Card>
@@ -288,26 +288,26 @@ Return ONLY the welcome message.`;
         </div>
 
         {/* Watch to Earn Section */}
-        <Card className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-md p-5">
+        <Card className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-sm p-4">
           <div className="flex items-center justify-between mb-3">
-            <div>
-              <h3 className="text-slate-900 dark:text-white font-bold text-base sm:text-lg flex items-center gap-2">
-                <Play className="w-5 h-5 text-green-600 dark:text-green-400" />
-                {t('home.watchToEarn')}
+            <div className="flex-1 min-w-0">
+              <h3 className="text-slate-900 dark:text-white font-bold text-sm flex items-center gap-2">
+                <Play className="w-4 h-4 text-green-600 dark:text-green-400 flex-shrink-0" />
+                <span className="truncate">{t('home.watchToEarn')}</span>
               </h3>
-              <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
+              <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5 truncate">
                 {userPersona?.daily_ad_credits || 0} / 10 {t('home.creditsEarned')}
               </p>
             </div>
-            <div className="text-right">
-              <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">{t('home.dailyCredits')}</p>
-              <p className="text-xl sm:text-2xl font-bold text-green-600 dark:text-green-400">{userPersona?.daily_ad_credits || 0}</p>
+            <div className="text-right flex-shrink-0 ml-3">
+              <p className="text-xs text-slate-600 dark:text-slate-400">{t('home.dailyCredits')}</p>
+              <p className="text-xl font-bold text-green-600 dark:text-green-400">{userPersona?.daily_ad_credits || 0}</p>
             </div>
           </div>
           <Button
             onClick={handleWatchAd}
             disabled={(userPersona?.daily_ad_credits || 0) >= 10}
-            className="w-full h-12 px-4 rounded-lg text-white font-semibold bg-gradient-to-r from-[#0FB5BA] to-[#14D4BA] shadow-md hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:bg-slate-200 dark:disabled:bg-slate-800 disabled:text-slate-500 dark:disabled:text-slate-600 disabled:shadow-none"
+            className="w-full h-11 px-4 rounded-lg text-white text-sm font-semibold bg-gradient-to-r from-[#0FB5BA] to-[#14D4BA] shadow-sm hover:shadow-md hover:scale-[1.02] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:bg-slate-200 dark:disabled:bg-slate-800 disabled:text-slate-500 dark:disabled:text-slate-600 disabled:shadow-none"
           >
             {(userPersona?.daily_ad_credits || 0) >= 10 ? t('home.dailyLimit') : t('home.watchAd')}
           </Button>

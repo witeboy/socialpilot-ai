@@ -15,10 +15,10 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Missing code or state' }, { status: 400 });
     }
 
-    const stateParts = state.split('_');
-    const platform = stateParts[0];
-    const email = stateParts[1];
-    const codeVerifier = stateParts[3] || 'challenge';
+    const stateData = JSON.parse(atob(state));
+    const platform = stateData.platform;
+    const email = stateData.email;
+    const codeVerifier = stateData.codeVerifier || 'challenge';
     const base44 = createClientFromRequest(req);
 
     const redirectUri = Deno.env.get('OAUTH_REDIRECT_URL');

@@ -17,7 +17,12 @@ Deno.serve(async (req) => {
     }
 
     const codeVerifier = crypto.randomUUID();
-    const state = `twitter_${user.email}_${Date.now()}_${codeVerifier}`;
+    const stateData = {
+      platform: 'twitter',
+      email: user.email,
+      codeVerifier: codeVerifier
+    };
+    const state = btoa(JSON.stringify(stateData));
     const scope = 'tweet.read tweet.write users.read offline.access';
 
     const authUrl = `https://x.com/i/oauth2/authorize?` +

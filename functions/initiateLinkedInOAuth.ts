@@ -16,7 +16,11 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'LinkedIn OAuth not configured' }, { status: 500 });
     }
 
-    const state = `linkedin_${user.email}_${Date.now()}`;
+    const stateData = {
+      platform: 'linkedin',
+      email: user.email
+    };
+    const state = btoa(JSON.stringify(stateData));
     const scope = 'openid profile email w_member_social';
 
     const authUrl = `https://www.linkedin.com/oauth/v2/authorization?` +

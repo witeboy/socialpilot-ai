@@ -49,13 +49,15 @@ export default function Home() {
   // Fetch scheduled posts
   const { data: scheduledPosts = [] } = useQuery({
     queryKey: ['scheduledPosts'],
-    queryFn: () => base44.entities.ContentPost.filter({ post_status: 'scheduled' })
+    queryFn: () => base44.entities.ContentPost.filter({ post_status: 'scheduled' }),
+    enabled: !isChecking && !personaLoading
   });
 
   // Fetch approved drafts
   const { data: approvedDrafts = [] } = useQuery({
     queryKey: ['approvedDrafts'],
-    queryFn: () => base44.entities.ContentDraft.filter({ status: 'approved' })
+    queryFn: () => base44.entities.ContentDraft.filter({ status: 'approved' }),
+    enabled: !isChecking && !personaLoading
   });
 
   // Calculate average virality

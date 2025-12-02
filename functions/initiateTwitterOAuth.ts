@@ -25,7 +25,7 @@ Deno.serve(async (req) => {
     const state = btoa(JSON.stringify(stateData));
     const scope = 'tweet.read tweet.write users.read offline.access';
 
-    const authUrl = `https://x.com/i/oauth2/authorize?` +
+    const authUrl = `https://twitter.com/i/oauth2/authorize?` +
       `response_type=code&` +
       `client_id=${clientId}&` +
       `redirect_uri=${encodeURIComponent(redirectUri)}&` +
